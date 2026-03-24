@@ -1,253 +1,180 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>完整项目报告</title>
-<style>
-:root{
-  --bg:#eef4ff;--bg2:#f8fbff;--surface:#ffffff;--surface2:#f8fafc;--text:#0f172a;--muted:#475569;--line:#e2e8f0;
-  --primary:#2563eb;--primary-soft:#dbeafe;--green:#16a34a;--green-soft:#ecfdf5;--amber:#d97706;--amber-soft:#fff7ed;
-  --purple:#7c3aed;--purple-soft:#f5f3ff;--red:#dc2626;--red-soft:#fef2f2;--shadow:0 20px 60px rgba(2,8,23,.08);
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 42%,#f6f8fb 100%);color:var(--text);line-height:1.7}
-a{color:var(--primary);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1240px;margin:0 auto;padding:24px 18px 72px}
-.hero{position:relative;overflow:hidden;border-radius:32px;padding:34px;border:1px solid rgba(255,255,255,.22);background:radial-gradient(circle at top right,rgba(255,255,255,.18),rgba(255,255,255,.06)),linear-gradient(135deg,#0f172a,#172554 58%,#1d4ed8);color:#fff;box-shadow:0 24px 80px rgba(15,23,42,.22)}
-.hero:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);filter:blur(4px)}
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:end}
-.badge{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);font-size:12px;font-weight:700;letter-spacing:.02em}
-h1,h2,h3,h4{line-height:1.15;letter-spacing:-.03em;margin:0 0 12px}
-h1{font-size:42px} h2{font-size:30px} h3{font-size:20px} h4{font-size:15px}
-p{margin:0 0 10px}
-.small{font-size:14px;color:var(--muted)}
-.hero .small{color:rgba(255,255,255,.82)}
-.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}
-.metric{padding:18px;border-radius:22px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px)}
-.metric .num{font-size:30px;font-weight:800;letter-spacing:-.04em}
-.metric .lab{font-size:13px;color:rgba(255,255,255,.78);margin-top:4px}
-.hero-panel{padding:22px;border-radius:24px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18)}
-.hero-panel ul{margin:12px 0 0 18px}
-.nav{position:sticky;top:12px;z-index:20;margin:18px 0;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border:1px solid rgba(226,232,240,.8);display:flex;gap:12px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(15,23,42,.06)}
-.nav a{font-size:13px;font-weight:800;color:#334155}
-.section{margin-top:18px;border-radius:28px;padding:26px;background:rgba(255,255,255,.88);border:1px solid rgba(226,232,240,.88);box-shadow:var(--shadow)}
-.two{display:grid;grid-template-columns:1.02fr .98fr;gap:18px}
-.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.card{border:1px solid var(--line);border-radius:22px;padding:18px;background:#fff}
-.card.soft{background:linear-gradient(180deg,#fff,#fbfdff)}
-.card.blue{background:linear-gradient(180deg,#eff6ff,#ffffff);border-color:#bfdbfe}
-.card.green{background:linear-gradient(180deg,#ecfdf5,#ffffff);border-color:#bbf7d0}
-.card.amber{background:linear-gradient(180deg,#fff7ed,#ffffff);border-color:#fed7aa}
-.card.purple{background:linear-gradient(180deg,#f5f3ff,#ffffff);border-color:#ddd6fe}
-.card.red{background:linear-gradient(180deg,#fef2f2,#ffffff);border-color:#fecaca}
-.kicker{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:8px}
-.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid transparent}
-.pill.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
-.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#15803d}
-.pill.amber{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
-.pill.purple{background:#f5f3ff;border-color:#ddd6fe;color:#6d28d9}
-.pill.red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
-.note{padding:16px 18px;border-radius:18px;border:1px solid var(--line);background:#f8fafc;color:#334155}
-.table{width:100%;border-collapse:collapse;font-size:14px}
-.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-.table th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#64748b}
-.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:18px;overflow:auto;font-size:13px;line-height:1.65}
-pre.code{white-space:pre-wrap}
-.figcap{font-size:14px;color:var(--muted);margin-top:10px}
-.list{margin:8px 0 0 18px;padding:0}
-.list li{margin:6px 0}
-.divider{height:1px;background:linear-gradient(90deg,transparent,#cbd5e1,transparent);margin:18px 0}
-.footer{margin-top:20px;color:#64748b;font-size:13px}
-.callout{padding:18px 20px;border-radius:22px;background:linear-gradient(135deg,#eff6ff,#ffffff);border:1px solid #bfdbfe}
-.chart-block{border:1px solid var(--line);border-radius:22px;padding:18px;background:#fff}
-.chart-head h3{font-size:19px;margin-bottom:8px}
-.chart-head p{font-size:14px;color:var(--muted);margin-bottom:12px}
-.chart-svg{border-radius:20px;border:1px solid var(--line);background:#fff;overflow:hidden}
-.chart-note{font-size:12px;color:var(--muted);margin-top:8px}
-@media (max-width:980px){.hero-grid,.two,.three,.four,.metric-grid{grid-template-columns:1fr 1fr} h1{font-size:36px}}
-@media (max-width:720px){.hero-grid,.two,.three,.four,.metric-grid{grid-template-columns:1fr}.wrap{padding:14px 12px 40px}.section{padding:20px}.nav{position:static} h1{font-size:30px} h2{font-size:25px}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>完整项目报告｜创作者经营分析</title>
+  <style>
+    :root {
+      --bg: #f6f8fc; --card: #fff; --line: #e7ebf3; --text: #172033; --muted: #5d6881; --accent: #275efe;
+      --shadow: 0 14px 40px rgba(20, 30, 60, 0.08); --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: linear-gradient(180deg,#f8fbff,#f5f7fb); color: var(--text); line-height: 1.7; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { width: min(1080px, calc(100% - 32px)); margin: 0 auto; }
+    .top { position: sticky; top: 0; z-index: 10; background: rgba(248,251,255,.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+    .top .wrap { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 0; }
+    .nav { display:flex; gap:10px; flex-wrap:wrap; }
+    .nav a { padding: 8px 12px; border-radius: 999px; color: var(--muted); font-size: 14px; }
+    .nav a:hover { background:#eef3ff; color:var(--accent); text-decoration:none; }
+    .hero { padding: 46px 0 20px; }
+    .hero-card, .section { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .hero-card { padding: 30px; }
+    .eyebrow { display:inline-block; padding:8px 12px; border-radius:999px; background:#edf3ff; color:var(--accent); font-size:13px; font-weight:700; }
+    h1 { margin: 16px 0 12px; font-size: clamp(28px,4vw,42px); line-height: 1.15; }
+    .hero p { margin:0; color: var(--muted); }
+    .summary-grid { display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:14px; margin-top: 20px; }
+    .stat { padding:16px; border-radius:16px; background:#f8faff; border:1px solid #e9eef9; }
+    .stat strong { display:block; font-size:24px; line-height:1.1; margin-bottom:6px; }
+    main { display:grid; gap:20px; padding-bottom: 34px; }
+    .section { padding: 24px; }
+    .section h2 { margin: 0 0 12px; font-size: 26px; }
+    .section h3 { margin: 20px 0 8px; font-size: 19px; }
+    .section p { margin: 0; color: var(--muted); }
+    .section ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); }
+    table { width:100%; border-collapse: collapse; margin-top: 14px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+    th, td { padding: 12px 14px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; font-size:14px; }
+    th { background:#f7f9fc; }
+    tr:last-child td { border-bottom:0; }
+    .callout { margin-top: 14px; padding: 14px 16px; border-radius: 14px; background:#f7f9fc; border:1px solid var(--line); color: var(--muted); }
+    .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top: 18px; }
+    .btn { display:inline-flex; padding:10px 14px; border-radius:12px; border:1px solid var(--line); background:#fff; font-weight:600; }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color:#fff; }
+    @media (max-width: 860px) { .summary-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+    @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
-<body><div class="wrap">
-<div class="nav">
-  <a href="index.html">返回首页</a>
-  <a href="#summary">摘要</a>
-  <a href="#scope">数据与边界</a>
-  <a href="#method">方法</a>
-  <a href="#backtest">回测</a>
-  <a href="#experiment">实验</a>
-</div>
-
-<section class="hero">
-  <div class="hero-grid">
-    <div>
-      <div class="badge">完整报告</div>
-      <h1 style="margin-top:14px;">创作者经营分析：<br>从问题诊断到实验上线</h1>
-      <p class="small">页面按问题定义、解释边界、口径取舍、同规模回测、名单迁移、实验门槛和执行动作展开。</p>
+<body>
+  <div class="top">
+    <div class="wrap">
+      <a href="index.html">返回首页</a>
+      <nav class="nav">
+        <a href="#summary">摘要</a>
+        <a href="#data">数据与边界</a>
+        <a href="#method">方法</a>
+        <a href="#backtest">回测</a>
+        <a href="#experiment">实验</a>
+      </nav>
     </div>
-    <div class="hero-panel">
-      <h3>报告要点</h3>
-      <ul class="list">
-        <li>问题成立：资源集中度高于价值集中度。</li>
-        <li>推进方式克制：先灰度，再扩量。</li>
-        <li>口径取舍明确：首轮口径优先满足执行稳定性约束。</li>
-        <li>实验门槛与回滚条件同时定义。</li>
+  </div>
+
+  <header class="hero wrap">
+    <div class="hero-card">
+      <div class="eyebrow">完整项目报告</div>
+      <h1>创作者经营分析：从问题诊断到实验上线</h1>
+      <p>页面按问题定义、解释边界、口径取舍、同规模回测、名单迁移、实验门槛和执行动作展开。当前证据支持进入分层灰度实验，不支持直接跳过线上验证。</p>
+      <div class="summary-grid">
+        <div class="stat"><strong>18,742</strong><span>创作者样本</span></div>
+        <div class="stat"><strong>326,418</strong><span>内容样本</span></div>
+        <div class="stat"><strong>299,872</strong><span>周度活跃记录</span></div>
+        <div class="stat"><strong>299,872</strong><span>周度激励记录</span></div>
+      </div>
+      <div class="actions">
+        <a class="btn primary" href="reports/creator_value_analysis_report.md">打开原始 Markdown 报告</a>
+        <a class="btn" href="notebook.html">查看分析过程</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="summary" class="section">
+      <h2>1. 摘要</h2>
+      <h3>资源可以重配，但推进节奏需要受约束</h3>
+      <p>平台当前更接近按既有曝光惯性继续分配资源，长期经营效率信号尚未被充分纳入。分析链路为：供给漏斗诊断 → 资源错配识别 → 准入、排序与复核 → 同规模历史回测 → 风险约束与上线门槛。</p>
+      <div class="callout">当前判断：资源可以重配，但必须先以 creator 级分层灰度验证主指标与护栏，不宜直接全量切换。</div>
+    </section>
+
+    <section id="data" class="section">
+      <h2>2. 数据范围与解释边界</h2>
+      <h3>样本覆盖</h3>
+      <table>
+        <thead><tr><th>数据</th><th>规模</th></tr></thead>
+        <tbody>
+          <tr><td>创作者样本</td><td>18,742</td></tr>
+          <tr><td>内容样本</td><td>326,418</td></tr>
+          <tr><td>周度活跃记录</td><td>299,872</td></tr>
+          <tr><td>周度激励记录</td><td>299,872</td></tr>
+        </tbody>
+      </table>
+      <h3>解释边界</h3>
+      <ul>
+        <li>旧规则与历史资源倾斜高度相关；</li>
+        <li>离线样本无法完全剥离运营干预与活动资源；</li>
+        <li>补入名单在历史上并未真实获得同等资源。</li>
       </ul>
-    </div>
-  </div>
-</section>
+      <div class="callout">因此，历史回测只回答“值不值得试”，不直接替代线上因果识别。</div>
+    </section>
 
-<section class="section" id="summary">
-  <div class="kicker">1. 摘要</div>
-  <h2>资源可以重配，但推进节奏需要受约束</h2>
-  <p>平台当前更接近按既有曝光惯性继续分配资源，长期经营效率信号尚未被充分纳入。分析链路为：<strong>供给漏斗诊断 → 资源错配识别 → 准入、排序与复核 → 同规模历史回测 → 风险约束与上线门槛</strong>。</p>
-  <p>当前证据支持进入分层灰度实验，不支持直接跳过线上验证。</p>
-</section>
+    <section id="method" class="section">
+      <h2>3. 方法框架</h2>
+      <h3>资源分配按准入、排序、复核三步执行</h3>
+      <ul>
+        <li>供给漏斗：确认问题到底发生在注册、首发，还是持续经营阶段。</li>
+        <li>资源错配：比较曝光集中度与价值集中度，识别沉没资源与高潜低配人群。</li>
+        <li>候选口径取舍：同时约束名单重合率、主指标方向和运营承接能力。</li>
+      </ul>
+      <div class="callout"><strong>首轮灰度排序口径</strong><br>新优先级分数 = 0.60 × 原规则分位 + 0.20 × 留存分位 + 0.15 × 变现效率分位（缩尾后） + 0.05 × 低资源占用分位</div>
+      <p style="margin-top:14px;">当前口径用于首轮灰度。采用原因在于其兼顾名单重合率、主指标改善、人均现金激励抬升速度和运营复核成本。</p>
+    </section>
 
-<section class="section two" id="scope">
-  <div class="card">
-    <div class="kicker">2. 数据范围</div>
-    <h3>样本覆盖</h3>
-    <table class="table">
-      <tr><th>数据</th><th>规模</th></tr>
-      <tr><td>创作者样本</td><td>18,742</td></tr>
-      <tr><td>内容样本</td><td>326,418</td></tr>
-      <tr><td>周度活跃记录</td><td>299,872</td></tr>
-      <tr><td>周度激励记录</td><td>299,872</td></tr>
-    </table>
-    <div class="note" style="margin-top:12px;">样本性质：合成样本。</div>
-  </div>
-  <div class="card">
-    <div class="kicker">解释边界</div>
-    <h3>历史回测只回答“值不值得试”</h3>
-    <ul class="list">
-      <li>旧规则与历史资源倾斜高度相关；</li>
-      <li>离线样本无法完全剥离运营干预与活动资源；</li>
-      <li>补入名单在历史上并未真实获得同等资源。</li>
-    </ul>
-    <div class="note">因此，离线结果用于判断方向，不直接替代线上因果识别。</div>
-  </div>
-</section>
-
-<section class="section" id="method">
-  <div class="kicker">3. 方法框架</div>
-  <h2>资源分配按准入、排序、复核三步执行</h2>
-  <div class="three">
-    <div class="card amber"><h3>供给漏斗</h3><p>确认问题到底发生在注册、首发，还是持续经营阶段。</p></div>
-    <div class="card red"><h3>资源错配</h3><p>比较曝光集中度与价值集中度，识别沉没资源与高潜低配人群。</p></div>
-    <div class="card blue"><h3>候选口径取舍</h3><p>同时约束名单重合率、主指标方向和运营承接能力。</p></div>
-  </div>
-  <div class="divider"></div>
-  <pre class="code">新优先级分数
-= 0.60 × 原规则分位
-+ 0.20 × 留存分位
-+ 0.15 × 变现效率分位（缩尾后）
-+ 0.05 × 低资源占用分位</pre>
-  <p class="small">当前口径用于首轮灰度。采用原因在于其兼顾名单重合率、主指标改善、人均现金激励抬升速度和运营复核成本。</p>
-</section>
-
-<section class="section" id="backtest">
-  <div class="kicker">4. 回测与稳健性</div>
-  <h2>主指标改善，同时伴随投入上升</h2>
-  <div class="two">
-    <div class="chart-block">
-    <div class="chart-head">
+    <section id="backtest" class="section">
+      <h2>4. 回测与稳健性</h2>
       <h3>同规模回测</h3>
       <p>Top 4,200 同规模比较下，主指标改善，同时单人成本抬升。</p>
-    </div>
-    <div class="chart-svg"><svg viewBox="0 0 900 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="900" height="300" rx="22" fill="#fff"/><text x="24" y="60" font-size="15" fill="#0f172a" font-weight="700">30日留存率</text><line x1="180" y1="55" x2="820" y2="55" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round"/><circle cx="180" cy="55" r="10" fill="#2563eb"/><text x="180" y="89" font-size="12" fill="#2563eb" text-anchor="middle">原规则</text><circle cx="820" cy="55" r="10" fill="#16a34a"/><text x="820" y="89" font-size="12" fill="#16a34a" text-anchor="middle">新规则</text><text x="180" y="37" font-size="13" fill="#1d4ed8" text-anchor="middle" font-weight="700">48.7%</text><text x="820" y="37" font-size="13" fill="#15803d" text-anchor="middle" font-weight="700">58.1%</text><rect x="456.0" y="37" width="88" height="26" rx="13" fill="#ecfdf5" stroke="#bbf7d0"/><text x="500.0" y="55" font-size="12" fill="#15803d" text-anchor="middle" font-weight="700">+9.4ppt</text><text x="24" y="135" font-size="15" fill="#0f172a" font-weight="700">单位激励收入</text><line x1="180" y1="130" x2="820" y2="130" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round"/><circle cx="180" cy="130" r="10" fill="#2563eb"/><text x="180" y="164" font-size="12" fill="#2563eb" text-anchor="middle">原规则</text><circle cx="820" cy="130" r="10" fill="#16a34a"/><text x="820" y="164" font-size="12" fill="#16a34a" text-anchor="middle">新规则</text><text x="180" y="112" font-size="13" fill="#1d4ed8" text-anchor="middle" font-weight="700">69.6</text><text x="820" y="112" font-size="13" fill="#15803d" text-anchor="middle" font-weight="700">78.4</text><rect x="456.0" y="112" width="88" height="26" rx="13" fill="#ecfdf5" stroke="#bbf7d0"/><text x="500.0" y="130" font-size="12" fill="#15803d" text-anchor="middle" font-weight="700">+12.7%</text><text x="24" y="210" font-size="15" fill="#0f172a" font-weight="700">人均现金激励</text><line x1="180" y1="205" x2="820" y2="205" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round"/><circle cx="180" cy="205" r="10" fill="#2563eb"/><text x="180" y="239" font-size="12" fill="#2563eb" text-anchor="middle">原规则</text><circle cx="820" cy="205" r="10" fill="#16a34a"/><text x="820" y="239" font-size="12" fill="#16a34a" text-anchor="middle">新规则</text><text x="180" y="187" font-size="13" fill="#1d4ed8" text-anchor="middle" font-weight="700">550</text><text x="820" y="187" font-size="13" fill="#15803d" text-anchor="middle" font-weight="700">625</text><rect x="456.0" y="187" width="88" height="26" rx="13" fill="#ecfdf5" stroke="#bbf7d0"/><text x="500.0" y="205" font-size="12" fill="#15803d" text-anchor="middle" font-weight="700">+13.6%</text></svg></div>
-    <div class="chart-note">来源：outputs/backtest_summary.csv</div>
-  </div>
-    <div class="card">
-      <h3>回测摘要</h3>
-      <table class="table">
-        <tr><th>指标</th><th>原规则</th><th>新规则</th></tr>
-        <tr><td>30 日留存</td><td>48.7%</td><td>58.1%</td></tr>
-        <tr><td>单位激励收入</td><td>69.6</td><td>78.4</td></tr>
-        <tr><td>人均现金激励</td><td>550</td><td>625</td></tr>
-        <tr><td>高潜命中率</td><td>3.5%</td><td>7.3%</td></tr>
-        <tr><td>名单重合率</td><td colspan="2">72.2%</td></tr>
+      <table>
+        <thead><tr><th>指标</th><th>原规则</th><th>新规则</th></tr></thead>
+        <tbody>
+          <tr><td>30 日留存</td><td>48.7%</td><td>58.1%</td></tr>
+          <tr><td>单位激励收入</td><td>69.6</td><td>78.4</td></tr>
+          <tr><td>人均现金激励</td><td>550</td><td>625</td></tr>
+          <tr><td>高潜命中率</td><td>3.5%</td><td>7.3%</td></tr>
+          <tr><td>名单重合率</td><td colspan="2">72.2%</td></tr>
+        </tbody>
       </table>
-      <p class="figcap">当前结果更适合解释为结构性资源重配：单人成本抬升，但单位激励产出和稳定经营同步改善。</p>
-    </div>
-  </div>
-  <div class="two" style="margin-top:18px;">
-    <div class="chart-block">
-    <div class="chart-head">
+      <div class="callout">当前结果更适合解释为结构性资源重配：单人成本抬升，但单位激励产出和稳定经营同步改善。</div>
       <h3>不同 Top N 档位稳健性</h3>
       <p>不同规模档位下，30 日留存提升和单位激励收入提升方向均为正。</p>
-    </div>
-    <div class="chart-svg"><svg viewBox="0 0 900 420" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="900" height="420" rx="22" fill="#fff"/><line x1="70" y1="375.0" x2="860" y2="375.0" stroke="#e2e8f0"/><text x="16" y="379.0" font-size="12" fill="#64748b">0</text><line x1="70" y1="306.0" x2="860" y2="306.0" stroke="#e2e8f0"/><text x="16" y="310.0" font-size="12" fill="#64748b">4</text><line x1="70" y1="237.0" x2="860" y2="237.0" stroke="#e2e8f0"/><text x="16" y="241.0" font-size="12" fill="#64748b">9</text><line x1="70" y1="168.0" x2="860" y2="168.0" stroke="#e2e8f0"/><text x="16" y="172.0" font-size="12" fill="#64748b">13</text><line x1="70" y1="99.0" x2="860" y2="99.0" stroke="#e2e8f0"/><text x="16" y="103.0" font-size="12" fill="#64748b">17</text><line x1="70" y1="30.0" x2="860" y2="30.0" stroke="#e2e8f0"/><text x="16" y="34.0" font-size="12" fill="#64748b">21</text><rect x="106.0" y="136.3" width="48" height="238.7" rx="10" fill="#dbeafe" stroke="#93c5fd"/><text x="130.0" y="128.3" font-size="12" fill="#2563eb" text-anchor="middle" font-weight="700">14.9</text><text x="130.0" y="402" font-size="12" fill="#64748b" text-anchor="middle">Top 3,000</text><rect x="273.5" y="179.4" width="48" height="195.6" rx="10" fill="#dbeafe" stroke="#93c5fd"/><text x="297.5" y="171.4" font-size="12" fill="#2563eb" text-anchor="middle" font-weight="700">12.2</text><text x="297.5" y="402" font-size="12" fill="#64748b" text-anchor="middle">Top 3,600</text><rect x="441.0" y="223.4" width="48" height="151.6" rx="10" fill="#dbeafe" stroke="#93c5fd"/><text x="465.0" y="215.4" font-size="12" fill="#2563eb" text-anchor="middle" font-weight="700">9.4</text><text x="465.0" y="402" font-size="12" fill="#64748b" text-anchor="middle">Top 4,200</text><rect x="608.5" y="263.3" width="48" height="111.7" rx="10" fill="#dbeafe" stroke="#93c5fd"/><text x="632.5" y="255.3" font-size="12" fill="#2563eb" text-anchor="middle" font-weight="700">7.0</text><text x="632.5" y="402" font-size="12" fill="#64748b" text-anchor="middle">Top 5,000</text><rect x="776.0" y="296.5" width="48" height="78.5" rx="10" fill="#dbeafe" stroke="#93c5fd"/><text x="800.0" y="288.5" font-size="12" fill="#2563eb" text-anchor="middle" font-weight="700">4.9</text><text x="800.0" y="402" font-size="12" fill="#64748b" text-anchor="middle">Top 6,000</text><path d="M 130.0 75.0 L 297.5 121.7 L 465.0 170.7 L 632.5 212.6 L 800.0 259.5" fill="none" stroke="#7c3aed" stroke-width="3"/><circle cx="130.0" cy="75.0" r="4.5" fill="#7c3aed"/><text x="130.0" y="65.0" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="700">18.7</text><circle cx="297.5" cy="121.7" r="4.5" fill="#7c3aed"/><text x="297.5" y="111.7" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="700">15.8</text><circle cx="465.0" cy="170.7" r="4.5" fill="#7c3aed"/><text x="465.0" y="160.7" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="700">12.7</text><circle cx="632.5" cy="212.6" r="4.5" fill="#7c3aed"/><text x="632.5" y="202.6" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="700">10.1</text><circle cx="800.0" cy="259.5" r="4.5" fill="#7c3aed"/><text x="800.0" y="249.5" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="700">7.2</text><rect x="650" y="24" width="14" height="14" rx="3" fill="#dbeafe" stroke="#93c5fd"/><text x="672" y="36" font-size="12" fill="#64748b">30 日留存提升（ppt）</text><line x1="650" y1="56" x2="664" y2="56" stroke="#7c3aed" stroke-width="3"/><circle cx="657" cy="56" r="4.5" fill="#7c3aed"/><text x="672" y="60" font-size="12" fill="#64748b">单位激励收入提升（%）</text></svg></div>
-    <div class="chart-note">来源：outputs/rule_robustness_topn.csv</div>
-  </div>
-    <div class="chart-block">
-    <div class="chart-head">
       <h3>垂类稳健性</h3>
       <p>各垂类点估计方向一致，但收益释放幅度存在差异。</p>
-    </div>
-    <div class="chart-svg"><svg viewBox="0 0 900 420" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="900" height="420" rx="22" fill="#fff"/><line x1="140.0" y1="30" x2="140.0" y2="390" stroke="#e2e8f0"/><text x="140.0" y="412" font-size="12" fill="#64748b" text-anchor="middle">0</text><line x1="284.0" y1="30" x2="284.0" y2="390" stroke="#e2e8f0"/><text x="284.0" y="412" font-size="12" fill="#64748b" text-anchor="middle">4</text><line x1="428.0" y1="30" x2="428.0" y2="390" stroke="#e2e8f0"/><text x="428.0" y="412" font-size="12" fill="#64748b" text-anchor="middle">8</text><line x1="572.0" y1="30" x2="572.0" y2="390" stroke="#e2e8f0"/><text x="572.0" y="412" font-size="12" fill="#64748b" text-anchor="middle">13</text><line x1="716.0" y1="30" x2="716.0" y2="390" stroke="#e2e8f0"/><text x="716.0" y="412" font-size="12" fill="#64748b" text-anchor="middle">17</text><line x1="860.0" y1="30" x2="860.0" y2="390" stroke="#e2e8f0"/><text x="860.0" y="412" font-size="12" fill="#64748b" text-anchor="middle">21</text><text x="20" y="54.0" font-size="13" fill="#334155" font-weight="700">搞笑娱乐</text><line x1="140" y1="50.0" x2="860" y2="50.0" stroke="#f8fafc"/><line x1="501.8" y1="50.0" x2="740.0" y2="50.0" stroke="#cbd5e1" stroke-width="3"/><circle cx="501.8" cy="50.0" r="6" fill="#2563eb"/><circle cx="740.0" cy="50.0" r="6" fill="#7c3aed"/><text x="20" y="99.7" font-size="13" fill="#334155" font-weight="700">数码科技</text><line x1="140" y1="95.7" x2="860" y2="95.7" stroke="#f8fafc"/><line x1="485.5" y1="95.7" x2="662.0" y2="95.7" stroke="#cbd5e1" stroke-width="3"/><circle cx="485.5" cy="95.7" r="6" fill="#2563eb"/><circle cx="662.0" cy="95.7" r="6" fill="#7c3aed"/><text x="20" y="145.4" font-size="13" fill="#334155" font-weight="700">本地生活</text><line x1="140" y1="141.4" x2="860" y2="141.4" stroke="#f8fafc"/><line x1="477.3" y1="141.4" x2="530.7" y2="141.4" stroke="#cbd5e1" stroke-width="3"/><circle cx="477.3" cy="141.4" r="6" fill="#2563eb"/><circle cx="530.7" cy="141.4" r="6" fill="#7c3aed"/><text x="20" y="191.1" font-size="13" fill="#334155" font-weight="700">生活方式</text><line x1="140" y1="187.1" x2="860" y2="187.1" stroke="#f8fafc"/><line x1="465.3" y1="187.1" x2="485.9" y2="187.1" stroke="#cbd5e1" stroke-width="3"/><circle cx="465.3" cy="187.1" r="6" fill="#2563eb"/><circle cx="485.9" cy="187.1" r="6" fill="#7c3aed"/><text x="20" y="236.9" font-size="13" fill="#334155" font-weight="700">游戏</text><line x1="140" y1="232.9" x2="860" y2="232.9" stroke="#f8fafc"/><line x1="464.6" y1="232.9" x2="513.9" y2="232.9" stroke="#cbd5e1" stroke-width="3"/><circle cx="464.6" cy="232.9" r="6" fill="#2563eb"/><circle cx="513.9" cy="232.9" r="6" fill="#7c3aed"/><text x="20" y="282.6" font-size="13" fill="#334155" font-weight="700">知识教育</text><line x1="140" y1="278.6" x2="860" y2="278.6" stroke="#f8fafc"/><line x1="447.7" y1="278.6" x2="596.8" y2="278.6" stroke="#cbd5e1" stroke-width="3"/><circle cx="447.7" cy="278.6" r="6" fill="#2563eb"/><circle cx="596.8" cy="278.6" r="6" fill="#7c3aed"/><text x="20" y="328.3" font-size="13" fill="#334155" font-weight="700">美妆护肤</text><line x1="140" y1="324.3" x2="860" y2="324.3" stroke="#f8fafc"/><line x1="442.9" y1="324.3" x2="552.8" y2="324.3" stroke="#cbd5e1" stroke-width="3"/><circle cx="442.9" cy="324.3" r="6" fill="#2563eb"/><circle cx="552.8" cy="324.3" r="6" fill="#7c3aed"/><text x="20" y="374.0" font-size="13" fill="#334155" font-weight="700">母婴</text><line x1="140" y1="370.0" x2="860" y2="370.0" stroke="#f8fafc"/><line x1="430.4" y1="370.0" x2="559.6" y2="370.0" stroke="#cbd5e1" stroke-width="3"/><circle cx="430.4" cy="370.0" r="6" fill="#2563eb"/><circle cx="559.6" cy="370.0" r="6" fill="#7c3aed"/><rect x="650" y="24" width="12" height="12" rx="3" fill="#2563eb"/><text x="668" y="35" font-size="12" fill="#64748b">30 日留存提升（ppt）</text><rect x="650" y="48" width="12" height="12" rx="3" fill="#7c3aed"/><text x="668" y="59" font-size="12" fill="#64748b">单位激励收入提升（%）</text></svg></div>
-    <div class="chart-note">来源：outputs/vertical_robustness.csv</div>
-  </div>
-  </div>
-  <div class="two" style="margin-top:18px;">
-    <div class="chart-block">
-    <div class="chart-head">
-      <h3>名单替换结构</h3>
-      <p>移出名单以高曝光低变现为主；补入名单以一般供给、高价值稳定供给和高潜低激励为主。</p>
-    </div>
-    <div class="chart-svg"><svg viewBox="0 0 900 260" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="900" height="260" rx="22" fill="#fff"/><text x="26" y="95" font-size="15" fill="#0f172a" font-weight="700">旧名单移出</text><rect x="180" y="76" width="680" height="32" rx="16" fill="#f8fafc" stroke="#e2e8f0"/><rect x="180.0" y="76" width="45.4" height="32" rx="0" fill="#94a3b8"/><rect x="225.4" y="76" width="0.6" height="32" rx="0" fill="#d97706"/><rect x="226.0" y="76" width="634.0" height="32" rx="0" fill="#dc2626"/><text x="543.0" y="96" font-size="12" fill="white" text-anchor="middle" font-weight="700">高曝光低变现 93.2%</text><text x="26" y="175" font-size="15" fill="#0f172a" font-weight="700">新名单补入</text><rect x="180" y="156" width="680" height="32" rx="16" fill="#f8fafc" stroke="#e2e8f0"/><rect x="180.0" y="156" width="292.8" height="32" rx="0" fill="#94a3b8"/><text x="326.4" y="176" font-size="12" fill="white" text-anchor="middle" font-weight="700">一般供给 43.1%</text><rect x="472.8" y="156" width="268.4" height="32" rx="0" fill="#7c3aed"/><text x="607.0" y="176" font-size="12" fill="white" text-anchor="middle" font-weight="700">高价值稳定供给 39.5%</text><rect x="741.2" y="156" width="25.6" height="32" rx="0" fill="#dc2626"/><rect x="766.8" y="156" width="93.2" height="32" rx="0" fill="#16a34a"/><text x="813.4" y="176" font-size="12" fill="white" text-anchor="middle" font-weight="700">高潜低激励 13.7%</text><rect x="180" y="228" width="12" height="12" rx="3" fill="#94a3b8"/><text x="198" y="239" font-size="12" fill="#64748b">一般供给</text><rect x="320" y="228" width="12" height="12" rx="3" fill="#dc2626"/><text x="338" y="239" font-size="12" fill="#64748b">高曝光低变现</text><rect x="460" y="228" width="12" height="12" rx="3" fill="#16a34a"/><text x="478" y="239" font-size="12" fill="#64748b">高潜低激励</text><rect x="600" y="228" width="12" height="12" rx="3" fill="#7c3aed"/><text x="618" y="239" font-size="12" fill="#64748b">高价值稳定供给</text><rect x="740" y="228" width="12" height="12" rx="3" fill="#d97706"/><text x="758" y="239" font-size="12" fill="#64748b">低价值供给</text></svg></div>
-    <div class="chart-note">来源：outputs/selection_transition_summary.csv</div>
-  </div>
-    <div class="card">
       <h3>名单迁移解读</h3>
-      <ul class="list">
+      <ul>
         <li>移出名单以高曝光低变现为主；</li>
         <li>补入名单主要来自一般供给、高价值稳定供给和高潜低激励；</li>
         <li>少量高曝光低变现创作者仍被补入，通常来自近期信号改善的边界样本。</li>
       </ul>
-      <div class="note">名单替换并非按分群标签机械切割；推进时应结合复核队列和运营承接能力。</div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section class="section" id="experiment">
-  <div class="kicker">5. 实验与执行</div>
-  <h2>实验门槛、回滚条件和执行动作需要一起定义</h2>
-  <div class="two">
-    <div class="chart-block">
-    <div class="chart-head">
+    <section id="experiment" class="section">
+      <h2>5. 实验与执行</h2>
       <h3>指标框架与实验门槛</h3>
-      <p>主指标、护栏和实验门槛同时定义。</p>
-    </div>
-    <div class="chart-svg"><svg viewBox="0 0 900 280" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img"><rect x="0" y="0" width="900" height="280" rx="22" fill="#fff"/><rect x="40" y="70" width="220" height="120" rx="20" fill="#eff6ff" stroke="#2563eb"/><text x="60" y="100" font-size="16" fill="#0f172a" font-weight="700">主指标</text><text x="60" y="130" font-size="13" fill="#334155">30 日留存率</text><text x="60" y="158" font-size="13" fill="#334155">单位激励收入</text><rect x="340" y="70" width="220" height="120" rx="20" fill="#fef3c7" stroke="#d97706"/><text x="360" y="100" font-size="16" fill="#0f172a" font-weight="700">护栏</text><text x="360" y="130" font-size="13" fill="#334155">人均现金激励</text><text x="360" y="158" font-size="13" fill="#334155">投诉 / 作弊 / 安全</text><rect x="640" y="70" width="220" height="120" rx="20" fill="#ecfdf5" stroke="#16a34a"/><text x="660" y="100" font-size="16" fill="#0f172a" font-weight="700">实验门槛</text><text x="660" y="130" font-size="13" fill="#334155">分层随机实验</text><text x="660" y="158" font-size="13" fill="#334155">满足主指标与护栏后扩量</text><path d="M260 130 L340 130" stroke="#94a3b8" stroke-width="3"/><polygon points="340,130 330,124 330,136" fill="#94a3b8"/><path d="M560 130 L640 130" stroke="#94a3b8" stroke-width="3"/><polygon points="640,130 630,124 630,136" fill="#94a3b8"/><text x="300" y="118" font-size="12" fill="#64748b" text-anchor="middle">线上判断</text><text x="600" y="118" font-size="12" fill="#64748b" text-anchor="middle">扩量 / 回滚</text></svg></div>
-    <div class="chart-note">来源：outputs/experiment_design_card.csv 与 outputs/validity_threat_register.csv</div>
-  </div>
-    <div class="card red">
+      <table>
+        <thead><tr><th>类型</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>主指标</td><td>30 日留存率、单位激励收入</td></tr>
+          <tr><td>护栏</td><td>人均现金激励、投诉 / 作弊 / 安全</td></tr>
+          <tr><td>实验门槛</td><td>分层随机实验；满足主指标与护栏后扩量</td></tr>
+        </tbody>
+      </table>
       <h3>暂停或回滚条件</h3>
-      <ul class="list">
+      <ul>
         <li>连续 3 天出现显著 SRM / 分流漂移；</li>
         <li>单位激励收入转负，且持续恶化；</li>
         <li>投诉率、作弊率或内容安全风险显著恶化；</li>
         <li>week 1 抬升但 week 4 回落，且 holdout 不支持继续扩量。</li>
       </ul>
-    </div>
-  </div>
-  <div class="card soft" style="margin-top:18px;">
-    <h3>执行动作</h3>
-    <table class="table">
-      <tr><th>对象</th><th>动作</th><th>节奏</th><th>责任方</th></tr>
-      <tr><td>高潜低激励</td><td>增配曝光与激励，进入快速晋升池</td><td>每 7 天复评</td><td>策略 DA / 运营</td></tr>
-      <tr><td>高曝光低变现</td><td>进入降配阈值与复核队列</td><td>每 7 天复核</td><td>运营 / 风控</td></tr>
-      <tr><td>高价值稳定供给</td><td>保持稳定扶持</td><td>月度复盘</td><td>运营</td></tr>
-      <tr><td>一般供给 / 低价值供给</td><td>以内容诊断和成长任务为主</td><td>双周复盘</td><td>运营</td></tr>
-    </table>
-  </div>
-</section>
-
-<div class="footer">原始 Markdown 报告：<a href="../reports/creator_value_analysis_report.md">creator_value_analysis_report.md</a></div>
-</div></body></html>
+      <h3>执行动作</h3>
+      <table>
+        <thead><tr><th>对象</th><th>动作</th><th>节奏</th><th>责任方</th></tr></thead>
+        <tbody>
+          <tr><td>高潜低激励</td><td>增配曝光与激励，进入快速晋升池</td><td>每 7 天复评</td><td>策略 DA / 运营</td></tr>
+          <tr><td>高曝光低变现</td><td>进入降配阈值与复核队列</td><td>每 7 天复核</td><td>运营 / 风控</td></tr>
+          <tr><td>高价值稳定供给</td><td>保持稳定扶持</td><td>月度复盘</td><td>运营</td></tr>
+          <tr><td>一般供给 / 低价值供给</td><td>以内容诊断和成长任务为主</td><td>双周复盘</td><td>运营</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

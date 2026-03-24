@@ -1,51 +1,88 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SQL 方案页</title><style>
-:root{
-  --bg:#0b1020;--bg2:#111831;--surface:#ffffff;--surface2:#f8fafc;--text:#0f172a;--muted:#475569;--line:#e2e8f0;
-  --primary:#2563eb;--primary-soft:#dbeafe;--green:#16a34a;--green-soft:#ecfdf5;--amber:#d97706;--amber-soft:#fff7ed;
-  --purple:#7c3aed;--purple-soft:#f5f3ff;--red:#dc2626;--red-soft:#fef2f2;--shadow:0 20px 60px rgba(2,8,23,.08);
-}
-*{box-sizing:border-box} html{scroll-behavior:smooth}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;background:linear-gradient(180deg,#eef4ff 0%,#f8fbff 42%,#f6f8fb 100%);color:var(--text);line-height:1.7}
-a{color:var(--primary);text-decoration:none} a:hover{text-decoration:underline}
-.wrap{max-width:1240px;margin:0 auto;padding:24px 18px 72px}
-.hero{position:relative;overflow:hidden;border-radius:32px;padding:34px;border:1px solid rgba(255,255,255,.22);background:radial-gradient(circle at top right,rgba(255,255,255,.18),rgba(255,255,255,.06)),linear-gradient(135deg,#0f172a,#172554 58%,#1d4ed8);color:#fff;box-shadow:0 24px 80px rgba(15,23,42,.22)}
-.hero:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);filter:blur(4px)}
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:end}
-.badge{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);font-size:12px;font-weight:700;letter-spacing:.02em}
-h1,h2,h3,h4{line-height:1.15;letter-spacing:-.03em;margin:0 0 12px} h1{font-size:44px} h2{font-size:30px} h3{font-size:19px} h4{font-size:15px}
-p{margin:0 0 10px}.small{font-size:14px;color:var(--muted)} .hero .small{color:rgba(255,255,255,.82)}
-.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}
-.metric{padding:18px;border-radius:22px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px)}
-.metric .num{font-size:30px;font-weight:800;letter-spacing:-.04em}.metric .lab{font-size:13px;color:rgba(255,255,255,.78);margin-top:4px}
-.hero-panel{padding:22px;border-radius:24px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18)}
-.hero-panel ul{margin:12px 0 0 18px}
-.nav{position:sticky;top:12px;z-index:20;margin:18px 0;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border:1px solid rgba(226,232,240,.8);display:flex;gap:12px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(15,23,42,.06)}
-.nav a{font-size:13px;font-weight:800;color:#334155}
-.section{margin-top:18px;border-radius:28px;padding:26px;background:rgba(255,255,255,.88);border:1px solid rgba(226,232,240,.88);box-shadow:var(--shadow)}
-.two{display:grid;grid-template-columns:1.02fr .98fr;gap:18px}.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.card{border:1px solid var(--line);border-radius:22px;padding:18px;background:#fff}.card.soft{background:linear-gradient(180deg,#fff,#fbfdff)}
-.card.blue{background:linear-gradient(180deg,#eff6ff,#ffffff);border-color:#bfdbfe}.card.green{background:linear-gradient(180deg,#ecfdf5,#ffffff);border-color:#bbf7d0}.card.amber{background:linear-gradient(180deg,#fff7ed,#ffffff);border-color:#fed7aa}.card.purple{background:linear-gradient(180deg,#f5f3ff,#ffffff);border-color:#ddd6fe}.card.red{background:linear-gradient(180deg,#fef2f2,#ffffff);border-color:#fecaca}
-.kicker{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:8px}
-.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid transparent}
-.pill.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#15803d}.pill.amber{background:#fff7ed;border-color:#fed7aa;color:#c2410c}.pill.purple{background:#f5f3ff;border-color:#ddd6fe;color:#6d28d9}.pill.red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
-.note{padding:16px 18px;border-radius:18px;border:1px solid var(--line);background:#f8fafc;color:#334155}
-.table{width:100%;border-collapse:collapse;font-size:14px}.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.table th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#64748b}
-.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:18px;overflow:auto;font-size:13px;line-height:1.65}
-pre.code{white-space:pre-wrap}
-img{width:100%;display:block;border-radius:20px;border:1px solid var(--line);background:#fff}
-.figcap{font-size:14px;color:var(--muted);margin-top:10px}
-.list{margin:8px 0 0 18px;padding:0}.list li{margin:6px 0}
-.divider{height:1px;background:linear-gradient(90deg,transparent,#cbd5e1,transparent);margin:18px 0}
-.footer{margin-top:20px;color:#64748b;font-size:13px}
-.callout{padding:18px 20px;border-radius:22px;background:linear-gradient(135deg,#eff6ff,#ffffff);border:1px solid #bfdbfe}
-@media (max-width:980px){.hero-grid,.two,.three,.four,.metric-grid{grid-template-columns:1fr 1fr} h1{font-size:36px}}
-@media (max-width:720px){.hero-grid,.two,.three,.four,.metric-grid{grid-template-columns:1fr}.wrap{padding:14px 12px 40px}.section{padding:20px}.nav{position:static} h1{font-size:30px} h2{font-size:25px}}
-</style></head><body><div class="wrap">
-<div class="nav"><a href="index.html">返回首页</a><a href="#overview">概览</a><a href="#core">核心 SQL</a><a href="#monitor">实验监控</a></div>
-<section class="hero"><div class="hero-grid"><div><div class="badge">SQL 方案页</div><h1 style="margin-top:14px;">把分析逻辑落到可复核的 SQL</h1><p class="small">页面按业务用途展开各段 SQL 的作用、关键字段和核心片段。</p></div><div class="hero-panel"><h3>SQL 分工</h3><ul class="list"><li>供给漏斗与 cohort 稳定性</li><li>关键人群识别与分层</li><li>同规模回测与名单迁移结构</li><li>SRM 与护栏日级监控</li></ul></div></div></section>
-<section class="section" id="overview"><div class="kicker">使用思路</div><h2>按业务职责拆分 SQL</h2><div class="three"><div class="card"><h3>事实层</h3><p>创作者主表、内容表现表、周度活跃表、激励表。</p></div><div class="card"><h3>指标层</h3><p>曝光、收入、激励、留存、资源占用统一到 creator 粒度。</p></div><div class="card"><h3>策略层</h3><p>准入过滤、排序加权、Top N 回测、迁移结构、实验监控。</p></div></div></section>
-<section class="section" id="core"><div class="kicker">核心 SQL</div><h2>六段 SQL，分别承担不同业务职责</h2>
-<div class="card soft"><h3>1. 供给漏斗</h3><p class="small">用于确认问题发生在注册、首发，还是持续经营阶段。</p><pre class="code">WITH creator_base AS (
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQL 方案页｜创作者经营分析</title>
+  <style>
+    :root {
+      --bg:#f6f8fc; --card:#fff; --line:#e7ebf3; --text:#172033; --muted:#5d6881; --accent:#275efe; --shadow:0 14px 40px rgba(20,30,60,.08); --radius:20px;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; background:linear-gradient(180deg,#f8fbff,#f5f7fb); color:var(--text); line-height:1.7; }
+    a { color:var(--accent); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .wrap { width:min(1100px, calc(100% - 32px)); margin:0 auto; }
+    .top { position:sticky; top:0; z-index:10; background:rgba(248,251,255,.92); backdrop-filter:blur(14px); border-bottom:1px solid var(--line); }
+    .top .wrap { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 0; }
+    .nav { display:flex; gap:10px; flex-wrap:wrap; }
+    .nav a { padding:8px 12px; border-radius:999px; color:var(--muted); font-size:14px; }
+    .nav a:hover { background:#eef3ff; color:var(--accent); text-decoration:none; }
+    .hero { padding:46px 0 20px; }
+    .hero-card, .section { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
+    .hero-card { padding:30px; }
+    .eyebrow { display:inline-block; padding:8px 12px; border-radius:999px; background:#edf3ff; color:var(--accent); font-size:13px; font-weight:700; }
+    h1 { margin:16px 0 12px; font-size:clamp(28px,4vw,42px); line-height:1.15; }
+    .hero p { margin:0; color:var(--muted); }
+    .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
+    .btn { display:inline-flex; padding:10px 14px; border-radius:12px; border:1px solid var(--line); background:#fff; font-weight:600; }
+    .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+    main { display:grid; gap:18px; padding-bottom:34px; }
+    .section { padding:24px; }
+    .section h2 { margin:0 0 10px; font-size:24px; }
+    .section h3 { margin:18px 0 8px; font-size:18px; }
+    .section p { margin:0; color:var(--muted); }
+    pre { margin:14px 0 0; padding:16px 18px; border-radius:16px; background:#0f172a; color:#f8fbff; overflow:auto; font-size:13px; line-height:1.55; }
+    .link-grid { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:12px; margin-top:16px; }
+    .link-grid a { display:block; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:#fff; }
+    .callout { margin-top:14px; padding:14px 16px; border-radius:14px; background:#f7f9fc; border:1px solid var(--line); color:var(--muted); }
+    @media (max-width: 760px) { .link-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div class="wrap">
+      <a href="index.html">返回首页</a>
+      <nav class="nav">
+        <a href="#overview">概览</a>
+        <a href="#core">核心 SQL</a>
+        <a href="#monitor">实验监控</a>
+      </nav>
+    </div>
+  </div>
+
+  <header class="hero wrap">
+    <div class="hero-card">
+      <div class="eyebrow">SQL 方案页</div>
+      <h1>把分析逻辑落到可复核的 SQL</h1>
+      <p>页面按业务用途展开各段 SQL 的作用、关键字段和核心片段。SQL 覆盖供给漏斗、cohort 稳定性、关键人群识别、同规模回测、名单迁移和 SRM / 护栏监控。</p>
+      <div class="actions">
+        <a class="btn primary" href="sql/experiment_srm_guardrail_template.sql">打开实验监控 SQL</a>
+        <a class="btn" href="report.html">查看完整报告</a>
+      </div>
+      <div class="link-grid">
+        <a href="sql/creator_funnel.sql">creator_funnel.sql</a>
+        <a href="sql/cohort_retention.sql">cohort_retention.sql</a>
+        <a href="sql/creator_segmentation.sql">creator_segmentation.sql</a>
+        <a href="sql/resource_reallocation_backtest.sql">resource_reallocation_backtest.sql</a>
+        <a href="sql/selection_transition.sql">selection_transition.sql</a>
+        <a href="sql/experiment_srm_guardrail_template.sql">experiment_srm_guardrail_template.sql</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="overview" class="section">
+      <h2>按业务职责拆分 SQL</h2>
+      <p>事实层负责创作者主表、内容表现表、周度活跃表和激励表；指标层将曝光、收入、激励、留存、资源占用统一到 creator 粒度；策略层负责准入过滤、排序加权、Top N 回测、迁移结构与实验监控。</p>
+      <div class="callout">六段 SQL 分别承担不同业务职责：供给漏斗、cohort 稳定性、关键人群识别、同规模回测、名单迁移结构、SRM 与护栏日级监控。</div>
+    </section>
+
+    <section id="core" class="section">
+      <h2>核心 SQL</h2>
+      <h3>1. 供给漏斗</h3>
+      <p>用于确认问题发生在注册、首发，还是持续经营阶段。</p>
+      <pre>WITH creator_base AS (
     SELECT
         creator_id,
         join_date,
@@ -54,263 +91,94 @@ img{width:100%;display:block;border-radius:20px;border:1px solid var(--line);bac
         monetization_opened,
         stable_updater,
         CASE WHEN has_first_publish = 1 THEN 1 ELSE 0 END AS published_creator,
-        CASE WHEN has_first_publish = 1 AND active_weeks &gt;= 2 THEN 1 ELSE 0 END AS active_2w_creator,
-        CASE WHEN has_first_publish = 1 AND active_weeks &gt;= 4 THEN 1 ELSE 0 END AS active_4w_creator,
-        CASE WHEN has_first_publish = 1 AND active_weeks &gt;= 4 AND monetization_opened = 1 THEN 1 ELSE 0 END AS monetization_after_active4,
-        CASE WHEN has_first_publish = 1 AND active_weeks &gt;= 4 AND monetization_opened = 1 AND stable_updater = 1 THEN 1 ELSE 0 END AS stable_monetizing_creator
+        CASE WHEN has_first_publish = 1 AND active_weeks >= 2 THEN 1 ELSE 0 END AS active_2w_creator,
+        CASE WHEN has_first_publish = 1 AND active_weeks >= 4 THEN 1 ELSE 0 END AS active_4w_creator
     FROM creator_profile
-), funnel_union AS (
-    SELECT 1 AS step_order, &#x27;注册创作者&#x27; AS stage, COUNT(*) AS creator_cnt FROM creator_base
-    UNION ALL
-    SELECT 2, &#x27;完成首发&#x27;, SUM(published_creator) FROM creator_base
-    UNION ALL
-    SELECT 3, &#x27;连续活跃≥2周&#x27;, SUM(active_2w_creator) FROM creator_base
-    UNION ALL
-    SELECT 4, &#x27;连续活跃≥4周&#x27;, SUM(active_4w_creator) FROM creator_base
-    UNION ALL
-    SELECT 5, &#x27;已开通变现&#x27;, SUM(monetization_after_active4) FROM creator_base
-    UNION ALL
-    SELECT 6, &#x27;稳定经营且已开通变现&#x27;, SUM(stable_monetizing_creator) FROM creator_base
 )
-SELECT
-    stage,
-    creator_cnt,
-    ROUND(creator_cnt * 1.0 / FIRST_VALUE(creator_cnt) OVER (ORDER BY step_order), 4) AS share_of_registered,
-    ROUND(creator_cnt * 1.0 / LAG(creator_cnt) OVER (ORDER BY step_order), 4) AS step_conversion
-FROM funnel_union
-ORDER BY step_order;</pre><p><a href="../sql/creator_funnel.sql">打开原文件</a></p></div>
-<div class="card soft" style="margin-top:16px;"><h3>2. Cohort 稳定性</h3><p class="small">用于避免把最新 cohort 的短观察窗误读为趋势改善。</p><pre class="code">WITH monthly_cohort AS (
-    SELECT
-        strftime(join_date, &#x27;%Y-%m&#x27;) AS join_month,
-        COUNT(*) AS creators,
-        AVG(has_first_publish) AS publish_rate,
-        AVG(retention_30d_rate) AS retention_30d_rate,
-        AVG(CASE WHEN monetization_opened = 1 THEN 1 ELSE 0 END) AS monetization_open_rate,
-        AVG(CASE WHEN active_weeks &gt;= 4 THEN 1 ELSE 0 END) AS active_4w_rate
-    FROM creator_profile
-    GROUP BY 1
-)
-SELECT
-    join_month,
-    creators,
-    ROUND(publish_rate, 4) AS publish_rate,
-    ROUND(retention_30d_rate, 4) AS retention_30d_rate,
-    ROUND(monetization_open_rate, 4) AS monetization_open_rate,
-    ROUND(active_4w_rate, 4) AS active_4w_rate,
-    CASE WHEN creators &lt; 100 THEN &#x27;样本较小，仅作方向参考&#x27; ELSE &#x27;可用于稳定监控&#x27; END AS interpretation
-FROM monthly_cohort
-ORDER BY join_month;</pre><p><a href="../sql/cohort_retention.sql">打开原文件</a></p></div>
-<div class="card soft" style="margin-top:16px;"><h3>3. 创作者分层</h3><p class="small">用于识别高曝光低变现、高潜低激励、高价值稳定供给等关键人群。</p><pre class="code">WITH creator_scored AS (
+SELECT * FROM creator_base;</pre>
+
+      <h3>2. 关键人群分层</h3>
+      <p>资源占用与长期价值需要分开识别，避免单一总分掩盖错配结构。</p>
+      <pre>WITH creator_scored AS (
     SELECT
         creator_id,
         retention_30d_rate,
         rev_per_1k_exposure,
         total_supported_exposure,
         total_cash_incentive,
-        exposure_pct_rank,
-        efficiency_pct_rank,
-        retention_pct_rank,
-        resource_pct_rank,
         CASE
-            WHEN exposure_pct_rank &gt;= 0.60 AND efficiency_pct_rank &lt;= 0.52 THEN &#x27;高曝光低变现&#x27;
-            WHEN retention_pct_rank &gt;= 0.65 AND efficiency_pct_rank &gt;= 0.65 AND resource_pct_rank &lt;= 0.68 THEN &#x27;高潜低激励&#x27;
-            WHEN retention_pct_rank &gt;= 0.72 AND efficiency_pct_rank &gt;= 0.72 THEN &#x27;高价值稳定供给&#x27;
-            WHEN exposure_pct_rank &lt;= 0.25 AND efficiency_pct_rank &lt;= 0.35 THEN &#x27;低价值供给&#x27;
-            ELSE &#x27;一般供给&#x27;
+            WHEN exposure_pct_rank >= 0.60 AND efficiency_pct_rank <= 0.52 THEN '高曝光低变现'
+            WHEN retention_pct_rank >= 0.65 AND efficiency_pct_rank >= 0.65 AND resource_pct_rank <= 0.68 THEN '高潜低激励'
+            WHEN retention_pct_rank >= 0.72 AND efficiency_pct_rank >= 0.72 THEN '高价值稳定供给'
+            WHEN exposure_pct_rank <= 0.25 AND efficiency_pct_rank <= 0.35 THEN '低价值供给'
+            ELSE '一般供给'
         END AS creator_segment
     FROM creator_profile
 )
-SELECT
-    creator_segment,
-    COUNT(*) AS creators,
-    ROUND(COUNT(*) * 1.0 / SUM(COUNT(*)) OVER (), 4) AS creator_share,
-    ROUND(AVG(retention_30d_rate), 4) AS avg_retention_30d,
-    ROUND(AVG(rev_per_1k_exposure), 2) AS avg_rev_per_1k_exposure,
-    ROUND(SUM(total_supported_exposure) * 1.0 / SUM(SUM(total_supported_exposure)) OVER (), 4) AS exposure_share,
-    ROUND(AVG(total_cash_incentive), 2) AS avg_cash_incentive
+SELECT creator_segment, COUNT(*) AS creators
 FROM creator_scored
-GROUP BY 1
-ORDER BY creators DESC;</pre><p><a href="../sql/creator_segmentation.sql">打开原文件</a></p></div>
-<div class="card soft" style="margin-top:16px;"><h3>4. 同规模回测</h3><p class="small">核心原则是固定 Top N，在同规模下比较新旧规则，避免样本池变化干扰读数。</p><pre class="code">WITH eligible_creators AS (
+GROUP BY 1;</pre>
+
+      <h3>3. 同规模回测</h3>
+      <p>核心原则是固定 Top N，在同规模下比较新旧规则，避免样本池变化干扰读数。</p>
+      <pre>WITH eligible_creators AS (
     SELECT
         creator_id,
         old_rule_score,
         total_cash_incentive,
         retention_30d_rate,
         unit_incentive_revenue,
-        rev_per_1k_exposure,
-        old_rule_pct,
-        retention_pct,
-        efficiency_pct,
-        resource_pct,
-        CASE
-            WHEN retention_pct_rank &gt;= 0.65 AND efficiency_pct_rank &gt;= 0.65 AND resource_pct_rank &lt;= 0.68 THEN 1
-            ELSE 0
-        END AS is_high_potential_under_incentivized,
-        CASE
-            WHEN safety_flag = 1 OR fraud_flag = 1 THEN 0
-            WHEN active_weeks &lt; 2 THEN 0
-            ELSE 1
-        END AS pass_entry_gate,
         (0.60 * old_rule_pct
          + 0.20 * retention_pct
          + 0.15 * efficiency_pct
          + 0.05 * (1 - resource_pct)) AS new_priority_score
     FROM creator_profile
     WHERE has_first_publish = 1
-), gated_pool AS (
-    SELECT *
-    FROM eligible_creators
-    WHERE pass_entry_gate = 1
-), old_logic AS (
-    SELECT *
-    FROM gated_pool
-    ORDER BY old_rule_score DESC
-    LIMIT 4200
-), new_rule AS (
-    SELECT *
-    FROM gated_pool
-    ORDER BY new_priority_score DESC
-    LIMIT 4200
 )
-SELECT
-    &#x27;old_logic&#x27; AS scheme,
-    COUNT(*) AS selected_creators,
-    ROUND(AVG(retention_30d_rate), 4) AS retention_30d,
-    ROUND(AVG(unit_incentive_revenue), 2) AS revenue_per_incentive,
-    ROUND(AVG(total_cash_incentive), 2) AS cash_per_creator,
-    ROUND(AVG(rev_per_1k_exposure), 2) AS revenue_per_1k_exposure,
-    ROUND(AVG(is_high_potential_under_incentivized), 4) AS high_potential_hit_rate
-FROM old_logic
-UNION ALL
-SELECT
-    &#x27;new_rule&#x27; AS scheme,
-    COUNT(*) AS selected_creators,
-    ROUND(AVG(retention_30d_rate), 4) AS retention_30d,
-    ROUND(AVG(unit_incentive_revenue), 2) AS revenue_per_incentive,
-    ROUND(AVG(total_cash_incentive), 2) AS cash_per_creator,
-    ROUND(AVG(rev_per_1k_exposure), 2) AS revenue_per_1k_exposure,
-    ROUND(AVG(is_high_potential_under_incentivized), 4) AS high_potential_hit_rate
-FROM new_rule;</pre><p><a href="../sql/resource_reallocation_backtest.sql">打开原文件</a></p></div>
-<div class="card soft" style="margin-top:16px;"><h3>5. 名单迁移结构</h3><p class="small">用于识别被移出与补入的人群结构，避免只看均值变化。</p><pre class="code">WITH eligible_creators AS (
-    SELECT
-        creator_id,
-        CASE
-            WHEN exposure_pct_rank &gt;= 0.60 AND efficiency_pct_rank &lt;= 0.52 THEN &#x27;高曝光低变现&#x27;
-            WHEN retention_pct_rank &gt;= 0.65 AND efficiency_pct_rank &gt;= 0.65 AND resource_pct_rank &lt;= 0.68 THEN &#x27;高潜低激励&#x27;
-            WHEN retention_pct_rank &gt;= 0.72 AND efficiency_pct_rank &gt;= 0.72 THEN &#x27;高价值稳定供给&#x27;
-            WHEN exposure_pct_rank &lt;= 0.25 AND efficiency_pct_rank &lt;= 0.35 THEN &#x27;低价值供给&#x27;
-            ELSE &#x27;一般供给&#x27;
-        END AS creator_segment,
-        old_rule_score,
-        (0.60 * old_rule_pct
-         + 0.20 * retention_pct
-         + 0.15 * efficiency_pct
-         + 0.05 * (1 - resource_pct)) AS new_priority_score
-    FROM creator_profile
-    WHERE has_first_publish = 1
-), old_logic AS (
-    SELECT creator_id
-    FROM eligible_creators
-    ORDER BY old_rule_score DESC
-    LIMIT 4200
-), new_rule AS (
-    SELECT creator_id
-    FROM eligible_creators
-    ORDER BY new_priority_score DESC
-    LIMIT 4200
-), transitioned AS (
-    SELECT
-        e.creator_segment,
-        CASE
-            WHEN o.creator_id IS NOT NULL AND n.creator_id IS NOT NULL THEN &#x27;retained&#x27;
-            WHEN o.creator_id IS NULL AND n.creator_id IS NOT NULL THEN &#x27;promoted_into_new_topn&#x27;
-            WHEN o.creator_id IS NOT NULL AND n.creator_id IS NULL THEN &#x27;dropped_from_old_topn&#x27;
-            ELSE &#x27;outside_both&#x27;
-        END AS selection_transition
-    FROM eligible_creators e
-    LEFT JOIN old_logic o ON e.creator_id = o.creator_id
-    LEFT JOIN new_rule n ON e.creator_id = n.creator_id
-)
-SELECT
-    selection_transition,
-    creator_segment,
-    COUNT(*) AS creators,
-    ROUND(COUNT(*) * 1.0 / SUM(COUNT(*)) OVER (PARTITION BY selection_transition), 4) AS share_within_transition,
-    CASE
-        WHEN selection_transition = &#x27;dropped_from_old_topn&#x27; AND creator_segment = &#x27;高曝光低变现&#x27; THEN &#x27;对应新规则回收低效率曝光&#x27;
-        WHEN selection_transition = &#x27;promoted_into_new_topn&#x27; AND creator_segment IN (&#x27;高潜低激励&#x27;,&#x27;高价值稳定供给&#x27;) THEN &#x27;对应新规则补入更高质量供给&#x27;
-        ELSE &#x27;作为迁移结构参考&#x27;
-    END AS interpretation
-FROM transitioned
-WHERE selection_transition IN (&#x27;promoted_into_new_topn&#x27;, &#x27;dropped_from_old_topn&#x27;)
-GROUP BY 1, 2
-ORDER BY 1, creators DESC;</pre><p><a href="../sql/selection_transition.sql">打开原文件</a></p></div>
-</section>
-<section class="section" id="monitor"><div class="kicker">实验监控</div><h2>上线阶段，日级监控优先于离线回测结论</h2><div class="card red"><p class="small">实验监控模板同时看 creator_share、exposure_share、cash_per_creator、revenue_per_incentive、投诉、作弊和安全。这样可以更早发现 SRM、分流漂移和效率转负。</p><pre class="code">-- 用于线上灰度期间的日级监控模板。
--- 目标：尽早发现 SRM、流量分配漂移、激励过量投放与关键护栏恶化。
+SELECT *
+FROM eligible_creators
+ORDER BY new_priority_score DESC
+LIMIT 4200;</pre>
 
-WITH assignment_daily AS (
-    SELECT
-        event_date,
-        experiment_group,
-        creator_vertical,
-        COUNT(DISTINCT creator_id) AS creators,
-        SUM(exposure_cnt) AS exposure,
-        SUM(cash_incentive) AS cash_incentive,
-        SUM(revenue_amt) AS revenue_amt,
-        SUM(retained_30d_flag) AS retained_creators,
-        SUM(complaint_cnt) AS complaints,
-        SUM(fraud_flag) AS fraud_cases,
-        SUM(safety_case_cnt) AS safety_cases
-    FROM creator_experiment_daily
-    WHERE experiment_name = &#x27;creator_resource_reallocation_v1&#x27;
-    GROUP BY 1, 2, 3
-), daily_totals AS (
-    SELECT
-        event_date,
-        SUM(creators) AS total_creators,
-        SUM(exposure) AS total_exposure
-    FROM assignment_daily
-    GROUP BY 1
-), monitored AS (
-    SELECT
-        a.event_date,
-        a.experiment_group,
-        a.creator_vertical,
-        a.creators,
-        a.exposure,
-        a.cash_incentive,
-        a.revenue_amt,
-        a.retained_creators,
-        a.complaints,
-        a.fraud_cases,
-        a.safety_cases,
-        a.creators * 1.0 / NULLIF(t.total_creators, 0) AS creator_share,
-        a.exposure * 1.0 / NULLIF(t.total_exposure, 0) AS exposure_share
-    FROM assignment_daily a
-    JOIN daily_totals t
-      ON a.event_date = t.event_date
+      <h3>4. 名单迁移结构</h3>
+      <p>用于识别新旧 Top N 之间的重合、补入与移出结构。</p>
+      <pre>WITH old_logic AS (
+    SELECT creator_id FROM eligible_creators ORDER BY old_rule_score DESC LIMIT 4200
+), new_rule AS (
+    SELECT creator_id FROM eligible_creators ORDER BY new_priority_score DESC LIMIT 4200
 )
+SELECT
+    CASE
+        WHEN o.creator_id IS NOT NULL AND n.creator_id IS NOT NULL THEN 'retained'
+        WHEN o.creator_id IS NULL AND n.creator_id IS NOT NULL THEN 'promoted_into_new_topn'
+        WHEN o.creator_id IS NOT NULL AND n.creator_id IS NULL THEN 'dropped_from_old_topn'
+        ELSE 'outside_both'
+    END AS selection_transition,
+    COUNT(*) AS creators
+FROM eligible_creators e
+LEFT JOIN old_logic o ON e.creator_id = o.creator_id
+LEFT JOIN new_rule n ON e.creator_id = n.creator_id
+GROUP BY 1;</pre>
+    </section>
+
+    <section id="monitor" class="section">
+      <h2>实验监控</h2>
+      <p>SRM、护栏和扩量 / 回滚判断需要日级可复核的监控查询。</p>
+      <pre>-- 示例：SRM 与护栏日级监控模板
 SELECT
     event_date,
     experiment_group,
-    creator_vertical,
-    creators,
-    ROUND(creator_share, 4) AS creator_share,
-    ROUND(exposure_share, 4) AS exposure_share,
-    ROUND(cash_incentive * 1.0 / NULLIF(creators, 0), 2) AS cash_per_creator,
-    ROUND(revenue_amt * 1.0 / NULLIF(cash_incentive, 0), 2) AS revenue_per_incentive,
-    ROUND(retained_creators * 1.0 / NULLIF(creators, 0), 4) AS retention_30d_proxy,
-    ROUND(complaints * 1.0 / NULLIF(creators, 0), 4) AS complaints_per_creator,
-    ROUND(fraud_cases * 1.0 / NULLIF(creators, 0), 4) AS fraud_rate,
-    ROUND(safety_cases * 1.0 / NULLIF(creators, 0), 4) AS safety_rate,
-    CASE
-        WHEN ABS(creator_share - 0.5) &gt; 0.03 THEN &#x27;检查 SRM / 分流漂移&#x27;
-        WHEN revenue_amt * 1.0 / NULLIF(cash_incentive, 0) &lt; 0 THEN &#x27;单位激励收入转负，暂停扩量&#x27;
-        ELSE &#x27;继续监控&#x27;
-    END AS action_hint
-FROM monitored
-ORDER BY event_date, creator_vertical, experiment_group;</pre><p><a href="../sql/experiment_srm_guardrail_template.sql">打开原文件</a></p></div></section>
-<div class="footer">建议：接业务库时，优先统一 creator 粒度口径，再把曝光、收入、激励、留存映射到同一宽表，否则后面的 Top N 回测和实验监控都容易口径漂移。</div>
-</div></body></html>
+    COUNT(DISTINCT creator_id) AS creators,
+    AVG(retention_30d_rate) AS retention_30d_rate,
+    AVG(unit_incentive_revenue) AS unit_incentive_revenue,
+    AVG(total_cash_incentive) AS avg_cash_incentive,
+    AVG(complaint_rate) AS complaint_rate,
+    AVG(cheat_flag) AS cheat_rate
+FROM experiment_daily_monitor
+GROUP BY 1, 2
+ORDER BY 1, 2;</pre>
+      <div class="callout">上线前至少要定义：主指标、护栏、SRM 预警阈值、暂停条件、回滚条件，以及对 creator 级分层随机实验的监控口径。</div>
+    </section>
+  </main>
+</body>
+</html>
