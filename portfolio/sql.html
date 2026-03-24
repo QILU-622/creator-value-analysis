@@ -1,51 +1,141 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SQL 方案页</title><style>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>创作者资源重配分析｜SQL 方案页</title>
+<style>
 :root{
-  --bg:#0b1020;--bg2:#111831;--surface:#ffffff;--surface2:#f8fafc;--text:#0f172a;--muted:#475569;--line:#e2e8f0;
+  --bg:#eef4ff;--bg2:#f8fbff;--surface:#ffffff;--surface2:#f8fafc;--text:#0f172a;--muted:#475569;--line:#e2e8f0;
   --primary:#2563eb;--primary-soft:#dbeafe;--green:#16a34a;--green-soft:#ecfdf5;--amber:#d97706;--amber-soft:#fff7ed;
   --purple:#7c3aed;--purple-soft:#f5f3ff;--red:#dc2626;--red-soft:#fef2f2;--shadow:0 20px 60px rgba(2,8,23,.08);
 }
-*{box-sizing:border-box} html{scroll-behavior:smooth}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;background:linear-gradient(180deg,#eef4ff 0%,#f8fbff 42%,#f6f8fb 100%);color:var(--text);line-height:1.7}
-a{color:var(--primary);text-decoration:none} a:hover{text-decoration:underline}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 42%,#f6f8fb 100%);color:var(--text);line-height:1.7}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
 .wrap{max-width:1240px;margin:0 auto;padding:24px 18px 72px}
 .hero{position:relative;overflow:hidden;border-radius:32px;padding:34px;border:1px solid rgba(255,255,255,.22);background:radial-gradient(circle at top right,rgba(255,255,255,.18),rgba(255,255,255,.06)),linear-gradient(135deg,#0f172a,#172554 58%,#1d4ed8);color:#fff;box-shadow:0 24px 80px rgba(15,23,42,.22)}
 .hero:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);filter:blur(4px)}
 .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:end}
 .badge{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);font-size:12px;font-weight:700;letter-spacing:.02em}
-h1,h2,h3,h4{line-height:1.15;letter-spacing:-.03em;margin:0 0 12px} h1{font-size:44px} h2{font-size:30px} h3{font-size:19px} h4{font-size:15px}
-p{margin:0 0 10px}.small{font-size:14px;color:var(--muted)} .hero .small{color:rgba(255,255,255,.82)}
+h1,h2,h3,h4{line-height:1.15;letter-spacing:-.03em;margin:0 0 12px}
+h1{font-size:42px} h2{font-size:30px} h3{font-size:20px} h4{font-size:15px}
+p{margin:0 0 10px}
+.small{font-size:14px;color:var(--muted)}
+.hero .small{color:rgba(255,255,255,.82)}
 .metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}
 .metric{padding:18px;border-radius:22px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px)}
-.metric .num{font-size:30px;font-weight:800;letter-spacing:-.04em}.metric .lab{font-size:13px;color:rgba(255,255,255,.78);margin-top:4px}
+.metric .num{font-size:30px;font-weight:800;letter-spacing:-.04em}
+.metric .lab{font-size:13px;color:rgba(255,255,255,.78);margin-top:4px}
 .hero-panel{padding:22px;border-radius:24px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18)}
 .hero-panel ul{margin:12px 0 0 18px}
 .nav{position:sticky;top:12px;z-index:20;margin:18px 0;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border:1px solid rgba(226,232,240,.8);display:flex;gap:12px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(15,23,42,.06)}
 .nav a{font-size:13px;font-weight:800;color:#334155}
 .section{margin-top:18px;border-radius:28px;padding:26px;background:rgba(255,255,255,.88);border:1px solid rgba(226,232,240,.88);box-shadow:var(--shadow)}
-.two{display:grid;grid-template-columns:1.02fr .98fr;gap:18px}.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.card{border:1px solid var(--line);border-radius:22px;padding:18px;background:#fff}.card.soft{background:linear-gradient(180deg,#fff,#fbfdff)}
-.card.blue{background:linear-gradient(180deg,#eff6ff,#ffffff);border-color:#bfdbfe}.card.green{background:linear-gradient(180deg,#ecfdf5,#ffffff);border-color:#bbf7d0}.card.amber{background:linear-gradient(180deg,#fff7ed,#ffffff);border-color:#fed7aa}.card.purple{background:linear-gradient(180deg,#f5f3ff,#ffffff);border-color:#ddd6fe}.card.red{background:linear-gradient(180deg,#fef2f2,#ffffff);border-color:#fecaca}
+.two{display:grid;grid-template-columns:1.02fr .98fr;gap:18px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{border:1px solid var(--line);border-radius:22px;padding:18px;background:#fff}
+.card.soft{background:linear-gradient(180deg,#fff,#fbfdff)}
+.card.blue{background:linear-gradient(180deg,#eff6ff,#ffffff);border-color:#bfdbfe}
+.card.green{background:linear-gradient(180deg,#ecfdf5,#ffffff);border-color:#bbf7d0}
+.card.amber{background:linear-gradient(180deg,#fff7ed,#ffffff);border-color:#fed7aa}
+.card.purple{background:linear-gradient(180deg,#f5f3ff,#ffffff);border-color:#ddd6fe}
+.card.red{background:linear-gradient(180deg,#fef2f2,#ffffff);border-color:#fecaca}
 .kicker{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:8px}
-.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid transparent}
-.pill.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#15803d}.pill.amber{background:#fff7ed;border-color:#fed7aa;color:#c2410c}.pill.purple{background:#f5f3ff;border-color:#ddd6fe;color:#6d28d9}.pill.red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid transparent}
+.pill.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#15803d}
+.pill.amber{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.pill.purple{background:#f5f3ff;border-color:#ddd6fe;color:#6d28d9}
+.pill.red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
 .note{padding:16px 18px;border-radius:18px;border:1px solid var(--line);background:#f8fafc;color:#334155}
-.table{width:100%;border-collapse:collapse;font-size:14px}.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.table th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#64748b}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.table th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#64748b}
+.table tr.highlight td{background:#eff6ff}
+.table tr:hover td{background:#f8fafc}
 .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:18px;overflow:auto;font-size:13px;line-height:1.65}
 pre.code{white-space:pre-wrap}
-img{width:100%;display:block;border-radius:20px;border:1px solid var(--line);background:#fff}
 .figcap{font-size:14px;color:var(--muted);margin-top:10px}
-.list{margin:8px 0 0 18px;padding:0}.list li{margin:6px 0}
+.list{margin:8px 0 0 18px;padding:0}
+.list li{margin:6px 0}
 .divider{height:1px;background:linear-gradient(90deg,transparent,#cbd5e1,transparent);margin:18px 0}
 .footer{margin-top:20px;color:#64748b;font-size:13px}
 .callout{padding:18px 20px;border-radius:22px;background:linear-gradient(135deg,#eff6ff,#ffffff);border:1px solid #bfdbfe}
-@media (max-width:980px){.hero-grid,.two,.three,.four,.metric-grid{grid-template-columns:1fr 1fr} h1{font-size:36px}}
-@media (max-width:720px){.hero-grid,.two,.three,.four,.metric-grid{grid-template-columns:1fr}.wrap{padding:14px 12px 40px}.section{padding:20px}.nav{position:static} h1{font-size:30px} h2{font-size:25px}}
-</style></head><body><div class="wrap">
-<div class="nav"><a href="index.html">返回首页</a><a href="#overview">概览</a><a href="#core">核心 SQL</a><a href="#monitor">实验监控</a></div>
-<section class="hero"><div class="hero-grid"><div><div class="badge">SQL 方案页</div><h1 style="margin-top:14px;">把分析逻辑落到可复核的 SQL</h1><p class="small">页面按业务用途展开各段 SQL 的作用、关键字段和核心片段。</p></div><div class="hero-panel"><h3>SQL 分工</h3><ul class="list"><li>供给漏斗与 cohort 稳定性</li><li>关键人群识别与分层</li><li>同规模回测与名单迁移结构</li><li>SRM 与护栏日级监控</li></ul></div></div></section>
-<section class="section" id="overview"><div class="kicker">使用思路</div><h2>按业务职责拆分 SQL</h2><div class="three"><div class="card"><h3>事实层</h3><p>创作者主表、内容表现表、周度活跃表、激励表。</p></div><div class="card"><h3>指标层</h3><p>曝光、收入、激励、留存、资源占用统一到 creator 粒度。</p></div><div class="card"><h3>策略层</h3><p>准入过滤、排序加权、Top N 回测、迁移结构、实验监控。</p></div></div></section>
-<section class="section" id="core"><div class="kicker">核心 SQL</div><h2>六段 SQL，分别承担不同业务职责</h2>
-<div class="card soft"><h3>1. 供给漏斗</h3><p class="small">用于确认问题发生在注册、首发，还是持续经营阶段。</p><pre class="code">WITH creator_base AS (
+.meter-stack{display:grid;gap:12px;margin-top:12px}
+.meter-row{display:grid;grid-template-columns:180px 1fr 76px;gap:12px;align-items:center}
+.meter-row.small{grid-template-columns:150px 1fr 84px}
+.meter-row .lab{font-size:14px;color:#334155;font-weight:700}
+.meter{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden;position:relative}
+.meter > span{display:block;height:100%;background:linear-gradient(90deg,#93c5fd,#2563eb);border-radius:999px}
+.meter.green > span{background:linear-gradient(90deg,#86efac,#16a34a)}
+.meter.amber > span{background:linear-gradient(90deg,#fdba74,#d97706)}
+.meter.purple > span{background:linear-gradient(90deg,#c4b5fd,#7c3aed)}
+.meter.red > span{background:linear-gradient(90deg,#fca5a5,#dc2626)}
+.meter-row .val{font-size:13px;font-weight:800;color:#0f172a;text-align:right}
+.grid-2-1{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}
+.grid-1-2{display:grid;grid-template-columns:.9fr 1.1fr;gap:18px}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.kv .item{padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.kv .k{font-size:12px;color:#64748b;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.kv .v{font-size:24px;font-weight:800;letter-spacing:-.03em;margin-top:4px}
+.timeline{display:grid;gap:14px}
+.timeline .step{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start}
+.timeline .idx{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-weight:800}
+.warning{border-left:4px solid #dc2626;padding-left:14px}
+.ok{border-left:4px solid #16a34a;padding-left:14px}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:800;background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+@media (max-width:1080px){.hero-grid,.two,.three,.four,.metric-grid,.grid-2-1,.grid-1-2{grid-template-columns:1fr 1fr}.meter-row{grid-template-columns:140px 1fr 70px}} 
+@media (max-width:720px){.hero-grid,.two,.three,.four,.metric-grid,.grid-2-1,.grid-1-2,.kv{grid-template-columns:1fr}.wrap{padding:14px 12px 40px}.section{padding:20px}.nav{position:static} h1{font-size:30px} h2{font-size:25px}.meter-row,.meter-row.small{grid-template-columns:1fr}.meter-row .val{text-align:left}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="nav">
+  <a href="index.html">返回首页</a>
+  <a href="#overview">总览</a>
+  <a href="#core">核心 SQL</a>
+  <a href="#monitor">实验监控</a>
+</div>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="badge">SQL 方案页</div>
+      <h1 style="margin-top:14px;">把分析逻辑落到可复核的 SQL</h1>
+      <p class="small">这里展示的是业务判断依赖的 SQL 结构，而不是为了“显得技术很多”而堆积代码。</p>
+    </div>
+    <div class="hero-panel">
+      <h3>SQL 分工</h3>
+      <ul class="list">
+        <li>供给漏斗与 cohort 稳定性</li>
+        <li>关键人群识别与分层</li>
+        <li>同规模回测与名单迁移</li>
+        <li>SRM 与护栏日级监控</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="overview">
+  <div class="kicker">总览</div>
+  <h2>SQL 的职责不是“复现所有图表”，而是支撑关键经营判断</h2>
+  <div class="three">
+    <div class="card"><h3>事实层</h3><p>创作者主表、内容表现表、周度活跃表、激励表。</p></div>
+    <div class="card"><h3>指标层</h3><p>把曝光、收入、激励、留存、资源占用统一到 creator 粒度。</p></div>
+    <div class="card"><h3>策略层</h3><p>准入过滤、排序加权、Top N 回测、名单迁移和实验监控。</p></div>
+  </div>
+</section>
+
+<section class="section" id="core">
+  <div class="kicker">核心 SQL</div>
+  <h2>六段 SQL，分别服务不同业务问题</h2>
+  <div class='card soft' style='margin-top:16px;'><h3>1. 供给漏斗</h3><p class='small'>用于确认问题发生在注册、首发，还是持续经营阶段。</p><pre class='code'>WITH creator_base AS (
     SELECT
         creator_id,
         join_date,
@@ -78,8 +168,7 @@ SELECT
     ROUND(creator_cnt * 1.0 / FIRST_VALUE(creator_cnt) OVER (ORDER BY step_order), 4) AS share_of_registered,
     ROUND(creator_cnt * 1.0 / LAG(creator_cnt) OVER (ORDER BY step_order), 4) AS step_conversion
 FROM funnel_union
-ORDER BY step_order;</pre><p><a href="../sql/creator_funnel.sql">打开原文件</a></p></div>
-<div class="card soft" style="margin-top:16px;"><h3>2. Cohort 稳定性</h3><p class="small">用于避免把最新 cohort 的短观察窗误读为趋势改善。</p><pre class="code">WITH monthly_cohort AS (
+ORDER BY step_order;</pre><p><a href='../sql/creator_funnel.sql'>打开原文件</a></p></div><div class='card soft' style='margin-top:16px;'><h3>2. Cohort 稳定性</h3><p class='small'>用于避免把最新 cohort 的短观察窗误读为趋势改善。</p><pre class='code'>WITH monthly_cohort AS (
     SELECT
         strftime(join_date, &#x27;%Y-%m&#x27;) AS join_month,
         COUNT(*) AS creators,
@@ -99,8 +188,7 @@ SELECT
     ROUND(active_4w_rate, 4) AS active_4w_rate,
     CASE WHEN creators &lt; 100 THEN &#x27;样本较小，仅作方向参考&#x27; ELSE &#x27;可用于稳定监控&#x27; END AS interpretation
 FROM monthly_cohort
-ORDER BY join_month;</pre><p><a href="../sql/cohort_retention.sql">打开原文件</a></p></div>
-<div class="card soft" style="margin-top:16px;"><h3>3. 创作者分层</h3><p class="small">用于识别高曝光低变现、高潜低激励、高价值稳定供给等关键人群。</p><pre class="code">WITH creator_scored AS (
+ORDER BY join_month;</pre><p><a href='../sql/cohort_retention.sql'>打开原文件</a></p></div><div class='card soft' style='margin-top:16px;'><h3>3. 创作者分层</h3><p class='small'>用于识别高曝光低变现、高潜低激励和高价值稳定供给。</p><pre class='code'>WITH creator_scored AS (
     SELECT
         creator_id,
         retention_30d_rate,
@@ -130,8 +218,7 @@ SELECT
     ROUND(AVG(total_cash_incentive), 2) AS avg_cash_incentive
 FROM creator_scored
 GROUP BY 1
-ORDER BY creators DESC;</pre><p><a href="../sql/creator_segmentation.sql">打开原文件</a></p></div>
-<div class="card soft" style="margin-top:16px;"><h3>4. 同规模回测</h3><p class="small">核心原则是固定 Top N，在同规模下比较新旧规则，避免样本池变化干扰读数。</p><pre class="code">WITH eligible_creators AS (
+ORDER BY creators DESC;</pre><p><a href='../sql/creator_segmentation.sql'>打开原文件</a></p></div><div class='card soft' style='margin-top:16px;'><h3>4. 同规模回测</h3><p class='small'>固定 Top N 比较旧规则和新规则，而不是通过扩大样本池制造提升。</p><pre class='code'>WITH eligible_creators AS (
     SELECT
         creator_id,
         old_rule_score,
@@ -191,8 +278,7 @@ SELECT
     ROUND(AVG(total_cash_incentive), 2) AS cash_per_creator,
     ROUND(AVG(rev_per_1k_exposure), 2) AS revenue_per_1k_exposure,
     ROUND(AVG(is_high_potential_under_incentivized), 4) AS high_potential_hit_rate
-FROM new_rule;</pre><p><a href="../sql/resource_reallocation_backtest.sql">打开原文件</a></p></div>
-<div class="card soft" style="margin-top:16px;"><h3>5. 名单迁移结构</h3><p class="small">用于识别被移出与补入的人群结构，避免只看均值变化。</p><pre class="code">WITH eligible_creators AS (
+FROM new_rule;</pre><p><a href='../sql/resource_reallocation_backtest.sql'>打开原文件</a></p></div><div class='card soft' style='margin-top:16px;'><h3>5. 名单迁移结构</h3><p class='small'>看新旧名单 overlap、补入与移出去向，判断运营承接压力。</p><pre class='code'>WITH eligible_creators AS (
     SELECT
         creator_id,
         CASE
@@ -245,9 +331,16 @@ SELECT
 FROM transitioned
 WHERE selection_transition IN (&#x27;promoted_into_new_topn&#x27;, &#x27;dropped_from_old_topn&#x27;)
 GROUP BY 1, 2
-ORDER BY 1, creators DESC;</pre><p><a href="../sql/selection_transition.sql">打开原文件</a></p></div>
+ORDER BY 1, creators DESC;</pre><p><a href='../sql/selection_transition.sql'>打开原文件</a></p></div>
 </section>
-<section class="section" id="monitor"><div class="kicker">实验监控</div><h2>上线阶段，日级监控优先于离线回测结论</h2><div class="card red"><p class="small">实验监控模板同时看 creator_share、exposure_share、cash_per_creator、revenue_per_incentive、投诉、作弊和安全。这样可以更早发现 SRM、分流漂移和效率转负。</p><pre class="code">-- 用于线上灰度期间的日级监控模板。
+
+<section class="section" id="monitor">
+  <div class="kicker">实验监控</div>
+  <h2>线上阶段，日级监控比离线点估计更重要</h2>
+  <div class="card soft">
+    <h3>6. 实验监控模板</h3>
+    <p class="small">目标是尽早发现 SRM、分流漂移、激励过量投放和关键护栏恶化。</p>
+    <pre class='code'>-- 用于线上灰度期间的日级监控模板。
 -- 目标：尽早发现 SRM、流量分配漂移、激励过量投放与关键护栏恶化。
 
 WITH assignment_daily AS (
@@ -311,6 +404,15 @@ SELECT
         ELSE &#x27;继续监控&#x27;
     END AS action_hint
 FROM monitored
-ORDER BY event_date, creator_vertical, experiment_group;</pre><p><a href="../sql/experiment_srm_guardrail_template.sql">打开原文件</a></p></div></section>
-<div class="footer">建议：接业务库时，优先统一 creator 粒度口径，再把曝光、收入、激励、留存映射到同一宽表，否则后面的 Top N 回测和实验监控都容易口径漂移。</div>
-</div></body></html>
+ORDER BY event_date, creator_vertical, experiment_group;</pre>
+    <p><a href="../sql/experiment_srm_guardrail_template.sql">打开原文件</a></p>
+  </div>
+  <div class="two" style="margin-top:16px;">
+    <div class="card red"><h3>优先监控什么</h3><ul class="list"><li>creator 数、曝光 share 是否偏离设计；</li><li>cash per creator 是否异常抬升；</li><li>投诉、作弊、内容安全是否恶化。</li></ul></div>
+    <div class="card green"><h3>监控的目的</h3><ul class="list"><li>不是为了证明离线结论正确；</li><li>而是为了判断新规则在真实环境中是否值得继续扩量。</li></ul></div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

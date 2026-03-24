@@ -1,76 +1,144 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>分析过程页</title><style>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>创作者资源重配分析｜分析过程页</title>
+<style>
 :root{
-  --bg:#0b1020;--bg2:#111831;--surface:#ffffff;--surface2:#f8fafc;--text:#0f172a;--muted:#475569;--line:#e2e8f0;
+  --bg:#eef4ff;--bg2:#f8fbff;--surface:#ffffff;--surface2:#f8fafc;--text:#0f172a;--muted:#475569;--line:#e2e8f0;
   --primary:#2563eb;--primary-soft:#dbeafe;--green:#16a34a;--green-soft:#ecfdf5;--amber:#d97706;--amber-soft:#fff7ed;
   --purple:#7c3aed;--purple-soft:#f5f3ff;--red:#dc2626;--red-soft:#fef2f2;--shadow:0 20px 60px rgba(2,8,23,.08);
 }
-*{box-sizing:border-box} html{scroll-behavior:smooth}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;background:linear-gradient(180deg,#eef4ff 0%,#f8fbff 42%,#f6f8fb 100%);color:var(--text);line-height:1.7}
-a{color:var(--primary);text-decoration:none} a:hover{text-decoration:underline}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 42%,#f6f8fb 100%);color:var(--text);line-height:1.7}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
 .wrap{max-width:1240px;margin:0 auto;padding:24px 18px 72px}
 .hero{position:relative;overflow:hidden;border-radius:32px;padding:34px;border:1px solid rgba(255,255,255,.22);background:radial-gradient(circle at top right,rgba(255,255,255,.18),rgba(255,255,255,.06)),linear-gradient(135deg,#0f172a,#172554 58%,#1d4ed8);color:#fff;box-shadow:0 24px 80px rgba(15,23,42,.22)}
 .hero:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);filter:blur(4px)}
 .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:end}
 .badge{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);font-size:12px;font-weight:700;letter-spacing:.02em}
-h1,h2,h3,h4{line-height:1.15;letter-spacing:-.03em;margin:0 0 12px} h1{font-size:44px} h2{font-size:30px} h3{font-size:19px} h4{font-size:15px}
-p{margin:0 0 10px}.small{font-size:14px;color:var(--muted)} .hero .small{color:rgba(255,255,255,.82)}
+h1,h2,h3,h4{line-height:1.15;letter-spacing:-.03em;margin:0 0 12px}
+h1{font-size:42px} h2{font-size:30px} h3{font-size:20px} h4{font-size:15px}
+p{margin:0 0 10px}
+.small{font-size:14px;color:var(--muted)}
+.hero .small{color:rgba(255,255,255,.82)}
 .metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}
 .metric{padding:18px;border-radius:22px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px)}
-.metric .num{font-size:30px;font-weight:800;letter-spacing:-.04em}.metric .lab{font-size:13px;color:rgba(255,255,255,.78);margin-top:4px}
+.metric .num{font-size:30px;font-weight:800;letter-spacing:-.04em}
+.metric .lab{font-size:13px;color:rgba(255,255,255,.78);margin-top:4px}
 .hero-panel{padding:22px;border-radius:24px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18)}
 .hero-panel ul{margin:12px 0 0 18px}
 .nav{position:sticky;top:12px;z-index:20;margin:18px 0;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border:1px solid rgba(226,232,240,.8);display:flex;gap:12px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(15,23,42,.06)}
 .nav a{font-size:13px;font-weight:800;color:#334155}
 .section{margin-top:18px;border-radius:28px;padding:26px;background:rgba(255,255,255,.88);border:1px solid rgba(226,232,240,.88);box-shadow:var(--shadow)}
-.two{display:grid;grid-template-columns:1.02fr .98fr;gap:18px}.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.card{border:1px solid var(--line);border-radius:22px;padding:18px;background:#fff}.card.soft{background:linear-gradient(180deg,#fff,#fbfdff)}
-.card.blue{background:linear-gradient(180deg,#eff6ff,#ffffff);border-color:#bfdbfe}.card.green{background:linear-gradient(180deg,#ecfdf5,#ffffff);border-color:#bbf7d0}.card.amber{background:linear-gradient(180deg,#fff7ed,#ffffff);border-color:#fed7aa}.card.purple{background:linear-gradient(180deg,#f5f3ff,#ffffff);border-color:#ddd6fe}.card.red{background:linear-gradient(180deg,#fef2f2,#ffffff);border-color:#fecaca}
+.two{display:grid;grid-template-columns:1.02fr .98fr;gap:18px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{border:1px solid var(--line);border-radius:22px;padding:18px;background:#fff}
+.card.soft{background:linear-gradient(180deg,#fff,#fbfdff)}
+.card.blue{background:linear-gradient(180deg,#eff6ff,#ffffff);border-color:#bfdbfe}
+.card.green{background:linear-gradient(180deg,#ecfdf5,#ffffff);border-color:#bbf7d0}
+.card.amber{background:linear-gradient(180deg,#fff7ed,#ffffff);border-color:#fed7aa}
+.card.purple{background:linear-gradient(180deg,#f5f3ff,#ffffff);border-color:#ddd6fe}
+.card.red{background:linear-gradient(180deg,#fef2f2,#ffffff);border-color:#fecaca}
 .kicker{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:8px}
-.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid transparent}
-.pill.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#15803d}.pill.amber{background:#fff7ed;border-color:#fed7aa;color:#c2410c}.pill.purple{background:#f5f3ff;border-color:#ddd6fe;color:#6d28d9}.pill.red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid transparent}
+.pill.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#15803d}
+.pill.amber{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.pill.purple{background:#f5f3ff;border-color:#ddd6fe;color:#6d28d9}
+.pill.red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
 .note{padding:16px 18px;border-radius:18px;border:1px solid var(--line);background:#f8fafc;color:#334155}
-.table{width:100%;border-collapse:collapse;font-size:14px}.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.table th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#64748b}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.table th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#64748b}
+.table tr.highlight td{background:#eff6ff}
+.table tr:hover td{background:#f8fafc}
 .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:18px;overflow:auto;font-size:13px;line-height:1.65}
 pre.code{white-space:pre-wrap}
-img{width:100%;display:block;border-radius:20px;border:1px solid var(--line);background:#fff}
 .figcap{font-size:14px;color:var(--muted);margin-top:10px}
-.list{margin:8px 0 0 18px;padding:0}.list li{margin:6px 0}
+.list{margin:8px 0 0 18px;padding:0}
+.list li{margin:6px 0}
 .divider{height:1px;background:linear-gradient(90deg,transparent,#cbd5e1,transparent);margin:18px 0}
 .footer{margin-top:20px;color:#64748b;font-size:13px}
 .callout{padding:18px 20px;border-radius:22px;background:linear-gradient(135deg,#eff6ff,#ffffff);border:1px solid #bfdbfe}
-@media (max-width:980px){.hero-grid,.two,.three,.four,.metric-grid{grid-template-columns:1fr 1fr} h1{font-size:36px}}
-@media (max-width:720px){.hero-grid,.two,.three,.four,.metric-grid{grid-template-columns:1fr}.wrap{padding:14px 12px 40px}.section{padding:20px}.nav{position:static} h1{font-size:30px} h2{font-size:25px}}
+.meter-stack{display:grid;gap:12px;margin-top:12px}
+.meter-row{display:grid;grid-template-columns:180px 1fr 76px;gap:12px;align-items:center}
+.meter-row.small{grid-template-columns:150px 1fr 84px}
+.meter-row .lab{font-size:14px;color:#334155;font-weight:700}
+.meter{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden;position:relative}
+.meter > span{display:block;height:100%;background:linear-gradient(90deg,#93c5fd,#2563eb);border-radius:999px}
+.meter.green > span{background:linear-gradient(90deg,#86efac,#16a34a)}
+.meter.amber > span{background:linear-gradient(90deg,#fdba74,#d97706)}
+.meter.purple > span{background:linear-gradient(90deg,#c4b5fd,#7c3aed)}
+.meter.red > span{background:linear-gradient(90deg,#fca5a5,#dc2626)}
+.meter-row .val{font-size:13px;font-weight:800;color:#0f172a;text-align:right}
+.grid-2-1{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}
+.grid-1-2{display:grid;grid-template-columns:.9fr 1.1fr;gap:18px}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.kv .item{padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.kv .k{font-size:12px;color:#64748b;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.kv .v{font-size:24px;font-weight:800;letter-spacing:-.03em;margin-top:4px}
+.timeline{display:grid;gap:14px}
+.timeline .step{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start}
+.timeline .idx{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-weight:800}
+.warning{border-left:4px solid #dc2626;padding-left:14px}
+.ok{border-left:4px solid #16a34a;padding-left:14px}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:800;background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+@media (max-width:1080px){.hero-grid,.two,.three,.four,.metric-grid,.grid-2-1,.grid-1-2{grid-template-columns:1fr 1fr}.meter-row{grid-template-columns:140px 1fr 70px}} 
+@media (max-width:720px){.hero-grid,.two,.three,.four,.metric-grid,.grid-2-1,.grid-1-2,.kv{grid-template-columns:1fr}.wrap{padding:14px 12px 40px}.section{padding:20px}.nav{position:static} h1{font-size:30px} h2{font-size:25px}.meter-row,.meter-row.small{grid-template-columns:1fr}.meter-row .val{text-align:left}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="nav">
+  <a href="index.html">返回首页</a>
+  <a href="#overview">总览</a>
+  <a href="#steps">分析步骤</a>
+  <a href="#results">关键结果</a>
+  <a href="#materials">原始材料</a>
+</div>
 
-.md h1,.md h2,.md h3,.md h4{margin:0 0 12px;line-height:1.3;letter-spacing:-.02em}
-.md h1{font-size:30px}
-.md h2{font-size:24px;margin-top:0}
-.md h3{font-size:18px;margin-top:0}
-.md p{margin:0 0 10px;color:#0f172a}
-.md ul,.md ol{margin:8px 0 0 22px;padding:0}
-.md li{margin:6px 0}
-.md strong{font-weight:800}
-.md blockquote{margin:0;padding:14px 16px;border-left:4px solid #93c5fd;background:#eff6ff;border-radius:14px;color:#1e3a8a}
-.md code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f8fafc;border:1px solid #e2e8f0;padding:2px 6px;border-radius:8px;font-size:.92em}
-</style></head><body><div class="wrap"><div class="nav"><a href="index.html">返回首页</a><a href="#structure">结构</a><a href="#detail">过程展开</a></div><section class="hero"><div class="hero-grid"><div><div class="badge">分析过程页</div><h1 style="margin-top:14px;">分析过程与关键代码</h1><p class="small">页面按问题定义、供给诊断、错配识别、同规模回测和上线约束展开分析过程。</p></div><div class="hero-panel"><h3>内容结构</h3><ul class="list"><li>问题定义</li><li>供给诊断</li><li>错配识别</li><li>同规模回测</li><li>上线约束</li></ul></div></div></section><section class="section" id="structure"><div class="kicker">结构</div><h2>Notebook 按经营判断顺序展开</h2><div class="four"><div class="card"><h4>1. 目标定义</h4><p class="small">先界定经营问题与指标边界。</p></div><div class="card"><h4>2. 供给诊断</h4><p class="small">确认损耗主要发生在哪个阶段。</p></div><div class="card"><h4>3. 错配识别</h4><p class="small">比较资源集中度与价值集中度，并识别关键人群。</p></div><div class="card"><h4>4. 策略回测</h4><p class="small">固定 Top N，评估主指标、迁移成本与上线条件。</p></div></div></section><section class="section" id="detail"><div class="kicker">过程展开</div><h2>Notebook 主要内容</h2><div class="card soft md" style="margin-top:16px;"><h1>短视频平台创作者经营分析：资源重配、验证设计与上线门槛</h1>
-<p>分析顺序如下：</p>
-<ol>
-<li>先确认问题发生在哪个阶段；</li>
-<li>再确认资源是否偏离长期价值；</li>
-<li>再做两段式准入与排序校正；</li>
-<li>最后判断这个方向是否值得进入实验。</li>
-</ol>
-</div><div class="card soft md" style="margin-top:16px;"><h2>0. 分析目标</h2>
-<p>核心问题：<strong>当流量和现金激励都有限时，平台是否把资源给到了更值得长期扶持的创作者？</strong></p>
-<p>该问题需要同时考察：</p>
-<ul>
-<li>供给漏斗；</li>
-<li>cohort 稳定性；</li>
-<li>曝光与收入的集中度差异；</li>
-<li>关键人群识别；</li>
-<li>新规则在同规模下是否改善主指标；</li>
-<li>改善是否伴随可接受的迁移成本与执行风险。</li>
-</ul>
-</div><div class="card" style="margin-top:16px;"><div class="kicker">代码片段</div><pre class="code">import pandas as pd
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="badge">分析过程页</div>
+      <h1 style="margin-top:14px;">按经营判断顺序展开分析过程</h1>
+      <p class="small">这里不展示“做了什么”的自我说明，而是按问题定义、数据处理、规则设计、回测解释和实验准备的顺序展示证据链。</p>
+    </div>
+    <div class="hero-panel">
+      <h3>内容结构</h3>
+      <ul class="list">
+        <li>Python 数据准备与口径计算</li>
+        <li>供给漏斗、cohort、Pareto、关键人群</li>
+        <li>规则构造、同规模回测、名单迁移</li>
+        <li>实验设计、风险控制与原始材料</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="overview">
+  <div class="kicker">分析总览</div>
+  <h2>Notebook 不把离线 uplift 写成结论，而是把证据链拆开</h2>
+  <div class="four">
+    <div class="card"><h3>问题定义</h3><p>资源是否流向更稳定、更有效率的供给。</p></div>
+    <div class="card"><h3>数据整理</h3><p>把创作者、内容、周度活跃和激励统一到 creator 粒度。</p></div>
+    <div class="card"><h3>规则回测</h3><p>所有比较都在固定 Top N 下完成，避免“池子变大导致指标变好”的错觉。</p></div>
+    <div class="card"><h3>上线准备</h3><p>实验门槛、护栏、SRM 与回滚条件同时定义。</p></div>
+  </div>
+  <div class="callout" style="margin-top:16px;">本页已把英文小标题全部改成中文，并删去容易露出“在解释作品”的表达，保留对业务判断真正有用的代码和结果。</div>
+</section>
+
+<section class="section" id="steps">
+  <div class="kicker">分析步骤</div>
+  <h2>从数据准备到实验设计，逐步建立判断</h2>
+  <div class='card soft' style='margin-bottom:16px;'><h3>0. 分析目标</h3><p class='small'>先判断资源错配是否成立，再判断轻量校正规则是否值得进入灰度实验。</p><pre class='code'>import pandas as pd
 import numpy as np
 
 creator = pd.read_csv(&#x27;../data/creator_profile.csv&#x27;, parse_dates=[&#x27;join_date&#x27;])
@@ -81,11 +149,7 @@ incentive = pd.read_csv(&#x27;../data/creator_incentive.csv&#x27;)
 print(&#x27;creator rows:&#x27;, len(creator))
 print(&#x27;content rows:&#x27;, len(content))
 print(&#x27;weekly rows:&#x27;, len(weekly))
-print(&#x27;incentive rows:&#x27;, len(incentive))
-</pre></div><div class="card soft md" style="margin-top:16px;"><h2>1. 先看供给漏斗</h2>
-<p>如果主要损耗发生在注册到首发之前，那么资源动作应偏向拉新与首发激活；
-如果主要损耗发生在首发之后到稳定经营之间，那么策略重点就应该放在持续经营。</p>
-</div><div class="card" style="margin-top:16px;"><div class="kicker">代码片段</div><pre class="code">funnel = pd.DataFrame({
+print(&#x27;incentive rows:&#x27;, len(incentive))</pre></div><div class='card soft' style='margin-bottom:16px;'><h3>1. 供给漏斗</h3><p class='small'>确认主要损耗集中在首发后到稳定经营阶段。</p><pre class='code'>funnel = pd.DataFrame({
     &#x27;stage&#x27;: [&#x27;注册创作者&#x27;,&#x27;完成首发&#x27;,&#x27;连续活跃≥2周&#x27;,&#x27;连续活跃≥4周&#x27;,&#x27;已开通变现&#x27;,&#x27;稳定经营且已开通变现&#x27;],
     &#x27;creator_cnt&#x27;: [
         len(creator),
@@ -98,11 +162,7 @@ print(&#x27;incentive rows:&#x27;, len(incentive))
 })
 funnel[&#x27;share_of_registered&#x27;] = funnel[&#x27;creator_cnt&#x27;] / funnel.loc[0, &#x27;creator_cnt&#x27;]
 funnel[&#x27;step_conversion&#x27;] = funnel[&#x27;creator_cnt&#x27;] / funnel[&#x27;creator_cnt&#x27;].shift(1)
-funnel
-</pre></div><div class="card soft md" style="margin-top:16px;"><h3>业务判断</h3>
-<p>主要损耗集中在首发后的持续经营阶段。后续资源动作应优先提高已启动创作者进入稳定经营状态的概率。</p>
-</div><div class="card soft md" style="margin-top:16px;"><h2>2. Cohort 检查：避免把短观察窗误读成趋势变化</h2>
-</div><div class="card" style="margin-top:16px;"><div class="kicker">代码片段</div><pre class="code">cohort = (
+funnel</pre></div><div class='card soft' style='margin-bottom:16px;'><h3>2. Cohort 检查</h3><p class='small'>避免把最新 cohort 的短观察窗误读为趋势变化。</p><pre class='code'>cohort = (
     creator.assign(join_month=creator[&#x27;join_date&#x27;].dt.to_period(&#x27;M&#x27;).astype(str))
            .groupby(&#x27;join_month&#x27;)
            .agg(
@@ -113,22 +173,12 @@ funnel
            )
            .reset_index()
 )
-cohort.tail(12)
-</pre></div><div class="card soft md" style="margin-top:16px;"><h3>业务判断</h3>
-<p>各 cohort 口径整体平稳，说明问题更可能来自资源分配逻辑而非单批样本质量突变。最新 cohort 样本较小、观察窗更短，更适合作为预警信号。</p>
-</div><div class="card soft md" style="margin-top:16px;"><h2>3. 比较曝光集中度与价值集中度</h2>
-<p>这一部分用于比较当前资源分布与长期价值贡献的匹配程度。</p>
-</div><div class="card" style="margin-top:16px;"><div class="kicker">代码片段</div><pre class="code">pareto = creator[[&#x27;creator_id&#x27;, &#x27;total_supported_exposure&#x27;, &#x27;total_revenue&#x27;]].copy()
+cohort.tail(12)</pre></div><div class='card soft' style='margin-bottom:16px;'><h3>3. 曝光与价值集中度</h3><p class='small'>用累计曝光占比和累计收入占比判断资源是否仍带有历史惯性。</p><pre class='code'>pareto = creator[[&#x27;creator_id&#x27;, &#x27;total_supported_exposure&#x27;, &#x27;total_revenue&#x27;]].copy()
 pareto = pareto.sort_values(&#x27;total_supported_exposure&#x27;, ascending=False).reset_index(drop=True)
 pareto[&#x27;creator_share&#x27;] = (pareto.index + 1) / len(pareto)
 pareto[&#x27;cum_exposure_share&#x27;] = pareto[&#x27;total_supported_exposure&#x27;].cumsum() / pareto[&#x27;total_supported_exposure&#x27;].sum()
 pareto[&#x27;cum_revenue_share&#x27;] = pareto[&#x27;total_revenue&#x27;].cumsum() / pareto[&#x27;total_revenue&#x27;].sum()
-pareto.loc[(pareto[&#x27;creator_share&#x27;] - 0.20).abs().idxmin(), [&#x27;creator_share&#x27;, &#x27;cum_exposure_share&#x27;, &#x27;cum_revenue_share&#x27;]]
-</pre></div><div class="card soft md" style="margin-top:16px;"><h3>业务判断</h3>
-<p>曝光累计曲线显著高于收入累计曲线，说明资源继承性强于长期价值，这构成后续资源重配的前提。</p>
-</div><div class="card soft md" style="margin-top:16px;"><h2>4. 识别关键人群</h2>
-<p>资源占用与长期价值需要分开识别，避免单一总分掩盖错配结构。</p>
-</div><div class="card" style="margin-top:16px;"><div class="kicker">代码片段</div><pre class="code">creator[&#x27;segment&#x27;] = np.select([
+pareto.loc[(pareto[&#x27;creator_share&#x27;] - 0.20).abs().idxmin(), [&#x27;creator_share&#x27;, &#x27;cum_exposure_share&#x27;, &#x27;cum_revenue_share&#x27;]]</pre></div><div class='card soft' style='margin-bottom:16px;'><h3>4. 关键人群识别</h3><p class='small'>找出高曝光低变现和高潜低激励两类人群。</p><pre class='code'>creator[&#x27;segment&#x27;] = np.select([
     (creator[&#x27;exposure_pct_rank&#x27;] &gt;= 0.60) &amp; (creator[&#x27;efficiency_pct_rank&#x27;] &lt;= 0.52),
     (creator[&#x27;retention_pct_rank&#x27;] &gt;= 0.65) &amp; (creator[&#x27;efficiency_pct_rank&#x27;] &gt;= 0.65) &amp; (creator[&#x27;resource_pct_rank&#x27;] &lt;= 0.68),
     (creator[&#x27;retention_pct_rank&#x27;] &gt;= 0.72) &amp; (creator[&#x27;efficiency_pct_rank&#x27;] &gt;= 0.72),
@@ -147,16 +197,7 @@ segment_summary = (
 )
 segment_summary[&#x27;creator_share&#x27;] = segment_summary[&#x27;creators&#x27;] / segment_summary[&#x27;creators&#x27;].sum()
 segment_summary[&#x27;exposure_share&#x27;] = segment_summary[&#x27;exposure&#x27;] / segment_summary[&#x27;exposure&#x27;].sum()
-segment_summary.sort_values(&#x27;creators&#x27;, ascending=False)
-</pre></div><div class="card soft md" style="margin-top:16px;"><h3>业务判断</h3>
-<ul>
-<li><strong>高曝光低变现</strong>：适合进入复核与降配流程；</li>
-<li><strong>高潜低激励</strong>：适合进入快速晋升池；</li>
-<li><strong>高价值稳定供给</strong>：适合做稳态扶持基线池。</li>
-</ul>
-</div><div class="card soft md" style="margin-top:16px;"><h2>5. 两段式策略设计</h2>
-<p>首轮策略保留旧规则主体，先通过准入过滤控制明显不适合继续强扶持的人群，再补入长期价值信号。</p>
-</div><div class="card" style="margin-top:16px;"><div class="kicker">代码片段</div><pre class="code">eligible = creator[creator[&#x27;has_first_publish&#x27;] == 1].copy()
+segment_summary.sort_values(&#x27;creators&#x27;, ascending=False)</pre></div><div class='card soft' style='margin-bottom:16px;'><h3>5. 规则构造</h3><p class='small'>在准入过滤基础上做轻量排序修正，而不是完全推翻旧规则。</p><pre class='code'>eligible = creator[creator[&#x27;has_first_publish&#x27;] == 1].copy()
 
 # 对效率指标缩尾，避免极端值直接主导排序
 low = eligible[&#x27;rev_per_1k_exposure&#x27;].quantile(0.01)
@@ -179,15 +220,7 @@ eligible[&#x27;new_rule_score&#x27;] = (
     0.05 * (1 - eligible[&#x27;resource_pct_rank&#x27;])
 )
 
-eligible[[&#x27;creator_id&#x27;, &#x27;pass_entry_gate&#x27;, &#x27;old_rule_score&#x27;, &#x27;new_rule_score&#x27;]].head()
-</pre></div><div class="card soft md" style="margin-top:16px;"><h2>6. 在同规模 Top N 下做回测</h2>
-<p>关键原则：</p>
-<ul>
-<li>不能扩大资源池规模来制造改善；</li>
-<li>不能只看留存，不看单位激励收入；</li>
-<li>不能只看离线最优，不看迁移成本。</li>
-</ul>
-</div><div class="card" style="margin-top:16px;"><div class="kicker">代码片段</div><pre class="code">pool = eligible[eligible[&#x27;pass_entry_gate&#x27;] == 1].copy()
+eligible[[&#x27;creator_id&#x27;, &#x27;pass_entry_gate&#x27;, &#x27;old_rule_score&#x27;, &#x27;new_rule_score&#x27;]].head()</pre></div><div class='card soft' style='margin-bottom:16px;'><h3>6. 同规模回测</h3><p class='small'>固定 Top N 比较旧规则和新规则，避免通过扩大样本池制造假提升。</p><pre class='code'>pool = eligible[eligible[&#x27;pass_entry_gate&#x27;] == 1].copy()
 old_sel = pool.nlargest(4200, &#x27;old_rule_score&#x27;)
 new_sel = pool.nlargest(4200, &#x27;new_rule_score&#x27;)
 
@@ -201,16 +234,7 @@ backtest = pd.DataFrame({
         (((new_sel[&#x27;retention_pct_rank&#x27;] &gt;= 0.65) &amp; (new_sel[&#x27;efficiency_pct_rank&#x27;] &gt;= 0.65) &amp; (new_sel[&#x27;resource_pct_rank&#x27;] &lt;= 0.68)).mean())
     ]
 })
-backtest
-</pre></div><div class="card soft md" style="margin-top:16px;"><h3>业务判断</h3>
-<p>结果解读：</p>
-<ul>
-<li>人均激励上升，说明资源更集中地投向了质量更高的人；</li>
-<li>单位激励收入仍然改善，说明成本上升不是无效投入；</li>
-<li>留存同步改善，说明并非只是短期冲量。</li>
-</ul>
-</div><div class="card soft md" style="margin-top:16px;"><h2>7. 迁移成本：名单变化不能太猛</h2>
-</div><div class="card" style="margin-top:16px;"><div class="kicker">代码片段</div><pre class="code">old_ids = set(old_sel[&#x27;creator_id&#x27;])
+backtest</pre></div><div class='card soft' style='margin-bottom:16px;'><h3>7. 名单迁移</h3><p class='small'>同时看 overlap 和迁移去向，判断运营承接是否可控。</p><pre class='code'>old_ids = set(old_sel[&#x27;creator_id&#x27;])
 new_ids = set(new_sel[&#x27;creator_id&#x27;])
 
 overlap_rate = len(old_ids &amp; new_ids) / len(old_ids)
@@ -220,16 +244,7 @@ dropped = len(old_ids - new_ids)
 pd.DataFrame({
     &#x27;指标&#x27;: [&#x27;新旧名单重合率&#x27;, &#x27;新增创作者数&#x27;, &#x27;移出创作者数&#x27;],
     &#x27;值&#x27;: [overlap_rate, promoted, dropped]
-})
-</pre></div><div class="card soft md" style="margin-top:16px;"><h3>业务判断</h3>
-<p>名单重合率过低会显著抬升迁移成本，因此需要在结果改善与执行成本之间取平衡。</p>
-</div><div class="card soft md" style="margin-top:16px;"><h2>8. 稳健性检查</h2>
-<p>至少应检查两件事：</p>
-<ul>
-<li>更换 Top N 后，方向是否依旧成立；</li>
-<li>按内容垂类拆开后，结果是否被单一垂类“抬”出来。</li>
-</ul>
-</div><div class="card" style="margin-top:16px;"><div class="kicker">代码片段</div><pre class="code">topn_results = []
+})</pre></div><div class='card soft' style='margin-bottom:16px;'><h3>8. 稳健性检查</h3><p class='small'>验证不同 Top N 档位下提升方向是否稳定。</p><pre class='code'>topn_results = []
 for n in [3000, 3600, 4200, 5000, 6000]:
     old_n = pool.nlargest(n, &#x27;old_rule_score&#x27;)
     new_n = pool.nlargest(n, &#x27;new_rule_score&#x27;)
@@ -239,18 +254,53 @@ for n in [3000, 3600, 4200, 5000, 6000]:
         &#x27;unit_incentive_revenue_uplift_pct&#x27;: (new_n[&#x27;unit_incentive_revenue&#x27;].mean() / old_n[&#x27;unit_incentive_revenue&#x27;].mean() - 1) * 100
     })
 
-pd.DataFrame(topn_results)
-</pre></div><div class="card soft md" style="margin-top:16px;"><h2>9. 上线前要准备什么</h2>
-<p>离线结果再好，也不能直接宣布上线成功。正式推进前，需要把以下内容变成制度化动作：</p>
-<ul>
-<li>creator 级锁定；</li>
-<li>池间隔离，减少推荐外溢；</li>
-<li>对降配对象做复核与申诉；</li>
-<li>每日监控 SRM、现金激励、人均投诉、作弊与安全风险；</li>
-<li>先看 week 1，再看 week 4，不被短期新鲜感效应误导。</li>
-</ul>
-</div><div class="card soft md" style="margin-top:16px;"><h2>10. 最终判断</h2>
-<blockquote>
-<p>在控制迁移成本和执行风险的前提下，把资源从一部分高曝光低效率人群中挪出，再补向更高质量的稳定供给，是一个值得进入线上灰度的方向。</p>
-</blockquote>
-</div><div class="card blue" style="margin-top:16px;"><h3>原始文件</h3><p><a href="../notebooks/creator_value_analysis.ipynb">打开 .ipynb 原文件</a></p></div></section><div class="footer">分析过程页已改为正常渲染 Markdown 标题、加粗、列表与引用，不再显示原始标记符号。</div></div></body></html>
+pd.DataFrame(topn_results)</pre></div>
+</section>
+
+<section class="section" id="results">
+  <div class="kicker">关键结果</div>
+  <h2>Notebook 中最值得被面试官追问的不是代码，而是解释边界</h2>
+  <div class="two">
+    <div class="card green">
+      <h3>可以稳答的点</h3>
+      <ul class="list">
+        <li>为什么要用固定 Top N 做对比；</li>
+        <li>为什么 D 方案不是“最优”，但适合作为首轮灰度；</li>
+        <li>为什么要把留存放进排序主逻辑，而不是只看短期效率；</li>
+        <li>为什么扩量要按垂类和预算档位分阶段推进。</li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h3>必须主动承认的边界</h3>
+      <ul class="list">
+        <li>离线回测不是因果识别；</li>
+        <li>旧规则与历史资源倾斜高度相关；</li>
+        <li>补入名单没有真实拿到同等资源，因此 uplift 只能解释为方向证据；</li>
+        <li>真正决定能否扩量的是线上主指标与护栏，而不是离线点估计。</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card soft" style="margin-top:16px;">
+    <h3>关键结果表</h3>
+    <table class="table">
+      <tr><th>指标</th><th>旧规则</th><th>新规则</th><th>变化</th></tr>
+      <tr><td>30 日留存率</td><td>48.7%</td><td>58.1%</td><td>9.4ppt</td></tr>
+      <tr><td>单位激励收入</td><td>69.6</td><td>78.4</td><td>12.7%</td></tr>
+      <tr><td>人均现金激励</td><td>550</td><td>625</td><td>13.6%</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="materials">
+  <div class="kicker">原始材料</div>
+  <h2>保留可复核的入口</h2>
+  <div class="three">
+    <div class="card"><h3>Notebook 原文件</h3><p><a href="../notebooks/creator_value_analysis.ipynb">打开 ipynb</a></p></div>
+    <div class="card"><h3>分析脚本</h3><p><a href="../analysis.py">打开 analysis.py</a></p></div>
+    <div class="card"><h3>完整报告</h3><p><a href="report.html">进入报告页</a></p></div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
