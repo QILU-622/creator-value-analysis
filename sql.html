@@ -8,314 +8,201 @@
 </head>
 <body>
   
-    <div class="topbar">
-      <div class="wrap nav">
-        <div class="brand">创作者资源重配分析<small>离线诊断、规则回测与实验设计</small></div>
-        <div class="navlinks"><a href="index.html" class="">首页</a><a href="report.html" class="">完整报告</a><a href="notebook.html" class="">分析过程</a><a href="sql.html" class="active">SQL 方案</a></div>
-      </div>
-    </div>
-    
-  
-<section class="hero">
-  <div class="wrap">
-    <div class="eyebrow">SQL 方案页</div>
-    <h1>把分析逻辑落到可复核的 SQL</h1>
-    <p>SQL 按事实层、指标层、策略层组织，用于支撑供给漏斗、cohort、关键人群、固定 Top N 回测、名单迁移与实验监控。</p>
+<div class="topbar">
+  <div class="wrap nav">
+    <div class="brand">创作者资源重配分析<small>离线诊断、规则回测与实验设计</small></div>
+    <div class="navlinks"><a href="index.html" class="">首页</a><a href="report.html" class="">完整报告</a><a href="notebook.html" class="">分析过程</a><a href="sql.html" class="active">SQL 方案</a></div>
   </div>
-</section>
+</div>
 
-<section class="section">
-  <div class="wrap">
-    <div class="panel pad">
-      <h2>1. 供给漏斗</h2>
-      <p>确认问题发生在注册、首发，还是持续经营阶段。</p>
-      <div class="code">WITH creator_base AS (
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">SQL 方案</div>
+      <h1>把经营判断落到可复核的 SQL</h1>
+      <p>SQL 按事实层、指标层、策略层与实验监控组织，覆盖供给漏斗、cohort、关键人群、固定 Top N 回测、名单迁移和灰度监控。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap grid-2">
+      <div class="panel pad">
+        <div class="section-kicker">1. Funnel</div>
+        <h2>供给漏斗</h2>
+        <p>确认问题发生在注册、首发或持续经营阶段。</p>
+        <div class="code">WITH creator_base AS (
     SELECT
         creator_id,
         join_date,
         has_first_publish,
         active_weeks,
         monetization_opened,
-        stable_updater,
-        CASE WHEN has_first_publish = 1 THEN 1 ELSE 0 END AS published_creator,
-        CASE WHEN has_first_publish = 1 AND active_weeks >= 2 THEN 1 ELSE 0 END AS active_2w_creator,
-        CASE WHEN has_first_publish = 1 AND active_weeks >= 4 THEN 1 ELSE 0 END AS active_4w_creator,
-        CASE WHEN has_first_publish = 1 AND active_weeks >= 4 AND monetization_opened = 1 THEN 1 ELSE 0 END AS monetization_after_active4,
-        CASE WHEN has_first_publish = 1 AND active_weeks >= 4 AND monetization_opened = 1 AND stable_updater = 1 THEN 1 ELSE 0 END AS stable_monetizing_creator
+        stable_updater
     FROM creator_profile
 ),
-funnel_union AS (
-    SELECT 1 AS step_order, '注册创作者' AS stage, COUNT(*) AS creator_cnt FROM creator_base
+funnel AS (
+    SELECT '注册创作者' AS stage, COUNT(*) AS creator_cnt FROM creator_base
     UNION ALL
-    SELECT 2, '完成首发', SUM(published_creator) FROM creator_base
+    SELECT '完成首发', COUNT(*) FROM creator_base WHERE has_first_publish = 1
     UNION ALL
-    SELECT 3, '连续活跃≥2周', SUM(active_2w_creator) FROM creator_base
+    SELECT '连续活跃≥2周', COUNT(*) FROM creator_base WHERE has_first_publish = 1 AND active_weeks >= 2
     UNION ALL
-    SELECT 4, '连续活跃≥4周', SUM(active_4w_creator) FROM creator_base
+    SELECT '连续活跃≥4周', COUNT(*) FROM creator_base WHERE has_first_publish = 1 AND active_weeks >= 4
     UNION ALL
-    SELECT 5, '已开通变现', SUM(monetization_after_active4) FROM creator_base
+    SELECT '已开通变现', COUNT(*) FROM creator_base WHERE has_first_publish = 1 AND active_weeks >= 4 AND monetization_opened = 1
     UNION ALL
-    SELECT 6, '稳定经营且已开通变现', SUM(stable_monetizing_creator) FROM creator_base
+    SELECT '稳定经营且已开通变现', COUNT(*) FROM creator_base WHERE has_first_publish = 1 AND active_weeks >= 4 AND monetization_opened = 1 AND stable_updater = 1
 )
-SELECT * FROM funnel_union ORDER BY step_order;</div>
+SELECT * FROM funnel;</div>
+      </div>
+      <div class="panel pad">
+        <div class="section-kicker">2. Cohort</div>
+        <h2>Cohort 稳定性</h2>
+        <p>避免把短观察窗或样本小波动误读成资源策略问题。</p>
+        <div class="code">SELECT
+    DATE_FORMAT(join_date, '%Y-%m') AS join_month,
+    COUNT(*) AS creators,
+    AVG(has_first_publish) AS publish_rate,
+    AVG(retention_30d_rate) AS retention_30d,
+    AVG(monetization_opened) AS monetization_open_rate
+FROM creator_profile
+GROUP BY 1
+ORDER BY 1;</div>
+      </div>
     </div>
+  </section>
 
-    <div class="panel pad" style="margin-top:18px">
-      <h2>2. Cohort 稳定性</h2>
-      <p>避免把观察窗较短的最新 cohort 误读为趋势变化。</p>
-      <div class="code">WITH monthly_cohort AS (
-    SELECT
-        strftime(join_date, '%Y-%m') AS join_month,
-        COUNT(*) AS creators,
-        AVG(has_first_publish) AS publish_rate,
-        AVG(retention_30d_rate) AS retention_30d_rate,
-        AVG(monetization_opened) AS monetization_open_rate,
-        AVG(CASE WHEN active_weeks >= 4 THEN 1 ELSE 0 END) AS active_4w_rate
-    FROM creator_profile
-    GROUP BY 1
-)
-SELECT
-    join_month,
-    creators,
-    ROUND(publish_rate, 4) AS publish_rate,
-    ROUND(retention_30d_rate, 4) AS retention_30d_rate,
-    ROUND(monetization_open_rate, 4) AS monetization_open_rate,
-    ROUND(active_4w_rate, 4) AS active_4w_rate,
-    CASE WHEN creators < 100 THEN '样本较小，仅作方向参考' ELSE '可用于稳定监控' END AS interpretation
-FROM monthly_cohort
-ORDER BY join_month;</div>
-    </div>
-
-    <div class="panel pad" style="margin-top:18px">
-      <h2>3. 创作者分层</h2>
-      <p>关键分层直接使用统一的分位字段。</p>
-      <div class="code">WITH creator_scored AS (
+  <section class="section">
+    <div class="wrap grid-2">
+      <div class="panel pad">
+        <div class="section-kicker">3. Segmentation</div>
+        <h2>关键人群分层</h2>
+        <p>给首轮动作提供名单来源。</p>
+        <div class="code">WITH scored AS (
     SELECT
         creator_id,
+        exposure_share_pct,
+        revenue_per_k_exposure,
         retention_30d_rate,
-        rev_per_1k_exposure,
-        total_supported_exposure,
-        total_cash_incentive,
-        exposure_pct_rank,
-        efficiency_pct_rank,
-        retention_pct_rank,
-        resource_pct_rank,
+        resource_occupancy_pct,
         CASE
-            WHEN exposure_pct_rank >= 0.60 AND efficiency_pct_rank <= 0.52 THEN '高曝光低变现'
-            WHEN retention_pct_rank >= 0.65 AND efficiency_pct_rank >= 0.65 AND resource_pct_rank <= 0.68 THEN '高潜低激励'
-            WHEN retention_pct_rank >= 0.72 AND efficiency_pct_rank >= 0.72 THEN '高价值稳定供给'
-            WHEN exposure_pct_rank <= 0.25 AND efficiency_pct_rank <= 0.35 THEN '低价值供给'
+            WHEN exposure_share_pct >= 0.80 AND revenue_per_k_exposure < 50 THEN '高曝光低变现'
+            WHEN retention_30d_rate >= 0.60 AND revenue_per_k_exposure >= 90 AND resource_occupancy_pct < 0.40 THEN '高潜低激励'
+            WHEN retention_30d_rate >= 0.60 THEN '高价值稳定供给'
+            WHEN retention_30d_rate < 0.35 THEN '低价值供给'
             ELSE '一般供给'
-        END AS creator_segment
+        END AS segment
     FROM creator_profile
 )
-SELECT
-    creator_segment,
-    COUNT(*) AS creators,
-    ROUND(COUNT(*) * 1.0 / SUM(COUNT(*)) OVER (), 4) AS creator_share,
-    ROUND(AVG(retention_30d_rate), 4) AS avg_retention_30d,
-    ROUND(AVG(rev_per_1k_exposure), 2) AS avg_rev_per_1k_exposure,
-    ROUND(SUM(total_supported_exposure) * 1.0 / SUM(SUM(total_supported_exposure)) OVER (), 4) AS exposure_share,
-    ROUND(AVG(total_cash_incentive), 2) AS avg_cash_incentive
-FROM creator_scored
+SELECT segment, COUNT(*) AS creators
+FROM scored
 GROUP BY 1
 ORDER BY creators DESC;</div>
-    </div>
-
-    <div class="panel pad" style="margin-top:18px">
-      <h2>4. 同规模回测</h2>
-      <p>固定 Top N 比较旧规则与新规则，口径统一为 old_rule_pct_rank / retention_pct_rank / efficiency_pct_rank / resource_pct_rank。</p>
-      <div class="code">WITH eligible_creators AS (
+      </div>
+      <div class="panel pad">
+        <div class="section-kicker">4. Rule scoring</div>
+        <h2>首轮灰度评分</h2>
+        <p>首轮口径核心是：控制迁移速度，让留存显式进入排序，同时把效率和低占用作为修正项。</p>
+        <div class="code">WITH ranked AS (
     SELECT
         creator_id,
-        old_rule_score,
-        total_cash_incentive,
-        retention_30d_rate,
-        unit_incentive_revenue,
-        rev_per_1k_exposure,
-        old_rule_pct_rank,
-        retention_pct_rank,
-        efficiency_pct_rank,
-        resource_pct_rank,
-        CASE
-            WHEN retention_pct_rank >= 0.65 AND efficiency_pct_rank >= 0.65 AND resource_pct_rank <= 0.68 THEN 1
-            ELSE 0
-        END AS is_high_potential_under_incentivized,
-        CASE
-            WHEN safety_flag = 1 OR fraud_flag = 1 THEN 0
-            WHEN active_weeks < 2 THEN 0
-            ELSE 1
-        END AS pass_entry_gate,
-        (0.60 * old_rule_pct_rank
-         + 0.20 * retention_pct_rank
-         + 0.15 * efficiency_pct_rank
-         + 0.05 * (1 - resource_pct_rank)) AS new_priority_score
+        PERCENT_RANK() OVER (ORDER BY old_priority_score) AS old_rule_pct,
+        PERCENT_RANK() OVER (ORDER BY retention_30d_rate) AS retention_pct,
+        PERCENT_RANK() OVER (ORDER BY revenue_per_k_exposure_clip) AS efficiency_pct,
+        PERCENT_RANK() OVER (ORDER BY -resource_occupancy_pct) AS low_resource_pct
     FROM creator_profile
-    WHERE has_first_publish = 1
-),
-gated_pool AS (
-    SELECT * FROM eligible_creators WHERE pass_entry_gate = 1
-),
-old_logic AS (
-    SELECT * FROM gated_pool ORDER BY old_rule_score DESC LIMIT 4200
-),
-new_rule AS (
-    SELECT * FROM gated_pool ORDER BY new_priority_score DESC LIMIT 4200
 )
 SELECT
-    'old_logic' AS scheme,
-    COUNT(*) AS selected_creators,
-    ROUND(AVG(retention_30d_rate), 4) AS retention_30d,
-    ROUND(AVG(unit_incentive_revenue), 2) AS revenue_per_incentive,
-    ROUND(AVG(total_cash_incentive), 2) AS cash_per_creator,
-    ROUND(AVG(rev_per_1k_exposure), 2) AS revenue_per_1k_exposure,
-    ROUND(AVG(is_high_potential_under_incentivized), 4) AS high_potential_hit_rate
-FROM old_logic
+    creator_id,
+    0.60 * old_rule_pct
+  + 0.20 * retention_pct
+  + 0.15 * efficiency_pct
+  + 0.05 * low_resource_pct AS new_priority_score
+FROM ranked;</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap grid-2">
+      <div class="panel pad">
+        <div class="section-kicker">5. Same-scale backtest</div>
+        <h2>固定 Top N 回测</h2>
+        <p>所有比较必须在同规模下完成，否则容易通过扩大样本池制造表面提升。</p>
+        <div class="code">WITH old_sel AS (
+    SELECT creator_id
+    FROM creator_profile
+    ORDER BY old_priority_score DESC
+    LIMIT 4200
+),
+new_sel AS (
+    SELECT creator_id
+    FROM scoring_result
+    ORDER BY new_priority_score DESC
+    LIMIT 4200
+)
+SELECT
+    'old_rule' AS rule_type,
+    AVG(retention_30d_rate) AS retention_30d,
+    AVG(revenue_per_incentive) AS revenue_per_incentive,
+    AVG(cash_incentive) AS cash_incentive
+FROM creator_profile
+WHERE creator_id IN (SELECT creator_id FROM old_sel)
 UNION ALL
 SELECT
-    'new_rule' AS scheme,
-    COUNT(*) AS selected_creators,
-    ROUND(AVG(retention_30d_rate), 4) AS retention_30d,
-    ROUND(AVG(unit_incentive_revenue), 2) AS revenue_per_incentive,
-    ROUND(AVG(total_cash_incentive), 2) AS cash_per_creator,
-    ROUND(AVG(rev_per_1k_exposure), 2) AS revenue_per_1k_exposure,
-    ROUND(AVG(is_high_potential_under_incentivized), 4) AS high_potential_hit_rate
-FROM new_rule;</div>
-    </div>
-
-    <div class="panel pad" style="margin-top:18px">
-      <h2>5. 名单迁移结构</h2>
-      <p>看 overlap、补入与移出去向，判断迁移成本与运营承接压力。</p>
-      <div class="code">WITH eligible_creators AS (
-    SELECT
-        creator_id,
-        CASE
-            WHEN exposure_pct_rank >= 0.60 AND efficiency_pct_rank <= 0.52 THEN '高曝光低变现'
-            WHEN retention_pct_rank >= 0.65 AND efficiency_pct_rank >= 0.65 AND resource_pct_rank <= 0.68 THEN '高潜低激励'
-            WHEN retention_pct_rank >= 0.72 AND efficiency_pct_rank >= 0.72 THEN '高价值稳定供给'
-            WHEN exposure_pct_rank <= 0.25 AND efficiency_pct_rank <= 0.35 THEN '低价值供给'
-            ELSE '一般供给'
-        END AS creator_segment,
-        old_rule_score,
-        (0.60 * old_rule_pct_rank
-         + 0.20 * retention_pct_rank
-         + 0.15 * efficiency_pct_rank
-         + 0.05 * (1 - resource_pct_rank)) AS new_priority_score
-    FROM creator_profile
-    WHERE has_first_publish = 1
-),
-old_logic AS (
-    SELECT creator_id FROM eligible_creators ORDER BY old_rule_score DESC LIMIT 4200
-),
-new_rule AS (
-    SELECT creator_id FROM eligible_creators ORDER BY new_priority_score DESC LIMIT 4200
-),
-transitioned AS (
-    SELECT
-        e.creator_segment,
-        CASE
-            WHEN o.creator_id IS NOT NULL AND n.creator_id IS NOT NULL THEN 'retained'
-            WHEN o.creator_id IS NULL AND n.creator_id IS NOT NULL THEN 'promoted_into_new_topn'
-            WHEN o.creator_id IS NOT NULL AND n.creator_id IS NULL THEN 'dropped_from_old_topn'
-            ELSE 'outside_both'
-        END AS selection_transition
-    FROM eligible_creators e
-    LEFT JOIN old_logic o ON e.creator_id = o.creator_id
-    LEFT JOIN new_rule n ON e.creator_id = n.creator_id
-)
+    'new_rule',
+    AVG(retention_30d_rate),
+    AVG(revenue_per_incentive),
+    AVG(cash_incentive)
+FROM creator_profile
+WHERE creator_id IN (SELECT creator_id FROM new_sel);</div>
+      </div>
+      <div class="panel pad">
+        <div class="section-kicker">6. Transition and monitoring</div>
+        <h2>迁移结构与实验监控</h2>
+        <p>输出名单迁移结构，并补充实验监控查询。</p>
+        <div class="code">-- 名单迁移
 SELECT
-    selection_transition,
-    creator_segment,
-    COUNT(*) AS creators,
-    ROUND(COUNT(*) * 1.0 / SUM(COUNT(*)) OVER (PARTITION BY selection_transition), 4) AS share_within_transition
-FROM transitioned
-WHERE selection_transition IN ('promoted_into_new_topn', 'dropped_from_old_topn')
-GROUP BY 1, 2
-ORDER BY 1, creators DESC;</div>
-    </div>
-
-    <div class="panel pad" style="margin-top:18px">
-      <h2>6. 实验监控模板</h2>
-      <p>日级监控的目标是尽早发现 SRM、分流漂移、激励过量投放和关键护栏恶化。</p>
-      <div class="code">WITH assignment_daily AS (
-    SELECT
-        event_date,
-        experiment_group,
-        creator_vertical,
-        COUNT(DISTINCT creator_id) AS creators,
-        SUM(exposure_cnt) AS exposure,
-        SUM(cash_incentive) AS cash_incentive,
-        SUM(revenue_amt) AS revenue_amt,
-        SUM(retained_30d_flag) AS retained_creators,
-        SUM(complaint_cnt) AS complaints,
-        SUM(fraud_flag) AS fraud_cases,
-        SUM(safety_case_cnt) AS safety_cases
-    FROM creator_experiment_daily
-    WHERE experiment_name = 'creator_resource_reallocation_v1'
-    GROUP BY 1, 2, 3
-),
-daily_totals AS (
-    SELECT
-        event_date,
-        SUM(creators) AS total_creators,
-        SUM(exposure) AS total_exposure
-    FROM assignment_daily
-    GROUP BY 1
-),
-monitored AS (
-    SELECT
-        a.event_date,
-        a.experiment_group,
-        a.creator_vertical,
-        a.creators,
-        a.exposure,
-        a.cash_incentive,
-        a.revenue_amt,
-        a.retained_creators,
-        a.complaints,
-        a.fraud_cases,
-        a.safety_cases,
-        a.creators * 1.0 / NULLIF(t.total_creators, 0) AS creator_share,
-        a.exposure * 1.0 / NULLIF(t.total_exposure, 0) AS exposure_share
-    FROM assignment_daily a
-    JOIN daily_totals t
-      ON a.event_date = t.event_date
-)
-SELECT
-    event_date,
-    experiment_group,
-    creator_vertical,
-    creators,
-    ROUND(creator_share, 4) AS creator_share,
-    ROUND(exposure_share, 4) AS exposure_share,
-    ROUND(cash_incentive * 1.0 / NULLIF(creators, 0), 2) AS cash_per_creator,
-    ROUND(revenue_amt * 1.0 / NULLIF(cash_incentive, 0), 2) AS revenue_per_incentive,
-    ROUND(retained_creators * 1.0 / NULLIF(creators, 0), 4) AS retention_30d_proxy,
-    ROUND(complaints * 1.0 / NULLIF(creators, 0), 4) AS complaints_per_creator,
-    ROUND(fraud_cases * 1.0 / NULLIF(creators, 0), 4) AS fraud_rate,
-    ROUND(safety_cases * 1.0 / NULLIF(creators, 0), 4) AS safety_rate,
     CASE
-        WHEN ABS(creator_share - 0.5) > 0.03 THEN '检查 SRM / 分流漂移'
-        WHEN revenue_amt * 1.0 / NULLIF(cash_incentive, 0) < 0 THEN '单位激励收入转负，暂停扩量'
-        ELSE '继续监控'
-    END AS action_hint
-FROM monitored
-ORDER BY event_date, creator_vertical, experiment_group;</div>
-      <div class="note" style="margin-top:14px">优先监控 creator 数与曝光 share 是否偏离设计、cash per creator 是否异常抬升、投诉/作弊/内容安全是否恶化。</div>
-    </div>
+        WHEN o.creator_id IS NOT NULL AND n.creator_id IS NULL THEN '旧名单移出'
+        WHEN o.creator_id IS NULL AND n.creator_id IS NOT NULL THEN '新名单补入'
+    END AS direction,
+    c.segment,
+    COUNT(*) AS creators,
+    AVG(c.retention_30d_rate) AS retention_30d,
+    AVG(c.revenue_per_incentive) AS revenue_per_incentive
+FROM creator_segment c
+LEFT JOIN old_sel o ON c.creator_id = o.creator_id
+LEFT JOIN new_sel n ON c.creator_id = n.creator_id
+WHERE (o.creator_id IS NOT NULL AND n.creator_id IS NULL)
+   OR (o.creator_id IS NULL AND n.creator_id IS NOT NULL)
+GROUP BY 1,2;
 
-    <div class="docs" style="margin-top:18px">
-      <a class="doc-link" href="analysis.py"><strong>analysis.py</strong><span>Python 口径版本</span></a>
-      <a class="doc-link" href="outputs/decision_scorecard.csv"><strong>决策分卡</strong><span>供问题定义与推进判断使用</span></a>
-      <a class="doc-link" href="outputs/experiment_design_card.csv"><strong>实验设计卡</strong><span>监控维度与扩量条件</span></a>
-      <a class="doc-link" href="outputs/validity_threat_register.csv"><strong>有效性威胁表</strong><span>风险与控制方式</span></a>
+-- 日级 SRM / 分流漂移监控
+SELECT
+    dt,
+    exp_group,
+    COUNT(DISTINCT creator_id) AS creators,
+    SUM(exposure) AS exposure,
+    SUM(budget_cost) AS budget_cost
+FROM experiment_daily_fact
+GROUP BY 1,2
+ORDER BY 1,2;</div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-  <div class="wrap footer">
-    样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。
-  </div>
-  <script src="assets/app.js"></script>
+  <section class="section">
+    <div class="wrap docs">
+      <a class="doc-link" href="analysis.py"><strong>analysis.py</strong><span class="muted">Python 口径版本</span></a>
+      <a class="doc-link" href="outputs/decision_scorecard.csv"><strong>决策分卡</strong><span class="muted">供问题定义与推进判断使用</span></a>
+      <a class="doc-link" href="outputs/experiment_design_card.csv"><strong>实验设计卡</strong><span class="muted">监控维度与扩量条件</span></a>
+      <a class="doc-link" href="outputs/validity_threat_register.csv"><strong>有效性威胁表</strong><span class="muted">风险与控制方式</span></a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。</div>
+  </footer>
 </body>
 </html>

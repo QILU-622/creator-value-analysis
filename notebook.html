@@ -8,35 +8,61 @@
 </head>
 <body>
   
-    <div class="topbar">
-      <div class="wrap nav">
-        <div class="brand">创作者资源重配分析<small>离线诊断、规则回测与实验设计</small></div>
-        <div class="navlinks"><a href="index.html" class="">首页</a><a href="report.html" class="">完整报告</a><a href="notebook.html" class="active">分析过程</a><a href="sql.html" class="">SQL 方案</a></div>
-      </div>
-    </div>
-    
-  
-<section class="hero">
-  <div class="wrap">
-    <div class="eyebrow">分析过程页</div>
-    <h1>按经营判断顺序展开分析过程</h1>
-    <p>本页按问题定义、数据整理、规则设计、同规模回测、迁移分析和实验准备组织代码片段，变量命名与规则字段已统一。</p>
+<div class="topbar">
+  <div class="wrap nav">
+    <div class="brand">创作者资源重配分析<small>离线诊断、规则回测与实验设计</small></div>
+    <div class="navlinks"><a href="index.html" class="">首页</a><a href="report.html" class="">完整报告</a><a href="notebook.html" class="active">分析过程</a><a href="sql.html" class="">SQL 方案</a></div>
   </div>
-</section>
+</div>
 
-<section class="section">
-  <div class="wrap">
-    <div class="panel pad">
-      <h2>分析步骤</h2>
-      <div class="grid-2">
-        <div class="small-card"><h3>0. 分析目标</h3><p>先判断资源错配是否成立，再判断轻量校正规则是否值得进入首轮灰度。</p><div class="code">import pandas as pd
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">分析过程</div>
+      <h1>经营判断顺序</h1>
+      <p>分析顺序与代码片段一一对应。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap grid-3">
+      <div class="panel pad"><h3>0. 目标定义</h3><p>聚焦资源配置效率判断。</p></div>
+      <div class="panel pad"><h3>1. 供给诊断</h3><p>识别损耗阶段，明确动作落点。</p></div>
+      <div class="panel pad"><h3>2. 错配识别</h3><p>比较曝光集中度与价值集中度，识别沉没资源与高潜低配。</p></div>
+      <div class="panel pad"><h3>3. 规则设计</h3><p>规则由准入、排序和复核三部分组成，并兼顾迁移成本和运营承接。</p></div>
+      <div class="panel pad"><h3>4. 固定 Top N 回测</h3><p>只在同规模下比较主指标，避免通过扩大样本池制造表面提升。</p></div>
+      <div class="panel pad"><h3>5. 实验准备</h3><p>离线证据只决定是否值得试；是否扩量，要看线上主指标和护栏。</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap panel pad">
+      <div class="section-kicker">Notebook structure</div>
+      <h2>0. 分析目标</h2>
+      <p>核心问题：当流量和现金激励都有限时，平台是否把资源给到了更值得长期扶持的创作者？</p>
+      <div class="code">import pandas as pd
 import numpy as np
 
 creator = pd.read_csv('../data/creator_profile.csv', parse_dates=['join_date'])
 content = pd.read_csv('../data/content_performance.csv', parse_dates=['publish_date'])
 weekly = pd.read_csv('../data/creator_weekly_activity.csv')
-incentive = pd.read_csv('../data/creator_incentive.csv')</div></div>
-        <div class="small-card"><h3>1. 供给漏斗</h3><p>确认主要损耗集中在首发后到稳定经营阶段。</p><div class="code">funnel = pd.DataFrame({
+incentive = pd.read_csv('../data/creator_incentive.csv')
+
+print('creator rows:', len(creator))
+print('content rows:', len(content))
+print('weekly rows:', len(weekly))
+print('incentive rows:', len(incentive))</div>
+      <div class="note" style="margin-top:14px">当前页面聚焦资源重配方向与灰度条件。</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap grid-2">
+      <div class="panel pad">
+        <div class="section-kicker">1. Funnel</div>
+        <h2>供给漏斗</h2>
+        <p>如果主要损耗发生在注册到首发之前，动作就偏拉新和首发激活；如果发生在首发之后，动作重点就应转向持续经营。</p>
+        <div class="code">funnel = pd.DataFrame({
     'stage': ['注册创作者','完成首发','连续活跃≥2周','连续活跃≥4周','已开通变现','稳定经营且已开通变现'],
     'creator_cnt': [
         len(creator),
@@ -48,11 +74,14 @@ incentive = pd.read_csv('../data/creator_incentive.csv')</div></div>
     ]
 })
 funnel['share_of_registered'] = funnel['creator_cnt'] / funnel.loc[0, 'creator_cnt']
-funnel['step_conversion'] = funnel['creator_cnt'] / funnel['creator_cnt'].shift(1)</div></div>
+funnel['step_conversion'] = funnel['creator_cnt'] / funnel['creator_cnt'].shift(1)</div>
+        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>主要损耗集中在首发后的持续经营阶段，因此资源动作应优先提高已启动创作者进入稳定经营状态的概率。</div>
       </div>
-
-      <div class="grid-2" style="margin-top:18px">
-        <div class="small-card"><h3>2. Cohort 检查</h3><p>避免把最新 cohort 的短观察窗误读为趋势变化。</p><div class="code">cohort = (
+      <div class="panel pad">
+        <div class="section-kicker">2. Cohort</div>
+        <h2>cohort 稳定性</h2>
+        <p>排除样本质量突变和短观察窗干扰。</p>
+        <div class="code">cohort = (
     creator.assign(join_month=creator['join_date'].dt.to_period('M').astype(str))
            .groupby('join_month')
            .agg(
@@ -62,124 +91,96 @@ funnel['step_conversion'] = funnel['creator_cnt'] / funnel['creator_cnt'].shift(
                monetization_open_rate=('monetization_opened', 'mean')
            )
            .reset_index()
-)</div></div>
-        <div class="small-card"><h3>3. 曝光与价值集中度</h3><p>比较累计曝光占比与累计收入占比，判断资源是否沿历史曝光惯性分配。</p><div class="code">pareto = creator[['creator_id', 'total_supported_exposure', 'total_revenue']].copy()
-pareto = pareto.sort_values('total_supported_exposure', ascending=False).reset_index(drop=True)
-pareto['creator_share'] = (pareto.index + 1) / len(pareto)
-pareto['cum_exposure_share'] = pareto['total_supported_exposure'].cumsum() / pareto['total_supported_exposure'].sum()
-pareto['cum_revenue_share'] = pareto['total_revenue'].cumsum() / pareto['total_revenue'].sum()</div></div>
-      </div>
-
-      <div class="small-card" style="margin-top:18px">
-        <h3>4. 关键人群识别</h3>
-        <p>四类分群均使用统一的分位字段命名：exposure_pct_rank、retention_pct_rank、efficiency_pct_rank、resource_pct_rank。</p>
-        <div class="code">creator['segment'] = np.select([
-    (creator['exposure_pct_rank'] >= 0.60) & (creator['efficiency_pct_rank'] <= 0.52),
-    (creator['retention_pct_rank'] >= 0.65) & (creator['efficiency_pct_rank'] >= 0.65) & (creator['resource_pct_rank'] <= 0.68),
-    (creator['retention_pct_rank'] >= 0.72) & (creator['efficiency_pct_rank'] >= 0.72),
-    (creator['exposure_pct_rank'] <= 0.25) & (creator['efficiency_pct_rank'] <= 0.35)
-], ['高曝光低变现', '高潜低激励', '高价值稳定供给', '低价值供给'], default='一般供给')</div>
-      </div>
-
-      <div class="small-card" style="margin-top:18px">
-        <h3>5. 规则构造</h3>
-        <p>排序修正建立在准入过滤之后；低资源占用信号通过 <code>1 - resource_pct_rank</code> 进入新分数。</p>
-        <div class="code">eligible = creator[creator['has_first_publish'] == 1].copy()
-
-low = eligible['rev_per_1k_exposure'].quantile(0.01)
-high = eligible['rev_per_1k_exposure'].quantile(0.99)
-eligible['efficiency_winsorized'] = eligible['rev_per_1k_exposure'].clip(low, high)
-
-eligible['old_rule_pct_rank'] = eligible['old_rule_score'].rank(pct=True)
-eligible['retention_pct_rank'] = eligible['retention_30d_rate'].rank(pct=True)
-eligible['efficiency_pct_rank'] = eligible['efficiency_winsorized'].rank(pct=True)
-eligible['resource_pct_rank'] = eligible['total_supported_exposure'].rank(pct=True)
-
-eligible['pass_entry_gate'] = np.where(
-    (eligible['active_weeks'] >= 2)
-    & (eligible['safety_flag'] == 0)
-    & (eligible['fraud_flag'] == 0),
-    1, 0
-)
-
-eligible['new_priority_score'] = (
-    0.60 * eligible['old_rule_pct_rank']
-    + 0.20 * eligible['retention_pct_rank']
-    + 0.15 * eligible['efficiency_pct_rank']
-    + 0.05 * (1 - eligible['resource_pct_rank'])
 )</div>
-      </div>
-
-      <div class="grid-2" style="margin-top:18px">
-        <div class="small-card"><h3>6. 同规模回测</h3><p>固定 Top N 比较旧规则与新规则，避免通过扩大样本池制造假提升。</p><div class="code">pool = eligible[eligible['pass_entry_gate'] == 1].copy()
-old_sel = pool.nlargest(4200, 'old_rule_score')
-new_sel = pool.nlargest(4200, 'new_priority_score')
-
-backtest = pd.DataFrame({
-    '方案': ['原规则', '校正后规则'],
-    '30日留存率': [old_sel['retention_30d_rate'].mean(), new_sel['retention_30d_rate'].mean()],
-    '单位激励收入': [old_sel['unit_incentive_revenue'].mean(), new_sel['unit_incentive_revenue'].mean()],
-    '人均现金激励': [old_sel['total_cash_incentive'].mean(), new_sel['total_cash_incentive'].mean()]
-})</div></div>
-        <div class="small-card"><h3>7. 名单迁移</h3><p>同时看 overlap 与迁移去向，判断运营承接是否可控。</p><div class="code">old_ids = set(old_sel['creator_id'])
-new_ids = set(new_sel['creator_id'])
-
-overlap_rate = len(old_ids & new_ids) / len(old_ids)
-promoted = len(new_ids - old_ids)
-dropped = len(old_ids - new_ids)
-
-transition_summary = pd.DataFrame({
-    '指标': ['新旧名单重合率', '新增创作者数', '移出创作者数'],
-    '值': [overlap_rate, promoted, dropped]
-})</div></div>
-      </div>
-
-      <div class="small-card" style="margin-top:18px">
-        <h3>8. 稳健性检查</h3>
-        <p>不同 Top N 档位下分别计算留存 uplift 与单位激励收入 uplift。</p>
-        <div class="code">topn_results = []
-for n in [3000, 3600, 4200, 5000, 6000]:
-    old_n = pool.nlargest(n, 'old_rule_score')
-    new_n = pool.nlargest(n, 'new_priority_score')
-    topn_results.append({
-        'top_n': n,
-        'retention_uplift_ppt': (new_n['retention_30d_rate'].mean() - old_n['retention_30d_rate'].mean()) * 100,
-        'unit_incentive_revenue_uplift_pct': (new_n['unit_incentive_revenue'].mean() / old_n['unit_incentive_revenue'].mean() - 1) * 100
-    })</div>
-      </div>
-
-      <div class="panel pad" style="margin-top:18px">
-        <h3>关键结果表</h3>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>指标</th><th>旧规则</th><th>新规则</th><th>变化</th></tr></thead>
-            <tbody>
-              <tr><td>30 日留存率</td><td>48.7%</td><td>58.1%</td><td>9.4ppt</td></tr>
-              <tr><td>单位激励收入</td><td>69.6</td><td>78.4</td><td>12.7%</td></tr>
-              <tr><td>人均现金激励</td><td>550</td><td>625</td><td>13.6%</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="callout" style="margin-top:18px">
-        <strong>读数边界</strong>
-        离线回测不等价于因果识别；旧规则与历史资源倾斜高度相关；补入名单没有真实拿到同等资源，因此离线 uplift 只解释方向，不直接等价于真实增量。
-      </div>
-
-      <div class="docs" style="margin-top:18px">
-        <a class="doc-link" href="notebooks/creator_value_analysis.ipynb"><strong>Notebook 原文件</strong><span>统一变量命名版</span></a>
-        <a class="doc-link" href="analysis.py"><strong>analysis.py</strong><span>静态站使用的示例脚本</span></a>
-        <a class="doc-link" href="report.html"><strong>完整报告</strong><span>口径、回测与风控</span></a>
-        <a class="doc-link" href="sql.html"><strong>SQL 方案</strong><span>事实层、指标层与实验监控</span></a>
+        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>各 cohort 整体平稳，问题更可能来自资源分配逻辑。最新 cohort 样本较小，仅作预警信号。</div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-  <div class="wrap footer">
-    样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。
-  </div>
-  <script src="assets/app.js"></script>
+  <section class="section">
+    <div class="wrap grid-2">
+      <div class="panel pad">
+        <div class="section-kicker">3. Misallocation</div>
+        <h2>识别资源错配</h2>
+        <p>用曝光集中度与收入集中度的差异判断资源是否仍沿历史曝光惯性分配，并用分群识别首轮动作人群。</p>
+        <div class="code">pareto = (
+    creator.sort_values('total_exposure', ascending=False)
+           .assign(
+               creator_share=lambda x: np.arange(1, len(x)+1) / len(x),
+               cum_exposure_share=lambda x: x['total_exposure'].cumsum() / x['total_exposure'].sum(),
+               cum_revenue_share=lambda x: x['total_revenue'].cumsum() / x['total_revenue'].sum()
+           )
+)
+
+top20 = creator.nlargest(int(len(creator) * 0.2), 'total_exposure')
+exposure_share = top20['total_exposure'].sum() / creator['total_exposure'].sum()
+revenue_share = top20['total_revenue'].sum() / creator['total_revenue'].sum()</div>
+        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>Top 20% 创作者拿走 42.9% 曝光，只贡献 30.2% 收入，说明当前资源集中度高于价值集中度。</div>
+      </div>
+      <div class="panel pad">
+        <div class="section-kicker">4. Rule design</div>
+        <h2>定义首轮灰度口径</h2>
+        <p>首轮规则兼顾迁移可控、主指标方向和运营承接。</p>
+        <div class="code">creator['old_rule_pct'] = creator['old_priority_score'].rank(pct=True)
+creator['retention_pct'] = creator['retention_30d_rate'].rank(pct=True)
+creator['efficiency_pct'] = creator['revenue_per_k_exposure_clip'].rank(pct=True)
+creator['low_resource_pct'] = (-creator['resource_occupancy_pct']).rank(pct=True)
+
+creator['new_priority_score'] = (
+    0.60 * creator['old_rule_pct']
+    + 0.20 * creator['retention_pct']
+    + 0.15 * creator['efficiency_pct']
+    + 0.05 * creator['low_resource_pct']
+)</div>
+        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>旧规则权重保留较高，用于控制名单迁移速度；留存进入排序主逻辑，把长期供给质量显式纳入分发。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap grid-2">
+      <div class="panel pad">
+        <div class="section-kicker">5. Same-scale backtest</div>
+        <h2>固定 Top N 做回测</h2>
+        <p>所有比较都在固定 Top N 下完成，避免通过扩大样本池制造表面提升。</p>
+        <div class="code">TOP_N = 4200
+old_sel = creator.nlargest(TOP_N, 'old_priority_score').copy()
+new_sel = creator.nlargest(TOP_N, 'new_priority_score').copy()
+
+summary = pd.DataFrame({
+    'metric': ['retention_30d_rate', 'revenue_per_incentive', 'cash_incentive_per_creator'],
+    'old_rule': [old_sel['retention_30d_rate'].mean(), old_sel['revenue_per_incentive'].mean(), old_sel['cash_incentive'].mean()],
+    'new_rule': [new_sel['retention_30d_rate'].mean(), new_sel['revenue_per_incentive'].mean(), new_sel['cash_incentive'].mean()]
+})</div>
+        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>30 日留存和单位激励收入同步改善，新旧名单重合率约 72.2%，调整幅度可控。</div>
+      </div>
+      <div class="panel pad">
+        <div class="section-kicker">6. Launch readiness</div>
+        <h2>补上实验与风控</h2>
+        <p>离线证据用于判断是否进入灰度；是否扩量，需要主指标、护栏、暂停条件和风控动作同时成立。</p>
+        <div class="code">experiment_card = {
+    'randomization_unit': 'creator 级分层随机实验',
+    'primary_metrics': ['30 日留存率', '单位激励收入'],
+    'guardrails': ['人均现金激励', '供给流失率', '投诉率', '作弊率', '内容安全'],
+    'expand_if': '主指标不为负，单位激励收入为正，关键护栏无明显恶化',
+    'rollback_if': '连续 3 天出现显著 SRM / 分流漂移，或投诉 / 作弊 / 安全明显恶化'
+}</div>
+        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>上线依据同时包括实验设计、风控门槛和回测结果。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap docs">
+      <a class="doc-link" href="notebooks/creator_value_analysis.ipynb"><strong>Notebook 原文件</strong><span class="muted">统一变量命名版</span></a>
+      <a class="doc-link" href="analysis.py"><strong>analysis.py</strong><span class="muted">静态站使用的示例脚本</span></a>
+      <a class="doc-link" href="report.html"><strong>完整报告</strong><span class="muted">口径、回测与风控</span></a>
+      <a class="doc-link" href="sql.html"><strong>SQL 方案</strong><span class="muted">事实层、指标层与实验监控</span></a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。</div>
+  </footer>
 </body>
 </html>

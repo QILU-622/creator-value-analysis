@@ -8,203 +8,199 @@
 </head>
 <body>
   
-    <div class="topbar">
-      <div class="wrap nav">
-        <div class="brand">创作者资源重配分析<small>离线诊断、规则回测与实验设计</small></div>
-        <div class="navlinks"><a href="index.html" class="active">首页</a><a href="report.html" class="">完整报告</a><a href="notebook.html" class="">分析过程</a><a href="sql.html" class="">SQL 方案</a></div>
-      </div>
-    </div>
-    
-  
-<section class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="eyebrow">固定 Top N 回测 · creator 级分层实验 · 首轮灰度口径</div>
-      <h1>资源可以重配，<br>扩量必须先过实验门槛</h1>
-      <p>在预算受限的前提下，这个项目判断平台资源是否持续流向更可能形成稳定供给、留存和收入的创作者；当前离线证据支持进入首轮灰度，不支持跳过线上验证直接全量切换。</p>
-      <div class="metrics">
-        <div class="metric"><div class="value">42.9%</div><div class="label">Top 20% 创作者曝光占比</div></div>
-        <div class="metric"><div class="value">30.2%</div><div class="label">Top 20% 创作者收入占比</div></div>
-        <div class="metric"><div class="value">2,620</div><div class="label">高曝光低变现创作者</div></div>
-        <div class="metric"><div class="value">+9.4ppt</div><div class="label">Top 4,200 30 日留存提升</div></div>
-      </div>
-    </div>
-    <div class="panel pad">
-      <h3>首屏结论</h3>
-      <div class="kicker-list">
-        <div class="kicker"><strong>问题位置</strong><span>曝光集中度高于价值集中度；损耗集中在首发后的持续经营阶段。</span></div>
-        <div class="kicker"><strong>动作方向</strong><span>回收部分低效率曝光，补向更可能形成稳定供给的创作者。</span></div>
-        <div class="kicker"><strong>推进方式</strong><span>先做 creator 级分层随机实验，再根据主指标与护栏决定是否扩量。</span></div>
-      </div>
-      <hr class="sep" />
-      <div class="mini-grid">
-        <div class="small-card"><div class="big">72.2%</div><div class="label">新旧名单重合率</div></div>
-        <div class="small-card"><div class="big">12.7%</div><div class="label">单位激励收入提升</div></div>
-      </div>
-    </div>
+<div class="topbar">
+  <div class="wrap nav">
+    <div class="brand">创作者资源重配分析<small>离线诊断、规则回测与实验设计</small></div>
+    <div class="navlinks"><a href="index.html" class="active">首页</a><a href="report.html" class="">完整报告</a><a href="notebook.html" class="">分析过程</a><a href="sql.html" class="">SQL 方案</a></div>
   </div>
-</section>
+</div>
 
-<section class="section">
-  <div class="wrap">
-    <div class="section-header">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
       <div>
-        <h2>问题诊断</h2>
-        <p>先确认损耗发生位置，再判断资源是否沿历史曝光惯性分配。</p>
-      </div>
-      <div class="badge soft">问题定义 → 供给漏斗 → Cohort → 关键人群</div>
-    </div>
-    <div class="grid-2">
-      <div class="panel pad">
-        <h3>供给漏斗</h3>
-        <p>注册到首发不是主要瓶颈，首发后到稳定经营之间才是主要损耗段。</p>
-        <div id="funnelChart"></div>
-      </div>
-      <div class="panel pad">
-        <h3>Cohort 稳定性</h3>
-        <p>首发率、30 日留存与变现开通率整体平稳；2026-03 样本量仅 54，只作方向参考。</p>
-        <div class="legend"><span class="l1">30 日留存</span><span class="l2">变现开通率</span></div>
-        <div id="cohortChart"></div>
-      </div>
-    </div>
-    <div class="grid-2" style="margin-top:18px">
-      <div class="panel pad">
-        <h3>曝光与价值集中度</h3>
-        <p>Top 20% 创作者拿走 42.9% 曝光，只贡献 30.2% 收入，资源分配仍带有较强历史惯性。</p>
-        <div class="mini-grid">
-          <div class="small-card"><div class="big">42.9%</div><div class="label">Top 20% 曝光占比</div></div>
-          <div class="small-card"><div class="big">30.2%</div><div class="label">Top 20% 收入占比</div></div>
+        <div class="eyebrow">固定 Top N 回测 · creator 级分层实验 · 首轮灰度口径</div>
+        <h1>资源重配是否具备灰度条件</h1>
+        <p>在预算受限的前提下，平台需要判断资源是否持续流向更可能形成稳定供给、留存和收入的创作者。当前离线证据支持进入首轮灰度，不支持跳过线上验证直接全量切换。</p>
+        <div class="metrics">
+          <div class="metric"><div class="value">42.9%</div><div class="label">Top 20% 创作者曝光占比</div></div>
+          <div class="metric"><div class="value">30.2%</div><div class="label">Top 20% 创作者收入占比</div></div>
+          <div class="metric"><div class="value">2,620</div><div class="label">高曝光低变现创作者</div></div>
+          <div class="metric"><div class="value">+9.4ppt</div><div class="label">Top 4,200 30 日留存提升</div></div>
         </div>
       </div>
-      <div class="panel pad">
-        <h3>关键人群</h3>
-        <div class="table-wrap"><table><thead><tr><th>人群</th><th>人数 / 占比</th><th>特征</th><th>动作含义</th></tr></thead><tbody><tr><td>高曝光低变现</td><td>2,620 / 14.0%</td><td>曝光占比 35.0%，是首轮降配与复核的主要名单来源</td><td>降配阈值 + 复核</td></tr><tr><td>高潜低激励</td><td>1,297 / 6.9%</td><td>30 日留存 62.4%，千次曝光收入 98.1，资源占用分位较低</td><td>增配曝光与激励</td></tr></tbody></table></div>
+      <div class="panel pad tight">
+        <div class="split" style="margin-bottom:14px">
+          <span class="badge good">问题成立</span>
+          <span class="badge soft">动作可执行</span>
+          <span class="badge warn">灰度后扩量</span>
+        </div>
+        <div class="kpi-list">
+          <div class="kpi"><strong>问题位置</strong>损耗主要发生在首发后的持续经营阶段。</div>
+          <div class="kpi"><strong>错配方向</strong>资源集中度高于价值集中度，说明当前分配更接近延续历史曝光优势。</div>
+          <div class="kpi"><strong>首轮动作</strong>回收部分低效率曝光，补向更可能形成稳定供给的创作者。</div>
+          <div class="kpi"><strong>推进节奏</strong>采用 creator 级分层随机实验；主指标为正且关键护栏稳定后，逐步扩量。</div>
+        </div>
       </div>
     </div>
-    <div class="panel pad" style="margin-top:18px">
-      <h3>决策分卡</h3>
-      <div class="table-wrap"><table><thead><tr><th>维度</th><th>判断</th><th>说明</th></tr></thead><tbody><tr><td>问题清晰度</td><td>通过</td><td>曝光集中度高于价值集中度，损耗集中在首发后的持续经营阶段。</td></tr><tr><td>动作可执行性</td><td>有条件通过</td><td>高潜低激励与高曝光低变现两类人群清晰；降配对象需要复核与申诉承接。</td></tr><tr><td>证据强度</td><td>有条件通过</td><td>固定 Top N 历史回测下，30 日留存与单位激励收入同步改善。</td></tr><tr><td>迁移风险</td><td>可控但需复核</td><td>新旧名单重合率约 72.2%，属于轻量校正，边界样本需要分层推进。</td></tr><tr><td>稳健性</td><td>基本通过</td><td>不同预算档位与内容垂类下方向一致，改善幅度随扩量递减。</td></tr><tr><td>上线建议</td><td>先实验后扩量</td><td>先做 creator 级分层随机实验，主指标与护栏稳定后再扩量。</td></tr></tbody></table></div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="section">
-  <div class="wrap">
-    <div class="section-header">
-      <div>
-        <h2>规则口径</h2>
-        <p>首轮灰度按照“准入过滤 → 排序加权 → 名单复核”三步执行。</p>
+  <section class="section">
+    <div class="wrap">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">Decision frame</div>
+          <h2>当前判断：问题位置、人群范围、推进节奏</h2>
+        </div>
       </div>
-      <div class="badge warn">首轮口径优先控制迁移幅度与运营承接压力</div>
+      <div class="grid-3">
+        <div class="panel pad">
+          <h3>问题在哪里</h3>
+          <p>注册到首发阶段转化相对平稳，主要损耗集中在首发后到稳定经营之间。</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>阶段</th><th>占全量</th><th>阶段转化</th></tr></thead>
+              <tbody>
+                <tr><td>注册创作者</td><td>100.0%</td><td>—</td></tr>
+                <tr><td>完成首发</td><td>80.6%</td><td>80.6%</td></tr>
+                <tr><td>连续活跃 ≥ 2 周</td><td>69.7%</td><td>86.5%</td></tr>
+                <tr><td>连续活跃 ≥ 4 周</td><td>45.7%</td><td>65.6%</td></tr>
+                <tr><td>已开通变现</td><td>31.6%</td><td>69.1%</td></tr>
+                <tr><td>稳定经营且已开通变现</td><td>15.0%</td><td>47.6%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel pad">
+          <h3>该动谁</h3>
+          <p>首轮名单围绕两类对资源效率最敏感的人群组织。</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>人群</th><th>规模</th><th>识别信号</th><th>动作</th></tr></thead>
+              <tbody>
+                <tr><td>高曝光低变现</td><td>2,620 / 14.0%</td><td>曝光占比 35.0%，是主要资源沉没点</td><td>降配阈值 + 复核</td></tr>
+                <tr><td>高潜低激励</td><td>1,297 / 6.9%</td><td>30 日留存 62.4%，千次曝光收入 98.1</td><td>增配曝光与激励</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small" style="margin-top:12px">少量边界样本仍需进入复核队列，不做机械切割。</p>
+        </div>
+        <div class="panel pad">
+          <h3>怎么推进</h3>
+          <p>首轮口径兼顾迁移幅度、运营承接压力和主指标方向。</p>
+          <div class="formula">新优先级分数 = 0.60 × 原规则分位 + 0.20 × 留存分位 + 0.15 × 变现效率分位（缩尾后） + 0.05 × 低资源占用分位</div>
+          <ul class="list-clean" style="margin-top:14px">
+            <li>旧规则占 0.60：控制名单迁移速度。</li>
+            <li>留存显式进入排序：把长期供给质量变成排序变量。</li>
+            <li>效率与低占用只作修正：避免极端信号主导名次。</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div class="grid-2">
-      <div class="panel pad">
-        <h3>执行结构</h3>
-        <ul class="list-tight">
-          <li><strong>准入过滤：</strong>过滤安全、作弊、活跃不足，以及历史资源占用高但长期效率低的人群。</li>
-          <li><strong>排序加权：</strong>保留旧规则主体，同时把留存、变现效率和低资源占用纳入修正信号。</li>
-          <li><strong>名单复核：</strong>拟降配对象进入复核与申诉队列，避免边界样本被机械误伤。</li>
-        </ul>
-      </div>
-      <div class="panel pad">
-        <h3>首轮灰度评分公式</h3>
-        <div class="code">新优先级分数
-= 0.60 × 原规则分位
-+ 0.20 × 留存分位
-+ 0.15 × 变现效率分位（缩尾后）
-+ 0.05 × 低资源占用分位</div>
-        <p style="margin-top:12px">旧规则占 0.60，用于控制名单迁移速度；留存进入排序主逻辑；效率与低资源占用只作修正项。</p>
-      </div>
-    </div>
-    <div class="panel pad" style="margin-top:18px">
-      <h3>候选口径取舍</h3>
-      <div class="table-wrap"><table><thead><tr><th>方案</th><th>旧规则</th><th>留存</th><th>效率</th><th>低占用</th><th>名单重合率</th><th>留存提升</th><th>单位激励收入提升</th><th>人均现金激励变化</th><th>结论</th></tr></thead><tbody><tr><td>A</td><td>0.5</td><td>0.2</td><td>0.15</td><td>0.15</td><td>69.5%</td><td>10.05ppt</td><td>19.85%</td><td>9.03%</td><td>未采用</td></tr><tr><td>B</td><td>0.5</td><td>0.15</td><td>0.2</td><td>0.15</td><td>69.0%</td><td>9.76ppt</td><td>21.42%</td><td>8.66%</td><td>未采用</td></tr><tr><td>C</td><td>0.55</td><td>0.2</td><td>0.15</td><td>0.1</td><td>70.6%</td><td>9.85ppt</td><td>16.12%</td><td>11.61%</td><td>未采用</td></tr><tr><td>D</td><td>0.6</td><td>0.2</td><td>0.15</td><td>0.05</td><td>71.9%</td><td>9.57ppt</td><td>12.32%</td><td>14.17%</td><td>首轮灰度采用</td></tr><tr><td>E</td><td>0.6</td><td>0.15</td><td>0.2</td><td>0.05</td><td>71.4%</td><td>9.29ppt</td><td>14.33%</td><td>13.61%</td><td>未采用</td></tr><tr><td>F</td><td>0.65</td><td>0.1</td><td>0.25</td><td>0.0</td><td>71.9%</td><td>8.95ppt</td><td>12.40%</td><td>15.58%</td><td>未采用</td></tr></tbody></table></div>
-      <div class="callout" style="margin-top:14px">
-        <strong>D 方案用于首轮灰度</strong>
-        离线提升最大并不是首轮口径的唯一目标。D 方案在名单重合率、主指标改善与运营承接压力之间更平衡，因此作为首轮灰度口径。
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="section">
-  <div class="wrap">
-    <div class="section-header">
-      <div>
-        <h2>同规模回测与扩量视角</h2>
-        <p>所有比较都在固定 Top N 下完成，避免通过扩大样本池制造表面提升。</p>
-      </div>
-      <div class="badge good">Top 4,200：留存 +9.4ppt；单位激励收入 +12.7%</div>
-    </div>
-    <div class="grid-3">
-      <div class="small-card"><div class="big">48.7% → 58.1%</div><div class="label">30 日留存率</div></div>
-      <div class="small-card"><div class="big">69.6 → 78.4</div><div class="label">单位激励收入</div></div>
-      <div class="small-card"><div class="big">550 → 625</div><div class="label">人均现金激励</div></div>
-    </div>
-    <div class="grid-2" style="margin-top:18px">
+  <section class="section">
+    <div class="wrap grid-2">
       <div class="panel pad">
-        <h3>读数边界</h3>
-        <ul class="list-tight">
-          <li>离线回测支持进入实验，不直接等价于真实因果增量。</li>
-          <li>旧规则与历史资源倾斜高度相关，样本天然带有路径依赖。</li>
-          <li>补入名单在历史上未真实拿到同等资源，离线 uplift 只能作为方向证据。</li>
-        </ul>
+        <div class="section-kicker">Why the issue is real</div>
+        <h2>资源分配仍带有历史曝光惯性</h2>
+        <p>Top 20% 创作者拿走 42.9% 曝光，但只贡献 30.2% 收入。资源集中度高于价值集中度，说明当前分配并没有充分把长期经营质量纳入排序逻辑。</p>
+        <div class="grid-2" style="margin-top:18px">
+          <div class="subpanel"><div class="small">Top 20% 曝光占比</div><div class="metric" style="margin-top:10px"><div class="value">42.9%</div><div class="label">历史曝光优势仍被持续放大</div></div></div>
+          <div class="subpanel"><div class="small">Top 20% 收入占比</div><div class="metric" style="margin-top:10px"><div class="value">30.2%</div><div class="label">价值产出没有同步集中</div></div></div>
+        </div>
+        <div class="note" style="margin-top:16px">这组证据只能说明“旧规则更接近按历史曝光惯性继续分配”，不能直接替代线上因果识别。</div>
       </div>
       <div class="panel pad">
-        <h3>Bootstrap 95% 区间</h3>
-        <div class="table-wrap"><table><thead><tr><th>指标</th><th>点估计</th><th>下界</th><th>上界</th></tr></thead><tbody><tr><td>30 日留存提升（ppt）</td><td>9.43</td><td>8.80</td><td>10.11</td></tr><tr><td>单位激励收入提升（%）</td><td>12.67</td><td>9.61</td><td>15.95</td></tr></tbody></table></div>
+        <div class="section-kicker">Offline evidence</div>
+        <h2>固定 Top 4,200 回测支持进入灰度</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>指标</th><th>原规则</th><th>新规则</th><th>变化</th></tr></thead>
+            <tbody>
+              <tr><td>30 日留存</td><td>48.7%</td><td>58.1%</td><td>+9.4ppt</td></tr>
+              <tr><td>单位激励收入</td><td>69.6</td><td>78.4</td><td>+12.7%</td></tr>
+              <tr><td>人均现金激励</td><td>550</td><td>625</td><td>+13.6%</td></tr>
+              <tr><td>高潜命中率</td><td>3.5%</td><td>7.3%</td><td>+3.8ppt</td></tr>
+              <tr><td>名单重合率</td><td colspan="3">72.2%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout" style="margin-top:16px"><strong>结果解释</strong>这组结果反映结构性资源重配：单人成本上升，但稳定经营和单位激励产出同步改善，支持进入实验；它不等价于真实因果 uplift。</div>
       </div>
     </div>
-    <div class="panel pad" style="margin-top:18px">
-      <h3>不同 Top N 档位</h3>
-      <p>随着 Top N 扩大，留存与单位激励收入提升逐步回落，扩量更适合按预算档位分阶段推进。</p>
-      <div id="topNChart"></div>
-      <div class="table-wrap"><table><thead><tr><th>Top N</th><th>人均现金激励变化</th><th>30 日留存提升</th><th>单位激励收入提升</th></tr></thead><tbody><tr><td>3,000</td><td>24.2%</td><td>14.9ppt</td><td>18.7%</td></tr><tr><td>3,600</td><td>18.6%</td><td>12.2ppt</td><td>15.8%</td></tr><tr><td>4,200</td><td>13.6%</td><td>9.4ppt</td><td>12.7%</td></tr><tr><td>5,000</td><td>9.7%</td><td>7.0ppt</td><td>10.1%</td></tr><tr><td>6,000</td><td>6.4%</td><td>4.9ppt</td><td>7.2%</td></tr></tbody></table></div>
-    </div>
-    <div class="grid-2" style="margin-top:18px">
-      <div class="panel pad">
-        <h3>名单迁移结构</h3>
-        <div class="table-wrap"><table><thead><tr><th>方向</th><th>分群</th><th>人数</th><th>组内占比</th><th>平均 30 日留存</th><th>平均单位激励收入</th></tr></thead><tbody><tr><td>旧名单移出</td><td>一般供给</td><td>78</td><td>6.7%</td><td>39.5%</td><td>40.7</td></tr><tr><td>旧名单移出</td><td>低价值供给</td><td>1</td><td>0.1%</td><td>32.6%</td><td>43.9</td></tr><tr><td>旧名单移出</td><td>高曝光低变现</td><td>1089</td><td>93.2%</td><td>30.2%</td><td>46.1</td></tr><tr><td>新名单补入</td><td>一般供给</td><td>503</td><td>43.1%</td><td>63.0%</td><td>70.2</td></tr><tr><td>新名单补入</td><td>高价值稳定供给</td><td>461</td><td>39.5%</td><td>66.9%</td><td>66.8</td></tr><tr><td>新名单补入</td><td>高曝光低变现</td><td>44</td><td>3.8%</td><td>65.7%</td><td>60.7</td></tr><tr><td>新名单补入</td><td>高潜低激励</td><td>160</td><td>13.7%</td><td>64.0%</td><td>136.0</td></tr></tbody></table></div>
-      </div>
-      <div class="panel pad">
-        <h3>垂类稳健性</h3>
-        <div id="verticalChart"></div>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="section">
-  <div class="wrap">
-    <div class="section-header">
-      <div>
-        <h2>实验设计与风险控制</h2>
-        <p>是否扩量，由线上主指标和护栏决定；离线结论只决定是否值得进入首轮灰度。</p>
+  <section class="section">
+    <div class="wrap">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">Scale-up</div>
+          <h2>扩量取决于预算档位和风控承接</h2>
+        </div>
       </div>
-      <div class="badge soft">intent-to-treat 为主 · SRM 日级监控 · holdout 保留</div>
-    </div>
-    <div class="grid-2">
-      <div class="panel pad">
-        <h3>实验设计卡</h3>
-        <div class="table-wrap"><table><thead><tr><th>项目</th><th>建议</th></tr></thead><tbody><tr><td>随机化单位</td><td>creator 级分层随机实验</td></tr><tr><td>实验动作</td><td>对高潜低激励池做增配；对高曝光低变现池做降配 / 复核</td></tr><tr><td>主指标</td><td>30 日留存率；单位激励收入</td></tr><tr><td>护栏指标</td><td>人均现金激励；供给流失率；投诉率；作弊率；内容安全</td></tr><tr><td>建议分层</td><td>内容垂类；历史曝光档位；创作者体量；是否已开通变现</td></tr><tr><td>主读数原则</td><td>以 intent-to-treat 为主，treatment-on-the-treated 只作辅助</td></tr><tr><td>扩量条件</td><td>主指标不为负，单位激励收入保持为正，且关键护栏无明显恶化</td></tr><tr><td>暂停或回滚</td><td>连续 3 天出现显著 SRM / 分流漂移，或投诉/作弊/安全明显恶化，或单位激励收入转负</td></tr></tbody></table></div>
+      <div class="grid-2">
+        <div class="panel pad">
+          <h3>不同 Top N 档位</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Top N</th><th>人均现金激励变化</th><th>30 日留存提升</th><th>单位激励收入提升</th></tr></thead>
+              <tbody>
+                <tr><td>3,000</td><td>24.2%</td><td>14.9ppt</td><td>18.7%</td></tr>
+                <tr><td>3,600</td><td>18.6%</td><td>12.2ppt</td><td>15.8%</td></tr>
+                <tr><td>4,200</td><td>13.6%</td><td>9.4ppt</td><td>12.7%</td></tr>
+                <tr><td>5,000</td><td>9.7%</td><td>7.0ppt</td><td>10.1%</td></tr>
+                <tr><td>6,000</td><td>6.4%</td><td>4.9ppt</td><td>7.2%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small" style="margin-top:12px">随着 Top N 扩大，改善幅度逐步回落，建议按预算档位分阶段推进。</p>
+        </div>
+        <div class="panel pad">
+          <h3>实验门槛与回滚条件</h3>
+          <div class="grid-2">
+            <div class="subpanel">
+              <span class="badge good">扩量条件</span>
+              <ul class="list-clean" style="margin-top:12px">
+                <li>主指标不为负。</li>
+                <li>单位激励收入保持为正。</li>
+                <li>投诉、作弊、安全等关键护栏无明显恶化。</li>
+              </ul>
+            </div>
+            <div class="subpanel">
+              <span class="badge bad">暂停 / 回滚</span>
+              <ul class="list-clean" style="margin-top:12px">
+                <li>连续 3 天出现显著 SRM / 分流漂移。</li>
+                <li>单位激励收入转负且无恢复迹象。</li>
+                <li>week 1 抬升但 week 4 回落，且 holdout 不支持继续扩量。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="note" style="margin-top:16px">推荐外溢、观察窗截断、新鲜感效应和跨池迁移污染，都需要通过 creator 级分层随机实验、assignment 锁定和 holdout 保留来控制。</div>
+        </div>
       </div>
-      <div class="panel pad">
-        <h3>有效性威胁</h3>
-        <div class="table-wrap"><table><thead><tr><th>风险</th><th>控制方式</th></tr></thead><tbody><tr><td>历史回测不是因果识别</td><td>正式扩量前采用分层随机实验或 switchback 验证。</td></tr><tr><td>SRM / 分流漂移</td><td>按日监控 creator 数、曝光和预算分配；显著偏离时暂停读数。</td></tr><tr><td>推荐外溢</td><td>优先做池级隔离、creator 级锁定，并单独监控外溢敏感指标。</td></tr><tr><td>观察窗截断</td><td>短窗看诊断指标，决策以 30 日或更长窗口为准。</td></tr><tr><td>新鲜感效应</td><td>比较 week 1 与 week 4 效应，并在扩量后保留 holdout。</td></tr><tr><td>跨池迁移污染</td><td>锁定 assignment 窗口，以 intent-to-treat 作为主读数。</td></tr></tbody></table></div>
-      </div>
     </div>
-    <div class="docs" style="margin-top:18px">
-      <a class="doc-link" href="report.html"><strong>完整报告</strong><span>执行摘要、口径取舍、回测与风控</span></a>
-      <a class="doc-link" href="notebook.html"><strong>分析过程</strong><span>按经营判断顺序展开的代码与结果</span></a>
-      <a class="doc-link" href="sql.html"><strong>SQL 方案</strong><span>供给漏斗、分层、回测与监控 SQL</span></a>
-      <a class="doc-link" href="reports/creator_value_analysis_report.md"><strong>Markdown 报告</strong><span>可直接作为仓库文档</span></a>
-    </div>
-  </div>
-</section>
+  </section>
 
-  <div class="wrap footer">
-    样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。
-  </div>
-  <script src="assets/app.js"></script>
+  <section class="section">
+    <div class="wrap">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">Materials</div>
+          <h2>相关材料</h2>
+        </div>
+      </div>
+      <div class="docs">
+        <a class="doc-link" href="report.html"><strong>完整报告</strong><span class="muted">执行摘要、口径取舍、回测解释与实验门槛</span></a>
+        <a class="doc-link" href="notebook.html"><strong>分析过程</strong><span class="muted">问题、口径、代码片段与关键判断</span></a>
+        <a class="doc-link" href="sql.html"><strong>SQL 方案</strong><span class="muted">漏斗、分层、回测、迁移与监控 SQL</span></a>
+        <a class="doc-link" href="reports/creator_value_analysis_report.md"><strong>Markdown 报告</strong><span class="muted">适合直接作为仓库文档</span></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。</div>
+  </footer>
 </body>
 </html>
