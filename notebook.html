@@ -1,186 +1,319 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>创作者资源重配分析｜分析过程</title>
-  <link rel="stylesheet" href="assets/styles.css" />
+  <meta name="description" content="创作者资源重配分析项目">
+  
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --text:#142033;
+      --muted:#556273;
+      --line:#d8e0ea;
+      --accent:#1f5eff;
+      --accent-soft:#edf3ff;
+      --ok:#0c8f5d;
+      --warn:#9a6700;
+      --shadow:0 10px 30px rgba(20,32,51,.08);
+      --radius:18px;
+      --max:1160px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+      background:linear-gradient(180deg,#f7f9fc 0%,#f3f6fb 100%);
+      color:var(--text);
+      line-height:1.65;
+    }
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter:saturate(180%) blur(10px);
+      background:rgba(246,248,251,.84);
+      border-bottom:1px solid rgba(216,224,234,.85);
+    }
+    .topbar .inner{
+      max-width:var(--max);margin:0 auto;padding:14px 24px;
+      display:flex;align-items:center;justify-content:space-between;gap:20px;
+    }
+    .brand{font-weight:700;letter-spacing:.2px}
+    .nav{display:flex;gap:16px;flex-wrap:wrap}
+    .nav a{font-size:14px;color:var(--muted)}
+    .hero{padding:48px 0 20px}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 12px;border-radius:999px;
+      background:var(--accent-soft);color:var(--accent);
+      font-size:13px;font-weight:600;
+    }
+    h1{
+      margin:16px 0 12px;font-size:42px;line-height:1.18;
+      letter-spacing:-.02em;
+    }
+    .subtitle{
+      max-width:900px;color:var(--muted);font-size:18px;
+      margin:0 0 24px;
+    }
+    .hero-grid{
+      display:grid;grid-template-columns:1.3fr .9fr;gap:20px;align-items:stretch;
+    }
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:22px;
+    }
+    .kpi-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px;
+    }
+    .kpi{
+      background:var(--card);border:1px solid var(--line);border-radius:16px;
+      padding:18px;box-shadow:var(--shadow);
+    }
+    .kpi .num{font-size:30px;font-weight:800;line-height:1.1;margin-bottom:6px}
+    .kpi .label{font-size:13px;color:var(--muted)}
+    .badge{
+      display:inline-block;padding:5px 10px;border-radius:999px;
+      background:#eef7f2;color:var(--ok);font-size:12px;font-weight:700
+    }
+    section{padding:18px 0}
+    h2{
+      margin:0 0 16px;font-size:28px;line-height:1.25;letter-spacing:-.01em;
+    }
+    h3{
+      margin:0 0 10px;font-size:19px;line-height:1.35;
+    }
+    p{margin:0 0 12px}
+    .muted{color:var(--muted)}
+    .section-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .panel-list{display:grid;gap:14px}
+    .mini{
+      padding:16px;border:1px solid var(--line);border-radius:14px;background:#fbfcfe;
+    }
+    .mini strong{display:block;margin-bottom:6px}
+    table{
+      width:100%;border-collapse:collapse;font-size:14px;background:#fff;
+      border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    }
+    th,td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+    th{background:#f7faff;font-weight:700}
+    tr:last-child td{border-bottom:none}
+    .bar-row{display:grid;gap:12px}
+    .bar{
+      display:grid;grid-template-columns:180px 1fr 70px;gap:12px;align-items:center;
+      font-size:14px;
+    }
+    .track{
+      position:relative;height:12px;border-radius:999px;background:#e8eef7;overflow:hidden;
+    }
+    .fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,#1f5eff,#78a2ff)}
+    .fill2{background:linear-gradient(90deg,#16a34a,#6ad18e)}
+    .note{
+      padding:14px 16px;border-left:4px solid var(--accent);background:#f8fbff;border-radius:12px;
+      color:var(--muted)
+    }
+    .code{
+      background:#0f1726;color:#dbe7ff;padding:16px;border-radius:14px;overflow:auto;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.6;
+      white-space:pre-wrap;
+    }
+    .chips{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{
+      padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;
+      font-size:13px;color:var(--muted)
+    }
+    .footer{padding:36px 0 64px;color:var(--muted);font-size:13px}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+    .toc a{
+      display:block;padding:14px 16px;border:1px solid var(--line);border-radius:14px;
+      background:#fff;color:var(--text);box-shadow:var(--shadow)
+    }
+    @media (max-width: 960px){
+      .hero-grid,.section-grid,.two-col,.three-col,.toc{grid-template-columns:1fr}
+      .kpi-grid{grid-template-columns:repeat(2,1fr)}
+      h1{font-size:34px}
+      .bar{grid-template-columns:1fr}
+    }
+    @media (max-width: 640px){
+      .topbar .inner{padding:12px 16px}
+      .wrap{padding:0 16px}
+      .hero{padding-top:28px}
+      .kpi-grid{grid-template-columns:1fr}
+    }
+  </style>
+
+  
 </head>
 <body>
-  
+
 <div class="topbar">
-  <div class="wrap nav">
-    <div class="brand">创作者资源重配分析<small>离线诊断、规则回测与实验设计</small></div>
-    <div class="navlinks"><a href="index.html" class="">首页</a><a href="report.html" class="">完整报告</a><a href="notebook.html" class="active">分析过程</a><a href="sql.html" class="">SQL 方案</a></div>
+  <div class="inner">
+    <div class="brand">创作者资源重配分析</div>
+    <div class="nav">
+      <a href="index.html">首页</a>
+      <a href="report.html">完整报告</a>
+      <a href="notebook.html">分析过程</a>
+      <a href="sql.html">SQL 方案</a>
+    </div>
   </div>
 </div>
 
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">分析过程</span>
+    <h1>按经营判断顺序整理分析链路</h1>
+    <p class="subtitle">这一页只保留做决策会用到的口径、步骤和代码片段，不写无关的“过程说明语句”。顺序是：定义问题、定位损耗、识别错配、构造分层、固定 Top N 回测、准备实验监控。</p>
+  </header>
 
-  <section class="hero">
-    <div class="wrap">
-      <div class="eyebrow">分析过程</div>
-      <h1>经营判断顺序</h1>
-      <p>分析顺序与代码片段一一对应。</p>
+  <section>
+    <h2>分析顺序</h2>
+    <div class="three-col">
+      <div class="card"><h3>0. 目标定义</h3><p>判断资源是否持续流向更可能形成稳定供给和单位资源产出的创作者。</p></div>
+      <div class="card"><h3>1. 供给诊断</h3><p>识别损耗阶段，明确资源动作作用在哪个经营环节。</p></div>
+      <div class="card"><h3>2. 错配识别</h3><p>比较曝光集中度与价值集中度，识别沉没资源与高潜低配。</p></div>
+      <div class="card"><h3>3. 规则设计</h3><p>规则由准入、排序和复核构成，同时控制迁移成本与承接压力。</p></div>
+      <div class="card"><h3>4. 固定 Top N 回测</h3><p>只在同规模下比较主指标，避免通过扩大样本池制造表面提升。</p></div>
+      <div class="card"><h3>5. 实验准备</h3><p>离线结论只决定是否值得试；是否扩量，要看线上主指标和护栏。</p></div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap grid-3">
-      <div class="panel pad"><h3>0. 目标定义</h3><p>聚焦资源配置效率判断。</p></div>
-      <div class="panel pad"><h3>1. 供给诊断</h3><p>识别损耗阶段，明确动作落点。</p></div>
-      <div class="panel pad"><h3>2. 错配识别</h3><p>比较曝光集中度与价值集中度，识别沉没资源与高潜低配。</p></div>
-      <div class="panel pad"><h3>3. 规则设计</h3><p>规则由准入、排序和复核三部分组成，并兼顾迁移成本和运营承接。</p></div>
-      <div class="panel pad"><h3>4. 固定 Top N 回测</h3><p>只在同规模下比较主指标，避免通过扩大样本池制造表面提升。</p></div>
-      <div class="panel pad"><h3>5. 实验准备</h3><p>离线证据只决定是否值得试；是否扩量，要看线上主指标和护栏。</p></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap panel pad">
-      <div class="section-kicker">Notebook structure</div>
-      <h2>0. 分析目标</h2>
-      <p>核心问题：当流量和现金激励都有限时，平台是否把资源给到了更值得长期扶持的创作者？</p>
-      <div class="code">import pandas as pd
-import numpy as np
-
-creator = pd.read_csv('../data/creator_profile.csv', parse_dates=['join_date'])
-content = pd.read_csv('../data/content_performance.csv', parse_dates=['publish_date'])
-weekly = pd.read_csv('../data/creator_weekly_activity.csv')
-incentive = pd.read_csv('../data/creator_incentive.csv')
-
-print('creator rows:', len(creator))
-print('content rows:', len(content))
-print('weekly rows:', len(weekly))
-print('incentive rows:', len(incentive))</div>
-      <div class="note" style="margin-top:14px">当前页面聚焦资源重配方向与灰度条件。</div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap grid-2">
-      <div class="panel pad">
-        <div class="section-kicker">1. Funnel</div>
-        <h2>供给漏斗</h2>
-        <p>如果主要损耗发生在注册到首发之前，动作就偏拉新和首发激活；如果发生在首发之后，动作重点就应转向持续经营。</p>
-        <div class="code">funnel = pd.DataFrame({
-    'stage': ['注册创作者','完成首发','连续活跃≥2周','连续活跃≥4周','已开通变现','稳定经营且已开通变现'],
-    'creator_cnt': [
-        len(creator),
-        int(creator['has_first_publish'].sum()),
-        int(((creator['has_first_publish'] == 1) & (creator['active_weeks'] >= 2)).sum()),
-        int(((creator['has_first_publish'] == 1) & (creator['active_weeks'] >= 4)).sum()),
-        int(((creator['has_first_publish'] == 1) & (creator['active_weeks'] >= 4) & (creator['monetization_opened'] == 1)).sum()),
-        int(((creator['has_first_publish'] == 1) & (creator['active_weeks'] >= 4) & (creator['monetization_opened'] == 1) & (creator['stable_updater'] == 1)).sum())
-    ]
-})
-funnel['share_of_registered'] = funnel['creator_cnt'] / funnel.loc[0, 'creator_cnt']
-funnel['step_conversion'] = funnel['creator_cnt'] / funnel['creator_cnt'].shift(1)</div>
-        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>主要损耗集中在首发后的持续经营阶段，因此资源动作应优先提高已启动创作者进入稳定经营状态的概率。</div>
+  <section>
+    <h2>核心口径</h2>
+    <div class="two-col">
+      <div class="card">
+        <h3>创作者主表</h3>
+        <div class="code">creator_id
+first_publish_date
+active_weeks_30d
+retention_30d
+monetization_open_flag
+revenue_30d
+impression_30d
+cash_incentive_30d
+rpm_30d = revenue_30d / impression_30d * 1000
+unit_incentive_revenue = revenue_30d / cash_incentive_30d</div>
       </div>
-      <div class="panel pad">
-        <div class="section-kicker">2. Cohort</div>
-        <h2>cohort 稳定性</h2>
-        <p>排除样本质量突变和短观察窗干扰。</p>
-        <div class="code">cohort = (
-    creator.assign(join_month=creator['join_date'].dt.to_period('M').astype(str))
-           .groupby('join_month')
-           .agg(
-               creators=('creator_id', 'count'),
-               publish_rate=('has_first_publish', 'mean'),
-               retention_30d=('retention_30d_rate', 'mean'),
-               monetization_open_rate=('monetization_opened', 'mean')
-           )
-           .reset_index()
-)</div>
-        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>各 cohort 整体平稳，问题更可能来自资源分配逻辑。最新 cohort 样本较小，仅作预警信号。</div>
+      <div class="card">
+        <h3>资源配置判断项</h3>
+        <div class="code">持续供给：retention_30d, active_weeks_30d
+单位资源产出：rpm_30d, unit_incentive_revenue
+供给质量：monetization_open_flag, 近期经营信号
+风险约束：safe_flag, cheat_flag, complaint_flag</div>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap grid-2">
-      <div class="panel pad">
-        <div class="section-kicker">3. Misallocation</div>
-        <h2>识别资源错配</h2>
-        <p>用曝光集中度与收入集中度的差异判断资源是否仍沿历史曝光惯性分配，并用分群识别首轮动作人群。</p>
-        <div class="code">pareto = (
-    creator.sort_values('total_exposure', ascending=False)
-           .assign(
-               creator_share=lambda x: np.arange(1, len(x)+1) / len(x),
-               cum_exposure_share=lambda x: x['total_exposure'].cumsum() / x['total_exposure'].sum(),
-               cum_revenue_share=lambda x: x['total_revenue'].cumsum() / x['total_revenue'].sum()
-           )
+  <section>
+    <h2>步骤与代码片段</h2>
+    <div class="panel-list">
+      <div class="card">
+        <h3>步骤 1：供给漏斗</h3>
+        <p class="muted">先找损耗位置，再决定资源动作作用在哪个阶段。</p>
+        <div class="code">WITH base AS (
+  SELECT creator_id,
+         CASE WHEN first_publish_date IS NOT NULL THEN 1 ELSE 0 END AS published,
+         CASE WHEN active_weeks_30d >= 2 THEN 1 ELSE 0 END AS active_2w,
+         CASE WHEN active_weeks_30d >= 4 THEN 1 ELSE 0 END AS active_4w,
+         monetization_open_flag
+  FROM creator_profile
 )
-
-top20 = creator.nlargest(int(len(creator) * 0.2), 'total_exposure')
-exposure_share = top20['total_exposure'].sum() / creator['total_exposure'].sum()
-revenue_share = top20['total_revenue'].sum() / creator['total_revenue'].sum()</div>
-        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>Top 20% 创作者拿走 42.9% 曝光，只贡献 30.2% 收入，说明当前资源集中度高于价值集中度。</div>
+SELECT
+  SUM(published) / COUNT(*) AS publish_rate,
+  SUM(active_4w) / COUNT(*) AS stable_operation_rate,
+  SUM(CASE WHEN active_4w = 1 AND monetization_open_flag = 1 THEN 1 ELSE 0 END) / COUNT(*) AS stable_monetized_rate
+FROM base;</div>
       </div>
-      <div class="panel pad">
-        <div class="section-kicker">4. Rule design</div>
-        <h2>定义首轮灰度口径</h2>
-        <p>首轮规则兼顾迁移可控、主指标方向和运营承接。</p>
-        <div class="code">creator['old_rule_pct'] = creator['old_priority_score'].rank(pct=True)
-creator['retention_pct'] = creator['retention_30d_rate'].rank(pct=True)
-creator['efficiency_pct'] = creator['revenue_per_k_exposure_clip'].rank(pct=True)
-creator['low_resource_pct'] = (-creator['resource_occupancy_pct']).rank(pct=True)
 
-creator['new_priority_score'] = (
-    0.60 * creator['old_rule_pct']
-    + 0.20 * creator['retention_pct']
-    + 0.15 * creator['efficiency_pct']
-    + 0.05 * creator['low_resource_pct']
-)</div>
-        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>旧规则权重保留较高，用于控制名单迁移速度；留存进入排序主逻辑，把长期供给质量显式纳入分发。</div>
+      <div class="card">
+        <h3>步骤 2：资源错配</h3>
+        <p class="muted">用曝光集中度和价值集中度做第一层判断。</p>
+        <div class="code">SELECT creator_id,
+       impression_30d,
+       revenue_30d,
+       SUM(impression_30d) OVER(ORDER BY impression_30d DESC) / SUM(impression_30d) OVER() AS cum_impression_share,
+       SUM(revenue_30d) OVER(ORDER BY impression_30d DESC) / SUM(revenue_30d) OVER() AS cum_revenue_share
+FROM creator_profile;</div>
+      </div>
+
+      <div class="card">
+        <h3>步骤 3：关键人群分层</h3>
+        <p class="muted">分层的目的不是描述人群，而是服务差异化动作。</p>
+        <div class="code">CASE
+  WHEN impression_pct >= 0.8 AND rpm_30d < p30_rpm THEN '高曝光低变现'
+  WHEN retention_30d >= p75_retention
+   AND unit_incentive_revenue >= p75_unit_rev
+   AND impression_pct < 0.5 THEN '高潜低激励'
+  WHEN retention_30d >= p75_retention
+   AND unit_incentive_revenue >= p50_unit_rev THEN '高价值稳定供给'
+  WHEN retention_30d < p25_retention
+   AND unit_incentive_revenue < p25_unit_rev THEN '低价值供给'
+  ELSE '一般供给'
+END AS creator_segment</div>
+      </div>
+
+      <div class="card">
+        <h3>步骤 4：新规则打分</h3>
+        <p class="muted">旧规则保留主体，新信号只做首轮修正，目的是控制迁移速度。</p>
+        <div class="code">priority_score
+= 0.60 * old_rule_percentile
++ 0.20 * retention_percentile
++ 0.15 * efficiency_percentile
++ 0.05 * low_resource_occupancy_percentile</div>
+      </div>
+
+      <div class="card">
+        <h3>步骤 5：固定 Top N 回测</h3>
+        <p class="muted">比较对象必须在同规模下产生，避免“扩池”带来的虚假改善。</p>
+        <div class="code">WITH ranked AS (
+  SELECT *,
+         ROW_NUMBER() OVER (ORDER BY old_rule_score DESC) AS rn_old,
+         ROW_NUMBER() OVER (ORDER BY priority_score DESC) AS rn_new
+  FROM creator_scored
+)
+SELECT
+  AVG(CASE WHEN rn_old <= 4200 THEN retention_30d END) AS old_retention,
+  AVG(CASE WHEN rn_new <= 4200 THEN retention_30d END) AS new_retention,
+  AVG(CASE WHEN rn_old <= 4200 THEN unit_incentive_revenue END) AS old_unit_rev,
+  AVG(CASE WHEN rn_new <= 4200 THEN unit_incentive_revenue END) AS new_unit_rev
+FROM ranked;</div>
+      </div>
+
+      <div class="card">
+        <h3>步骤 6：实验监控</h3>
+        <p class="muted">主指标和护栏同时准备，避免离线结果一好看就直接扩量。</p>
+        <div class="code">核心监控：
+1) SRM：样本量、曝光、预算分配是否偏离
+2) 主指标：30日留存率、单位激励收入
+3) 护栏：人均现金激励、供给流失率、投诉率、作弊率、安全
+4) 观察窗：week1、week2、week4 与 holdout 对照</div>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap grid-2">
-      <div class="panel pad">
-        <div class="section-kicker">5. Same-scale backtest</div>
-        <h2>固定 Top N 做回测</h2>
-        <p>所有比较都在固定 Top N 下完成，避免通过扩大样本池制造表面提升。</p>
-        <div class="code">TOP_N = 4200
-old_sel = creator.nlargest(TOP_N, 'old_priority_score').copy()
-new_sel = creator.nlargest(TOP_N, 'new_priority_score').copy()
-
-summary = pd.DataFrame({
-    'metric': ['retention_30d_rate', 'revenue_per_incentive', 'cash_incentive_per_creator'],
-    'old_rule': [old_sel['retention_30d_rate'].mean(), old_sel['revenue_per_incentive'].mean(), old_sel['cash_incentive'].mean()],
-    'new_rule': [new_sel['retention_30d_rate'].mean(), new_sel['revenue_per_incentive'].mean(), new_sel['cash_incentive'].mean()]
-})</div>
-        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>30 日留存和单位激励收入同步改善，新旧名单重合率约 72.2%，调整幅度可控。</div>
-      </div>
-      <div class="panel pad">
-        <div class="section-kicker">6. Launch readiness</div>
-        <h2>补上实验与风控</h2>
-        <p>离线证据用于判断是否进入灰度；是否扩量，需要主指标、护栏、暂停条件和风控动作同时成立。</p>
-        <div class="code">experiment_card = {
-    'randomization_unit': 'creator 级分层随机实验',
-    'primary_metrics': ['30 日留存率', '单位激励收入'],
-    'guardrails': ['人均现金激励', '供给流失率', '投诉率', '作弊率', '内容安全'],
-    'expand_if': '主指标不为负，单位激励收入为正，关键护栏无明显恶化',
-    'rollback_if': '连续 3 天出现显著 SRM / 分流漂移，或投诉 / 作弊 / 安全明显恶化'
-}</div>
-        <div class="callout" style="margin-top:14px"><strong>业务判断</strong>上线依据同时包括实验设计、风控门槛和回测结果。</div>
-      </div>
+  <section>
+    <h2>读数纪律</h2>
+    <div class="card">
+      <table>
+        <tr><th>约束</th><th>要求</th></tr>
+        <tr><td>比较口径</td><td>所有策略比较都在固定 Top N 下完成。</td></tr>
+        <tr><td>解释方式</td><td>离线 uplift 只解释方向，不解释真实线上因果增量。</td></tr>
+        <tr><td>扩量规则</td><td>主指标为正且关键护栏稳定后，再按预算档位扩量。</td></tr>
+        <tr><td>回滚条件</td><td>连续 3 天 SRM 显著偏移，或单位激励收入转负，或风险侧恶化。</td></tr>
+      </table>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap docs">
-      <a class="doc-link" href="notebooks/creator_value_analysis.ipynb"><strong>Notebook 原文件</strong><span class="muted">统一变量命名版</span></a>
-      <a class="doc-link" href="analysis.py"><strong>analysis.py</strong><span class="muted">静态站使用的示例脚本</span></a>
-      <a class="doc-link" href="report.html"><strong>完整报告</strong><span class="muted">口径、回测与风控</span></a>
-      <a class="doc-link" href="sql.html"><strong>SQL 方案</strong><span class="muted">事实层、指标层与实验监控</span></a>
-    </div>
-  </section>
+  <div class="footer">
+    样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。
+  </div>
+</div>
 
-  <footer class="footer">
-    <div class="wrap">样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。</div>
-  </footer>
 </body>
 </html>
