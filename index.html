@@ -1,392 +1,322 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>创作者经营分析｜资源重配与实验上线</title>
-  <style>
-    :root {
-      --bg: #f6f8fc;
-      --card: #ffffff;
-      --line: #e7ebf3;
-      --text: #172033;
-      --muted: #58627a;
-      --accent: #275efe;
-      --accent-weak: #edf3ff;
-      --good: #0f8f54;
-      --shadow: 0 14px 40px rgba(20, 30, 60, 0.08);
-      --radius: 20px;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      background: linear-gradient(180deg, #f8fbff 0%, #f5f7fb 100%);
-      color: var(--text);
-      line-height: 1.65;
-    }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
-    .topbar {
-      position: sticky; top: 0; z-index: 20;
-      background: rgba(248, 251, 255, 0.9);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(231, 235, 243, 0.85);
-    }
-    .topbar-inner {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; padding: 14px 0;
-    }
-    .brand { font-weight: 700; font-size: 16px; color: var(--text); }
-    .nav { display: flex; flex-wrap: wrap; gap: 14px; }
-    .nav a {
-      color: var(--muted); font-size: 14px; padding: 8px 12px; border-radius: 999px;
-    }
-    .nav a:hover { background: #eef3ff; color: var(--accent); text-decoration: none; }
-    .hero {
-      padding: 56px 0 28px;
-      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px;
-    }
-    .hero-main, .hero-side, .card {
-      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
-    }
-    .hero-main { padding: 34px; }
-    .hero-side { padding: 26px; }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 12px; border-radius: 999px;
-      background: var(--accent-weak); color: var(--accent); font-size: 13px; font-weight: 600;
-    }
-    h1 { margin: 18px 0 14px; font-size: clamp(28px, 4vw, 44px); line-height: 1.15; letter-spacing: -0.02em; }
-    .lead { margin: 0; color: var(--muted); font-size: 16px; }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 11px 16px; border-radius: 12px; font-size: 14px; font-weight: 600;
-      border: 1px solid var(--line); background: #fff; color: var(--text);
-      text-decoration: none;
-    }
-    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .btn:hover { text-decoration: none; transform: translateY(-1px); }
-    .bullet-list { margin: 18px 0 0; padding-left: 18px; color: var(--muted); }
-    .metric-grid {
-      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 18px;
-    }
-    .metric {
-      padding: 16px; border-radius: 16px; background: #f8faff; border: 1px solid #e9eef9;
-    }
-    .metric .value { font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
-    .metric .label { color: var(--muted); font-size: 13px; }
-    section { padding: 10px 0 6px; }
-    .section-head { margin: 28px 0 14px; }
-    .section-head h2 { margin: 0 0 6px; font-size: 28px; }
-    .section-head p { margin: 0; color: var(--muted); }
-    .grid-2, .grid-3 {
-      display: grid; gap: 18px;
-    }
-    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .card { padding: 24px; }
-    .card h3 { margin: 0 0 10px; font-size: 20px; }
-    .card p { margin: 0; color: var(--muted); }
-    .tag-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-    .tag {
-      display: inline-flex; align-items: center;
-      padding: 7px 10px; border-radius: 999px;
-      background: #f5f7fb; border: 1px solid var(--line); color: var(--muted); font-size: 13px;
-    }
-    .formula {
-      margin-top: 14px; padding: 16px 18px; border-radius: 16px;
-      background: #0f172a; color: #f8fbff; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      white-space: pre-wrap; overflow-x: auto;
-    }
-    table {
-      width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px;
-      overflow: hidden; border-radius: 16px; border: 1px solid var(--line);
-    }
-    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-    th { background: #f7f9fc; font-weight: 700; }
-    tr:last-child td { border-bottom: none; }
-    .note {
-      margin-top: 14px; padding: 14px 16px; border-radius: 14px;
-      background: #f7f9fc; color: var(--muted); border: 1px solid var(--line); font-size: 14px;
-    }
-    .materials { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-    .material-group h3 { margin-top: 0; }
-    .material-links { display: grid; gap: 10px; margin-top: 12px; }
-    .material-links a {
-      display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: #fff;
-    }
-    footer { padding: 28px 0 42px; color: var(--muted); font-size: 14px; }
-    @media (max-width: 960px) {
-      .hero, .grid-2, .grid-3, .materials { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 680px) {
-      .topbar-inner { align-items: flex-start; }
-      .nav { gap: 8px; }
-      .hero-main, .hero-side, .card { padding: 20px; }
-      .metric-grid { grid-template-columns: 1fr 1fr; }
-      h1 { font-size: 30px; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>创作者资源重配分析｜离线诊断与实验设计</title>
+<style>
+:root{
+  --bg:#eef4ff;--bg2:#f8fbff;--surface:#ffffff;--surface2:#f8fafc;--text:#0f172a;--muted:#475569;--line:#e2e8f0;
+  --primary:#2563eb;--primary-soft:#dbeafe;--green:#16a34a;--green-soft:#ecfdf5;--amber:#d97706;--amber-soft:#fff7ed;
+  --purple:#7c3aed;--purple-soft:#f5f3ff;--red:#dc2626;--red-soft:#fef2f2;--shadow:0 20px 60px rgba(2,8,23,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 42%,#f6f8fb 100%);color:var(--text);line-height:1.7}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1240px;margin:0 auto;padding:24px 18px 72px}
+.hero{position:relative;overflow:hidden;border-radius:32px;padding:34px;border:1px solid rgba(255,255,255,.22);background:radial-gradient(circle at top right,rgba(255,255,255,.18),rgba(255,255,255,.06)),linear-gradient(135deg,#0f172a,#172554 58%,#1d4ed8);color:#fff;box-shadow:0 24px 80px rgba(15,23,42,.22)}
+.hero:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);filter:blur(4px)}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:end}
+.badge{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);font-size:12px;font-weight:700;letter-spacing:.02em}
+h1,h2,h3,h4{line-height:1.15;letter-spacing:-.03em;margin:0 0 12px}
+h1{font-size:42px} h2{font-size:30px} h3{font-size:20px} h4{font-size:15px}
+p{margin:0 0 10px}
+.small{font-size:14px;color:var(--muted)}
+.hero .small{color:rgba(255,255,255,.82)}
+.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}
+.metric{padding:18px;border-radius:22px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px)}
+.metric .num{font-size:30px;font-weight:800;letter-spacing:-.04em}
+.metric .lab{font-size:13px;color:rgba(255,255,255,.78);margin-top:4px}
+.hero-panel{padding:22px;border-radius:24px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18)}
+.hero-panel ul{margin:12px 0 0 18px}
+.nav{position:sticky;top:12px;z-index:20;margin:18px 0;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border:1px solid rgba(226,232,240,.8);display:flex;gap:12px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(15,23,42,.06)}
+.nav a{font-size:13px;font-weight:800;color:#334155}
+.section{margin-top:18px;border-radius:28px;padding:26px;background:rgba(255,255,255,.88);border:1px solid rgba(226,232,240,.88);box-shadow:var(--shadow)}
+.two{display:grid;grid-template-columns:1.02fr .98fr;gap:18px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{border:1px solid var(--line);border-radius:22px;padding:18px;background:#fff}
+.card.soft{background:linear-gradient(180deg,#fff,#fbfdff)}
+.card.blue{background:linear-gradient(180deg,#eff6ff,#ffffff);border-color:#bfdbfe}
+.card.green{background:linear-gradient(180deg,#ecfdf5,#ffffff);border-color:#bbf7d0}
+.card.amber{background:linear-gradient(180deg,#fff7ed,#ffffff);border-color:#fed7aa}
+.card.purple{background:linear-gradient(180deg,#f5f3ff,#ffffff);border-color:#ddd6fe}
+.card.red{background:linear-gradient(180deg,#fef2f2,#ffffff);border-color:#fecaca}
+.kicker{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#64748b;margin-bottom:8px}
+.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid transparent}
+.pill.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#15803d}
+.pill.amber{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.pill.purple{background:#f5f3ff;border-color:#ddd6fe;color:#6d28d9}
+.pill.red{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+.note{padding:16px 18px;border-radius:18px;border:1px solid var(--line);background:#f8fafc;color:#334155}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.table th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#64748b}
+.table tr.highlight td{background:#eff6ff}
+.table tr:hover td{background:#f8fafc}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:18px;overflow:auto;font-size:13px;line-height:1.65}
+pre.code{white-space:pre-wrap}
+.figcap{font-size:14px;color:var(--muted);margin-top:10px}
+.list{margin:8px 0 0 18px;padding:0}
+.list li{margin:6px 0}
+.divider{height:1px;background:linear-gradient(90deg,transparent,#cbd5e1,transparent);margin:18px 0}
+.footer{margin-top:20px;color:#64748b;font-size:13px}
+.callout{padding:18px 20px;border-radius:22px;background:linear-gradient(135deg,#eff6ff,#ffffff);border:1px solid #bfdbfe}
+.meter-stack{display:grid;gap:12px;margin-top:12px}
+.meter-row{display:grid;grid-template-columns:180px 1fr 76px;gap:12px;align-items:center}
+.meter-row.small{grid-template-columns:150px 1fr 84px}
+.meter-row .lab{font-size:14px;color:#334155;font-weight:700}
+.meter{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden;position:relative}
+.meter > span{display:block;height:100%;background:linear-gradient(90deg,#93c5fd,#2563eb);border-radius:999px}
+.meter.green > span{background:linear-gradient(90deg,#86efac,#16a34a)}
+.meter.amber > span{background:linear-gradient(90deg,#fdba74,#d97706)}
+.meter.purple > span{background:linear-gradient(90deg,#c4b5fd,#7c3aed)}
+.meter.red > span{background:linear-gradient(90deg,#fca5a5,#dc2626)}
+.meter-row .val{font-size:13px;font-weight:800;color:#0f172a;text-align:right}
+.grid-2-1{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}
+.grid-1-2{display:grid;grid-template-columns:.9fr 1.1fr;gap:18px}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.kv .item{padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.kv .k{font-size:12px;color:#64748b;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.kv .v{font-size:24px;font-weight:800;letter-spacing:-.03em;margin-top:4px}
+.timeline{display:grid;gap:14px}
+.timeline .step{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start}
+.timeline .idx{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-weight:800}
+.warning{border-left:4px solid #dc2626;padding-left:14px}
+.ok{border-left:4px solid #16a34a;padding-left:14px}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:800;background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+@media (max-width:1080px){.hero-grid,.two,.three,.four,.metric-grid,.grid-2-1,.grid-1-2{grid-template-columns:1fr 1fr}.meter-row{grid-template-columns:140px 1fr 70px}} 
+@media (max-width:720px){.hero-grid,.two,.three,.four,.metric-grid,.grid-2-1,.grid-1-2,.kv{grid-template-columns:1fr}.wrap{padding:14px 12px 40px}.section{padding:20px}.nav{position:static} h1{font-size:30px} h2{font-size:25px}.meter-row,.meter-row.small{grid-template-columns:1fr}.meter-row .val{text-align:left}}
+</style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="wrap topbar-inner">
-      <div class="brand">创作者经营分析</div>
-      <nav class="nav">
-        <a href="#judgement">问题与判断</a>
-        <a href="#mismatch">供给与错配</a>
-        <a href="#policy">策略口径</a>
-        <a href="#robustness">稳健性</a>
-        <a href="#experiment">实验与执行</a>
-        <a href="#materials">分析材料</a>
-      </nav>
+<div class="wrap">
+<div class="nav">
+  <a href="#positioning">项目定位</a>
+  <a href="#diagnosis">问题诊断</a>
+  <a href="#strategy">策略口径</a>
+  <a href="#backtest">回测与扩量</a>
+  <a href="#experiment">实验设计</a>
+  <a href="#materials">分析材料</a>
+</div>
+
+<section class="hero" id="top">
+  <div class="hero-grid">
+    <div>
+      <div class="badge">创作者资源重配分析</div>
+      <h1 style="margin-top:14px;">离线诊断支持进入灰度，<br>不支持跳过线上验证</h1>
+      <p class="small">项目定位为<strong>资源重配策略的离线诊断、规则回测与实验设计</strong>。它回答“值不值得试”，而不是直接宣布“策略已经成立”。</p>
+      <div class="metric-grid">
+        <div class="metric"><div class="num">42.9%</div><div class="lab">Top 20% 创作者曝光占比</div></div>
+        <div class="metric"><div class="num">30.2%</div><div class="lab">Top 20% 创作者收入占比</div></div>
+        <div class="metric"><div class="num">2,620</div><div class="lab">高曝光低变现创作者</div></div>
+        <div class="metric"><div class="num">+9.4ppt</div><div class="lab">Top 4,200 留存提升</div></div>
+      </div>
+    </div>
+    <div class="hero-panel">
+      <h3>首屏判断</h3>
+      <ul class="list">
+        <li>问题成立：资源集中度高于价值集中度，且损耗集中在首发后的持续经营阶段。</li>
+        <li>动作明确：回收部分低效率曝光，补向更可能形成稳定供给的创作者。</li>
+        <li>推进克制：先做 creator 级分层灰度，再决定是否扩量。</li>
+      </ul>
     </div>
   </div>
+</section>
 
-  <main class="wrap">
-    <section class="hero">
-      <div class="hero-main">
-        <div class="eyebrow">资源重配 · 分层灰度 · 上线门槛</div>
-        <h1>资源分配更接近历史曝光惯性，当前证据支持先做分层灰度</h1>
-        <p class="lead">经营问题是：当流量和现金激励有限时，平台是否把资源持续配置给更可能形成稳定供给、留存和收入的创作者。当前离线证据支持进入实验，但不支持跳过线上验证直接全量。</p>
-        <div class="hero-actions">
-          <a class="btn primary" href="report.html">进入完整报告</a>
-          <a class="btn" href="notebook.html">查看分析过程</a>
-          <a class="btn" href="sql.html">查看 SQL 方案</a>
-        </div>
-        <ul class="bullet-list">
-          <li>为什么要动：曝光集中度高于价值集中度。</li>
-          <li>动什么：回收一部分低效率曝光，补向高质量稳定供给。</li>
-          <li>为什么不直接全量：离线证据成立，但仍需控制迁移成本与实验污染。</li>
-        </ul>
-      </div>
-      <aside class="hero-side">
-        <h3 style="margin:0 0 8px;">首屏判断</h3>
-        <p style="margin:0;color:var(--muted);">以下指标概括当前错配程度与离线回测方向。</p>
-        <div class="metric-grid">
-          <div class="metric"><div class="value">42.9%</div><div class="label">Top 20% 创作者曝光占比</div></div>
-          <div class="metric"><div class="value">30.2%</div><div class="label">Top 20% 创作者收入占比</div></div>
-          <div class="metric"><div class="value">2,620</div><div class="label">高曝光低变现创作者</div></div>
-          <div class="metric"><div class="value">+9.4ppt</div><div class="label">Top 4,200 的 30 日留存提升</div></div>
-        </div>
-        <div class="note">样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。</div>
-      </aside>
-    </section>
+<section class="section" id="positioning">
+  <div class="kicker">项目定位</div>
+  <h2>先把项目说准：这是策略分析与实验设计，不是实验结果汇报</h2>
+  <div class="three">
+    <div class="card blue"><h3>它是什么</h3><p>围绕创作者资源配置效率，完成从问题诊断、规则设计、同规模回测到实验设计的闭环。</p></div>
+    <div class="card amber"><h3>它不是什么</h3><p>不是已经完成因果识别的 A/B 实验复盘，也不应把离线 uplift 直接表述成真实增量效果。</p></div>
+    <div class="card green"><h3>为什么值得试</h3><p>离线证据显示方向稳定、迁移幅度可控、执行门槛清晰，因此适合进入首轮灰度。</p></div>
+  </div>
+  <div class="callout" style="margin-top:16px;">当前页面已统一为中文标题、中文小节、UTF-8 编码，并补充了权重取舍、回测边界、预算视角和实验门槛。</div>
+</section>
 
-    <section id="judgement">
-      <div class="section-head">
-        <h2>问题与判断</h2>
-        <p>资源可以重配，但推进节奏需要受约束。</p>
+<section class="section grid-2-1" id="diagnosis">
+  <div>
+    <div class="kicker">问题诊断</div>
+    <h2>损耗发生在哪里，资源又错配在哪里</h2>
+    <div class="card soft">
+      <h3>供给漏斗</h3>
+      <p class="small">注册到首发并不是主要瓶颈，真正的大幅损耗发生在首发后到稳定经营之间。</p>
+      <div class="meter-stack"><div class='meter-row'><div class='lab'>注册创作者</div><div class='meter'><span style='width:100.0%'></span></div><div class='val'>100.0%</div></div><div class='meter-row'><div class='lab'>完成首发</div><div class='meter'><span style='width:80.6%'></span></div><div class='val'>80.6%｜阶段转化 80.6%</div></div><div class='meter-row'><div class='lab'>连续活跃≥2周</div><div class='meter'><span style='width:69.7%'></span></div><div class='val'>69.7%｜阶段转化 86.5%</div></div><div class='meter-row'><div class='lab'>连续活跃≥4周</div><div class='meter'><span style='width:45.7%'></span></div><div class='val'>45.7%｜阶段转化 65.6%</div></div><div class='meter-row'><div class='lab'>已开通变现</div><div class='meter'><span style='width:31.6%'></span></div><div class='val'>31.6%｜阶段转化 69.1%</div></div><div class='meter-row'><div class='lab'>稳定经营且已开通变现</div><div class='meter'><span style='width:15.0%'></span></div><div class='val'>15.0%｜阶段转化 47.6%</div></div></div>
+    </div>
+    <div class="card soft" style="margin-top:16px;">
+      <h3>Cohort 稳定性</h3>
+      <p class="small">首发率、30 日留存和变现开通率整体平稳；2026-03 只有 54 个样本，只能作方向参考。</p>
+      <table class="table"><tr><th>入驻月</th><th>样本量</th><th>首发率</th><th>30日留存</th><th>变现开通率</th><th>备注</th></tr><tr><td>2025-04</td><td>1692</td><td>85.0%</td><td>45.5%</td><td>57.7%</td><td></td></tr><tr><td>2025-05</td><td>1699</td><td>84.1%</td><td>46.2%</td><td>58.4%</td><td></td></tr><tr><td>2025-06</td><td>1678</td><td>83.6%</td><td>45.4%</td><td>58.1%</td><td></td></tr><tr><td>2025-07</td><td>1750</td><td>82.7%</td><td>45.7%</td><td>56.5%</td><td></td></tr><tr><td>2025-08</td><td>1677</td><td>80.0%</td><td>45.1%</td><td>60.4%</td><td></td></tr><tr><td>2025-09</td><td>1734</td><td>81.8%</td><td>45.0%</td><td>58.4%</td><td></td></tr><tr><td>2025-10</td><td>1707</td><td>78.8%</td><td>44.9%</td><td>57.5%</td><td></td></tr><tr><td>2025-11</td><td>1713</td><td>79.9%</td><td>45.7%</td><td>58.8%</td><td></td></tr><tr><td>2025-12</td><td>1751</td><td>77.7%</td><td>44.5%</td><td>56.6%</td><td></td></tr><tr><td>2026-01</td><td>1745</td><td>75.9%</td><td>44.8%</td><td>58.0%</td><td></td></tr><tr><td>2026-02</td><td>1542</td><td>77.3%</td><td>45.7%</td><td>60.1%</td><td></td></tr><tr><td>2026-03</td><td>54</td><td>70.4%</td><td>47.1%</td><td>63.2%</td><td>样本较小，仅作方向参考</td></tr></table>
+    </div>
+  </div>
+  <div>
+    <div class="card blue">
+      <h3>曝光与价值集中度</h3>
+      <p>Top 20% 创作者拿走 <strong>42.9%</strong> 曝光，但只贡献 <strong>30.2%</strong> 收入，说明当前资源分配更接近延续历史曝光优势，而不是持续投向长期质量更高的供给。</p>
+      <div class="meter-stack" style="margin-top:14px;">
+        <div class="meter-row small"><div class="lab">Top 20% 曝光占比</div><div class="meter blue"><span style="width:42.9%"></span></div><div class="val">42.9%</div></div>
+        <div class="meter-row small"><div class="lab">Top 20% 收入占比</div><div class="meter green"><span style="width:30.2%"></span></div><div class="val">30.2%</div></div>
       </div>
-      <div class="grid-3">
-        <article class="card">
-          <h3>错配已经成立</h3>
-          <p>Top 20% 创作者拿走 42.9% 曝光，但只贡献 30.2% 收入。资源集中度高于价值集中度，说明当前配置更接近既有曝光惯性，而不是长期经营价值。</p>
-        </article>
-        <article class="card">
-          <h3>问题位置清晰</h3>
-          <p>从注册到首发并不差，主要损耗发生在首发后到稳定经营之间。策略重点应放在“已启动创作者如何进入稳定经营”而不是单纯扩注册或补首发。</p>
-        </article>
-        <article class="card">
-          <h3>推进方式明确</h3>
-          <p>建议先做 creator 级分层灰度；主指标持续为正且护栏稳定后，再按池和预算档位扩量。</p>
-        </article>
-      </div>
-    </section>
+    </div>
+    <div class="card purple" style="margin-top:16px;">
+      <h3>关键人群</h3>
+      <table class="table">
+        <tr><th>人群</th><th>人数 / 占比</th><th>特征</th><th>动作含义</th></tr>
+        <tr><td>高曝光低变现</td><td>2,620 / 14.0%</td><td>占曝光 35.0%，是主要资源沉没点</td><td>降配阈值 + 复核</td></tr>
+        <tr><td>高潜低激励</td><td>1,297 / 6.9%</td><td>30 日留存 62.4%，千次曝光收入 98.1</td><td>增配曝光与激励</td></tr>
+      </table>
+      <p class="figcap">这两类人群都不应被“机械标签化”处理，而应作为首轮策略动作的重点名单来源。</p>
+    </div>
+    <div class="card green" style="margin-top:16px;">
+      <h3>决策分卡</h3>
+      <table class="table"><tr><th>维度</th><th>判断</th><th>说明</th></tr><tr><td>问题清晰度</td><td><span class='badge-inline'>通过</span></td><td>曝光集中度高于价值集中度，且损耗主要发生在首发后的持续经营阶段，资源错配问题成立。</td></tr><tr><td>动作可执行性</td><td><span class='badge-inline'>有条件通过</span></td><td>高潜低激励与高曝光低变现两类优先人群清晰，但降配对象仍需复核队列和申诉机制承接。</td></tr><tr><td>证据强度</td><td><span class='badge-inline'>有条件通过</span></td><td>同规模历史回测显示 30 日留存和单位激励收入同时改善，当前证据支持进入实验，不直接替代线上因果识别。</td></tr><tr><td>迁移风险</td><td><span class='badge-inline'>可控但需复核</span></td><td>新旧名单重合率约 72.2%，属于轻量校正；边界样本仍需结合运营承接能力分层推进。</td></tr><tr><td>稳健性</td><td><span class='badge-inline'>基本通过</span></td><td>不同预算规模和内容垂类下方向基本一致，但收益释放幅度存在差异，更适合分层灰度。</td></tr><tr><td>上线建议</td><td><span class='badge-inline'>先实验后扩量</span></td><td>先做 creator 级分层随机实验；主指标保持为正且关键护栏无明显恶化后，再按池和预算档位扩量。</td></tr></table>
+    </div>
+  </div>
+</section>
 
-    <section id="mismatch">
-      <div class="section-head">
-        <h2>供给与错配</h2>
-        <p>供给漏斗、集中度差异和关键人群共同决定资源动作的方向。</p>
-      </div>
-      <div class="grid-2">
-        <article class="card">
-          <h3>供给漏斗</h3>
-          <p>损耗主要发生在首发后到稳定经营阶段。</p>
-          <table>
-            <thead>
-              <tr><th>阶段</th><th>创作者数</th><th>占注册比例</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>注册创作者</td><td>18,742</td><td>100.0%</td></tr>
-              <tr><td>完成首发</td><td>15,107</td><td>80.6%</td></tr>
-              <tr><td>连续活跃 ≥ 2 周</td><td>13,061</td><td>69.7%</td></tr>
-              <tr><td>连续活跃 ≥ 4 周</td><td>8,572</td><td>45.7%</td></tr>
-              <tr><td>已开通变现</td><td>5,927</td><td>31.6%</td></tr>
-              <tr><td>稳定经营且已开通变现</td><td>2,819</td><td>15.0%</td></tr>
-            </tbody>
-          </table>
-          <div class="note">来源文件：<a href="outputs/funnel_summary.csv">outputs/funnel_summary.csv</a></div>
-        </article>
-        <article class="card">
-          <h3>关键人群分层</h3>
-          <p>高曝光低变现与高潜低激励两类人群分离明显，分别对应资源回收与资源补投的两端。</p>
-          <table>
-            <thead>
-              <tr><th>人群</th><th>含义</th><th>动作方向</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>高曝光低变现</td><td>占用较多曝光，但效率偏低</td><td>进入降配阈值与复核队列</td></tr>
-              <tr><td>高潜低激励</td><td>留存与效率较高，但资源支持不足</td><td>优先补入曝光与激励</td></tr>
-              <tr><td>高价值稳定供给</td><td>留存、效率、持续经营表现稳定</td><td>保持稳定扶持</td></tr>
-              <tr><td>一般供给 / 低价值供给</td><td>优先做内容诊断与成长任务</td><td>不直接进入高资源池</td></tr>
-            </tbody>
-          </table>
-          <div class="tag-row">
-            <span class="tag">Top 20% 创作者曝光占比 42.9%</span>
-            <span class="tag">Top 20% 创作者收入占比 30.2%</span>
-            <span class="tag">高曝光低变现 2,620 人</span>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="policy">
-      <div class="section-head">
-        <h2>策略口径</h2>
-        <p>资源分配按准入、排序、复核三步执行。</p>
-      </div>
-      <div class="grid-2">
-        <article class="card">
-          <h3>执行框架</h3>
-          <table>
-            <thead>
-              <tr><th>步骤</th><th>作用</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>准入</td><td>过滤安全、作弊、活跃不足和历史占用高但长期效率低的人群。</td></tr>
-              <tr><td>排序</td><td>保留旧规则主体，同时补入留存、效率和低资源占用信号。</td></tr>
-              <tr><td>复核</td><td>拟降配名单进入复核队列，避免误伤边界样本。</td></tr>
-            </tbody>
-          </table>
-        </article>
-        <article class="card">
-          <h3>首轮灰度采用的排序口径</h3>
-          <div class="formula">新优先级分数
+<section class="section" id="strategy">
+  <div class="kicker">策略口径</div>
+  <h2>把规则说清楚：准入、排序、复核三步执行</h2>
+  <div class="three">
+    <div class="card blue"><h3>准入过滤</h3><p>先过滤安全、作弊、活跃不足，以及历史资源占用高但长期效率低的人群。</p></div>
+    <div class="card green"><h3>排序加权</h3><p>保留旧规则主体，同时加入留存、变现效率和低资源占用三个修正信号。</p></div>
+    <div class="card amber"><h3>名单复核</h3><p>拟降配对象进入复核与申诉队列，避免机械误伤边界样本。</p></div>
+  </div>
+  <div class="grid-2-1" style="margin-top:16px;">
+    <div class="card soft">
+      <h3>首轮灰度评分公式</h3>
+      <pre class="code">新优先级分数
 = 0.60 × 原规则分位
 + 0.20 × 留存分位
 + 0.15 × 变现效率分位（缩尾后）
-+ 0.05 × 低资源占用分位</div>
-          <div class="note">采用原因：它在名单重合率、主指标改善、人均现金激励抬升速度和运营承接之间更平衡。</div>
-        </article>
++ 0.05 × 低资源占用分位</pre>
+      <div class="timeline" style="margin-top:10px;">
+        <div class="step"><div class="idx">1</div><div><strong>旧规则权重保留 0.60</strong><br><span class="small">核心目的不是推翻旧规则，而是在首轮灰度中控制名单迁移速度，避免把执行风险直接推到运营端。</span></div></div>
+        <div class="step"><div class="idx">2</div><div><strong>留存显式给到 0.20</strong><br><span class="small">让长期供给质量从“解释变量”进入“排序变量”。</span></div></div>
+        <div class="step"><div class="idx">3</div><div><strong>效率和低资源占用只作修正项</strong><br><span class="small">避免让单一短期效率口径或极端占用口径直接主导名次。</span></div></div>
       </div>
-    </section>
+    </div>
+    <div class="card soft">
+      <h3>为什么是 D 方案</h3>
+      <p class="small">不是因为它离线提升最大，而是因为它更适合作为首轮灰度：名单重合率更稳，主指标改善为正，且运营承接压力更可控。</p>
+      <table class="table">
+        <tr><th>方案</th><th>旧规则</th><th>留存</th><th>效率</th><th>低占用</th><th>名单重合率</th><th>留存提升</th><th>单位激励收入提升</th><th>人均现金激励变化</th><th>结论</th></tr>
+        <tr><td>A</td><td>0.50</td><td>0.20</td><td>0.15</td><td>0.15</td><td>69.5%</td><td>10.05</td><td>19.85%</td><td>9.03%</td><td>未采用</td></tr><tr><td>B</td><td>0.50</td><td>0.15</td><td>0.20</td><td>0.15</td><td>69.0%</td><td>9.76</td><td>21.42%</td><td>8.66%</td><td>未采用</td></tr><tr><td>C</td><td>0.55</td><td>0.20</td><td>0.15</td><td>0.10</td><td>70.6%</td><td>9.85</td><td>16.12%</td><td>11.61%</td><td>未采用</td></tr><tr class="highlight"><td>D</td><td>0.60</td><td>0.20</td><td>0.15</td><td>0.05</td><td>71.9%</td><td>9.57</td><td>12.32%</td><td>14.17%</td><td>首轮灰度采用</td></tr><tr><td>E</td><td>0.60</td><td>0.15</td><td>0.20</td><td>0.05</td><td>71.4%</td><td>9.29</td><td>14.33%</td><td>13.61%</td><td>未采用</td></tr><tr><td>F</td><td>0.65</td><td>0.10</td><td>0.25</td><td>-0.00</td><td>71.9%</td><td>8.95</td><td>12.40%</td><td>15.58%</td><td>未采用</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
 
-    <section id="robustness">
-      <div class="section-head">
-        <h2>稳健性与迁移结构</h2>
-        <p>不同规模和垂类下方向基本一致，名单替换以回收低效率曝光为主。</p>
+<section class="section" id="backtest">
+  <div class="kicker">回测与扩量</div>
+  <h2>同规模比较方向成立，但扩量要分阶段</h2>
+  <div class="kv">
+    <div class="item"><div class="k">30日留存</div><div class="v">48.7% → 58.1%</div><div class="small">提升 9.4 个百分点</div></div>
+    <div class="item"><div class="k">单位激励收入</div><div class="v">69.6 → 78.4</div><div class="small">提升 12.7%</div></div>
+    <div class="item"><div class="k">人均现金激励</div><div class="v">550 → 625</div><div class="small">变化 13.6%</div></div>
+    <div class="item"><div class="k">Bootstrap 95% 区间</div><div class="v">留存 8.8–10.1ppt</div><div class="small">单位激励收入 9.6%–16.0%</div></div>
+  </div>
+  <div class="two" style="margin-top:16px;">
+    <div class="card blue">
+      <h3>这组回测说明什么</h3>
+      <ul class="list">
+        <li>在同规模 Top N 下，新规则把更多资源分给了经营质量更高的供给。</li>
+        <li>单人成本上升，但稳定经营与单位激励产出同步改善，因此更接近结构性资源重配。</li>
+        <li>新旧名单重合率约 72.2%，属于轻量校正，而不是推倒重来。</li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h3>这组回测不能说明什么</h3>
+      <ul class="list">
+        <li>不能把离线 uplift 当成真实因果 uplift。</li>
+        <li>不能排除历史活动资源、运营干预和幸存者偏差。</li>
+        <li>不能假设补入名单在真实拿到同等资源后一定兑现同幅度收益。</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid-2-1" style="margin-top:16px;">
+    <div class="card soft">
+      <h3>不同 Top N 档位</h3>
+      <p class="small">规模越大，边际改善越弱，因此扩量应按预算档位分阶段推进，而不是一次性全量替换。</p>
+      <div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>Top 3,000</strong><span class='small'>人均现金激励变化 24.2%</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:100.0%'></span></div><div class='val'>14.9ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:100.0%'></span></div><div class='val'>18.7%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>Top 3,600</strong><span class='small'>人均现金激励变化 18.6%</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:82.0%'></span></div><div class='val'>12.2ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:84.4%'></span></div><div class='val'>15.8%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>Top 4,200</strong><span class='small'>人均现金激励变化 13.6%</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:63.5%'></span></div><div class='val'>9.4ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:68.1%'></span></div><div class='val'>12.7%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>Top 5,000</strong><span class='small'>人均现金激励变化 9.7%</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:46.8%'></span></div><div class='val'>7.0ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:54.1%'></span></div><div class='val'>10.1%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>Top 6,000</strong><span class='small'>人均现金激励变化 6.4%</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:32.9%'></span></div><div class='val'>4.9ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:38.5%'></span></div><div class='val'>7.2%</div></div></div></div>
+    </div>
+    <div>
+      <div class="card soft">
+        <h3>名单迁移结构</h3>
+        <table class="table"><tr><th>方向</th><th>分群</th><th>人数</th><th>组内占比</th><th>平均30日留存</th><th>平均单位激励收入</th></tr><tr><td>旧名单移出</td><td>一般供给</td><td>78</td><td>6.7%</td><td>39.5%</td><td>40.7</td></tr><tr><td>旧名单移出</td><td>低价值供给</td><td>1</td><td>0.1%</td><td>32.6%</td><td>43.9</td></tr><tr><td>旧名单移出</td><td>高曝光低变现</td><td>1089</td><td>93.2%</td><td>30.2%</td><td>46.1</td></tr><tr><td>新名单补入</td><td>一般供给</td><td>503</td><td>43.1%</td><td>63.0%</td><td>70.2</td></tr><tr><td>新名单补入</td><td>高价值稳定供给</td><td>461</td><td>39.5%</td><td>66.9%</td><td>66.8</td></tr><tr><td>新名单补入</td><td>高曝光低变现</td><td>44</td><td>3.8%</td><td>65.7%</td><td>60.7</td></tr><tr><td>新名单补入</td><td>高潜低激励</td><td>160</td><td>13.7%</td><td>64.0%</td><td>136.0</td></tr></table>
+        <p class="figcap">移出名单主要回收高曝光低变现；补入名单主要来自一般供给、高价值稳定供给和高潜低激励。</p>
       </div>
-      <div class="grid-2">
-        <article class="card">
-          <h3>同规模回测摘要</h3>
-          <table>
-            <thead>
-              <tr><th>指标</th><th>原规则</th><th>新规则</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>30 日留存</td><td>48.7%</td><td>58.1%</td></tr>
-              <tr><td>单位激励收入</td><td>69.6</td><td>78.4</td></tr>
-              <tr><td>人均现金激励</td><td>550</td><td>625</td></tr>
-              <tr><td>高潜命中率</td><td>3.5%</td><td>7.3%</td></tr>
-              <tr><td>名单重合率</td><td colspan="2">72.2%</td></tr>
-            </tbody>
-          </table>
-          <div class="note">当前结果更适合解释为结构性资源重配：单人成本抬升，但稳定经营和单位激励产出同步改善。</div>
-        </article>
-        <article class="card">
-          <h3>方向稳定</h3>
-          <p>不同 Top N 档位下，30 日留存提升和单位激励收入提升方向均为正；各垂类点估计方向一致，但收益释放幅度存在差异。</p>
-          <div class="tag-row">
-            <span class="tag">Top 3,000 ～ Top 6,000 方向为正</span>
-            <span class="tag">Bootstrap 95% 区间支持正向提升</span>
-            <span class="tag">名单重合率约 72.2%</span>
-          </div>
-          <div class="note">来源文件：<a href="outputs/backtest_summary.csv">backtest_summary.csv</a>、<a href="outputs/weight_sensitivity_screen.csv">weight_sensitivity_screen.csv</a>、<a href="outputs/vertical_robustness.csv">vertical_robustness.csv</a></div>
-        </article>
+      <div class="card soft" style="margin-top:16px;">
+        <h3>垂类稳健性</h3>
+        <div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>搞笑娱乐</strong><span class='small'>净席位变化 -25</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:100.0%'></span></div><div class='val'>10.5ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:100.0%'></span></div><div class='val'>17.4%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>数码科技</strong><span class='small'>净席位变化 +10</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:95.5%'></span></div><div class='val'>10.0ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:87.0%'></span></div><div class='val'>15.1%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>本地生活</strong><span class='small'>净席位变化 +13</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:93.2%'></span></div><div class='val'>9.8ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:65.1%'></span></div><div class='val'>11.3%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>生活方式</strong><span class='small'>净席位变化 -16</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:89.9%'></span></div><div class='val'>9.4ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:57.7%'></span></div><div class='val'>10.0%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>游戏</strong><span class='small'>净席位变化 +29</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:89.7%'></span></div><div class='val'>9.4ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:62.3%'></span></div><div class='val'>10.8%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>知识教育</strong><span class='small'>净席位变化 -11</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:85.1%'></span></div><div class='val'>8.9ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:76.1%'></span></div><div class='val'>13.3%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>美妆护肤</strong><span class='small'>净席位变化 +2</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:83.7%'></span></div><div class='val'>8.8ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:68.8%'></span></div><div class='val'>12.0%</div></div></div></div><div class='card soft' style='margin-bottom:12px;'><div style='display:flex;justify-content:space-between;gap:12px;align-items:center;'><strong>母婴</strong><span class='small'>净席位变化 -2</span></div><div class='meter-stack'><div class='meter-row small'><div class='lab'>30 日留存提升</div><div class='meter green'><span style='width:80.3%'></span></div><div class='val'>8.4ppt</div></div><div class='meter-row small'><div class='lab'>单位激励收入提升</div><div class='meter purple'><span style='width:69.9%'></span></div><div class='val'>12.2%</div></div></div></div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section id="experiment">
-      <div class="section-head">
-        <h2>实验与执行</h2>
-        <p>主指标、护栏和执行动作需要同时落地。</p>
-      </div>
-      <div class="grid-2">
-        <article class="card">
-          <h3>指标框架与实验门槛</h3>
-          <table>
-            <thead>
-              <tr><th>类型</th><th>内容</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>主指标</td><td>30 日留存率、单位激励收入</td></tr>
-              <tr><td>护栏</td><td>人均现金激励、投诉 / 作弊 / 安全</td></tr>
-              <tr><td>实验门槛</td><td>分层随机实验；满足主指标与护栏后扩量</td></tr>
-            </tbody>
-          </table>
-          <div class="note">来源：<a href="outputs/experiment_design_card.csv">experiment_design_card.csv</a> 与 <a href="outputs/validity_threat_register.csv">validity_threat_register.csv</a></div>
-        </article>
-        <article class="card">
-          <h3>暂停或回滚条件</h3>
-          <ul class="bullet-list" style="margin-top:0;">
-            <li>连续 3 天出现显著 SRM / 分流漂移；</li>
-            <li>单位激励收入转负，且没有恢复迹象；</li>
-            <li>投诉率、作弊率或内容安全风险明显恶化；</li>
-            <li>week 1 抬升但 week 4 回落，且 holdout 不支持继续扩量。</li>
-          </ul>
-          <table>
-            <thead>
-              <tr><th>对象</th><th>动作</th><th>节奏</th><th>责任方</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>高潜低激励</td><td>增配曝光与激励，进入快速晋升池</td><td>每 7 天复评</td><td>策略 DA / 运营</td></tr>
-              <tr><td>高曝光低变现</td><td>设置降配阈值并进入复核队列</td><td>每 7 天复核</td><td>运营 / 风控</td></tr>
-              <tr><td>高价值稳定供给</td><td>保持稳定扶持</td><td>月度复盘</td><td>运营</td></tr>
-              <tr><td>一般供给 / 低价值供给</td><td>内容诊断和成长任务</td><td>双周复盘</td><td>运营</td></tr>
-            </tbody>
-          </table>
-        </article>
-      </div>
-    </section>
+<section class="section" id="experiment">
+  <div class="kicker">实验设计</div>
+  <h2>线上判断才决定能不能扩量</h2>
+  <div class="two">
+    <div class="card green">
+      <h3>实验设计卡</h3>
+      <table class="table"><tr><th>项目</th><th>建议</th></tr><tr><td>随机化单位</td><td>creator 级分层随机实验</td></tr><tr><td>实验动作</td><td>对高潜低激励池做增配；对高曝光低变现池做降配 / 复核</td></tr><tr><td>主指标</td><td>30 日留存率；单位激励收入</td></tr><tr><td>护栏指标</td><td>人均现金激励；供给流失率；投诉率；作弊率；内容安全</td></tr><tr><td>建议分层</td><td>内容垂类；历史曝光档位；创作者体量；是否已开通变现</td></tr><tr><td>主读数原则</td><td>以 intent-to-treat 为主，treatment-on-the-treated 只作辅助</td></tr><tr><td>进入下一档扩量的条件</td><td>主指标不为负，单位激励收入保持为正，且关键护栏无明显恶化</td></tr><tr><td>暂停或回滚条件</td><td>连续 3 天出现显著 SRM / 分流漂移，或投诉/作弊/安全等关键护栏明显恶化，或单位激励收入转负</td></tr></table>
+      <div class="warning" style="margin-top:12px;"><strong>扩量条件</strong><br><span class="small">主指标持续为正，且护栏稳定，再按池、按垂类、按预算档位扩量。</span></div>
+    </div>
+    <div class="card amber">
+      <h3>暂停或回滚条件</h3>
+      <ul class="list">
+        <li>连续 3 天出现显著 SRM / 分流漂移；</li>
+        <li>单位激励收入转负且没有恢复迹象；</li>
+        <li>投诉率、作弊率、内容安全明显恶化；</li>
+        <li>week 1 抬升但 week 4 回落，且 holdout 不支持继续扩量。</li>
+      </ul>
+      <div class="ok" style="margin-top:12px;"><strong>推荐推进顺序</strong><br><span class="small">先按内容垂类和历史曝光档位做分层随机实验，再根据预算承接能力逐步扩量。</span></div>
+    </div>
+  </div>
+  <div class="card soft" style="margin-top:16px;">
+    <h3>有效性威胁与控制方式</h3>
+    <table class="table"><tr><th>风险</th><th>为什么重要</th><th>控制方式</th></tr><tr><td>历史回测不是因果识别</td><td>历史选择可能带有既有策略偏差和幸存者偏差。</td><td>正式扩量前采用分层随机实验或 switchback 验证。</td></tr><tr><td>SRM / 分流漂移</td><td>实验组和对照组在创作者数、曝光和支持预算上的分配可能偏离设计。</td><td>按日监控 creator 数、曝光和预算分配；显著偏离时暂停读数。</td></tr><tr><td>推荐外溢</td><td>资源重排会间接影响未直接实验的人群。</td><td>优先做池级隔离、creator 级锁定，并单独监控外溢敏感指标。</td></tr><tr><td>观察窗截断</td><td>短窗口可能高估短期效果，低估后续回落。</td><td>短窗看诊断指标，决策以 30 日或更长窗口为准。</td></tr><tr><td>新鲜感效应</td><td>新口径初期的抬升可能在后续衰减。</td><td>比较 week 1 与 week 4 效应，并在扩量后保留 holdout。</td></tr><tr><td>跨池迁移污染</td><td>创作者跨阈值移动可能污染 treatment assignment。</td><td>锁定 assignment 窗口，以 intent-to-treat 作为主读数。</td></tr></table>
+  </div>
+</section>
 
-    <section id="materials">
-      <div class="section-head">
-        <h2>分析材料</h2>
-        <p>本页所有链接均已改成适用于 GitHub Pages 项目站点的相对路径。</p>
-      </div>
-      <div class="materials">
-        <article class="card material-group">
-          <h3>文档</h3>
-          <div class="material-links">
-            <a href="report.html">进入报告页</a>
-            <a href="notebook.html">进入分析过程页</a>
-            <a href="sql.html">进入 SQL 页</a>
-            <a href="reports/creator_value_analysis_report.md">Markdown 报告</a>
-            <a href="README.md">README</a>
-          </div>
-        </article>
-        <article class="card material-group">
-          <h3>分析材料与结果表</h3>
-          <div class="material-links">
-            <a href="notebooks/creator_value_analysis.ipynb">Notebook 原文件</a>
-            <a href="analysis.py">分析脚本</a>
-            <a href="outputs/decision_scorecard.csv">决策分卡</a>
-            <a href="outputs/weight_sensitivity_screen.csv">候选口径取舍</a>
-            <a href="outputs/experiment_design_card.csv">实验设计卡</a>
-            <a href="outputs/validity_threat_register.csv">有效性威胁表</a>
-          </div>
-        </article>
-      </div>
-    </section>
-  </main>
+<section class="section" id="materials">
+  <div class="kicker">分析材料</div>
+  <h2>报告、分析过程、SQL 与原始结果表</h2>
+  <div class="three">
+    <div class="card"><h3>完整报告</h3><p>问题定义、解释边界、口径取舍、同规模回测、实验门槛与执行约束。</p><p><a href="report.html">进入报告页</a></p></div>
+    <div class="card"><h3>分析过程</h3><p>按经营判断顺序组织代码片段、表格输出和业务解释。</p><p><a href="notebook.html">进入分析过程页</a></p></div>
+    <div class="card"><h3>SQL 方案</h3><p>供给漏斗、分层、回测、迁移结构与实验监控 SQL。</p><p><a href="sql.html">进入 SQL 页</a></p></div>
+  </div>
+  <div class="two" style="margin-top:16px;">
+    <div class="card soft">
+      <h3>文档</h3>
+      <ul class="list">
+        <li><a href="reports/creator_value_analysis_report.md">Markdown 报告</a></li>
+        <li><a href="README.md">README</a></li>
+      </ul>
+    </div>
+    <div class="card soft">
+      <h3>原始材料</h3>
+      <ul class="list">
+        <li><a href="notebooks/creator_value_analysis.ipynb">Notebook 原文件</a></li>
+        <li><a href="analysis.py">分析脚本</a></li>
+        <li><a href="outputs/decision_scorecard.csv">决策分卡</a></li>
+        <li><a href="outputs/weight_sensitivity_screen.csv">候选口径取舍</a></li>
+        <li><a href="outputs/experiment_design_card.csv">实验设计卡</a></li>
+        <li><a href="outputs/validity_threat_register.csv">有效性威胁表</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer">样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。</div>
+</section>
 
-  <footer class="wrap">
-    当前替换版修复了两类核心问题：一是首页 CSS 样式失效，二是 GitHub Pages 项目站点下的错误相对路径。将本文件覆盖仓库根目录的同名文件即可生效。
-  </footer>
+</div>
 </body>
 </html>
