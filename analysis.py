@@ -3,10 +3,10 @@ import numpy as np
 
 TOP_N = 4200
 
-creator = pd.read_csv('data/creator_profile.csv', parse_dates=['join_date'])
-content = pd.read_csv('data/content_performance.csv', parse_dates=['publish_date'])
-weekly = pd.read_csv('data/creator_weekly_activity.csv')
-incentive = pd.read_csv('data/creator_incentive.csv')
+creator = pd.read_csv('creator_profile.csv', parse_dates=['join_date'])
+content = pd.read_csv('content_performance.csv', parse_dates=['publish_date'])
+weekly = pd.read_csv('creator_weekly_activity.csv')
+incentive = pd.read_csv('creator_incentive.csv')
 
 # 1) 供给漏斗
 funnel = pd.DataFrame({
@@ -42,13 +42,9 @@ eligible['segment'] = np.select([
     (eligible['exposure_pct_rank'] <= 0.25) & (eligible['efficiency_pct_rank'] <= 0.35)
 ], ['高曝光低变现', '高潜低激励', '高价值稳定供给', '低价值供给'], default='一般供给')
 
-# 4) 准入与排序
-eligible['pass_entry_gate'] = np.where(
-    (eligible['active_weeks'] >= 2)
-    & (eligible['safety_flag'] == 0)
-    & (eligible['fraud_flag'] == 0),
-    1, 0
-)
+# 4) 排序
+# The synthetic portfolio dataset does not include safety or fraud fields.
+# Those gates belong in the online experiment design, not this offline back-test.
 eligible['new_priority_score'] = (
     0.60 * eligible['old_rule_pct_rank']
     + 0.20 * eligible['retention_pct_rank']
@@ -57,7 +53,7 @@ eligible['new_priority_score'] = (
 )
 
 # 5) 固定 Top N 回测
-pool = eligible[eligible['pass_entry_gate'] == 1].copy()
+pool = eligible.copy()
 old_sel = pool.nlargest(TOP_N, 'old_rule_score')
 new_sel = pool.nlargest(TOP_N, 'new_priority_score')
 

@@ -1,35 +1,67 @@
-# 创作者资源重配分析
+# Creator Value Analysis and Resource Reallocation
 
-## 项目定位
+A portfolio case study showing how Python and SQL can be used to diagnose resource misallocation, redesign a creator-prioritisation rule, evaluate it with a fixed-size offline back-test, and define a controlled online rollout.
 
-该项目围绕“资源是否持续流向更可能形成稳定供给和单位资源产出的创作者”展开，
-目标是判断是否值得进入首轮灰度，而不是直接给出全量上线结论。
+> **Data disclosure:** All data in this repository are synthetic and were created solely for portfolio demonstration. They do not come from an employer, client, production platform, internship, or any confidential source.
 
-## 首页结论
+## Decision question
 
-- 问题成立：曝光集中度高于价值集中度。
-- 动作明确：高曝光低变现进入降配复核；高潜低激励进入增配试验池。
-- 推进边界：离线证据支持进入首轮灰度，不支持跳过线上验证直接全量切换。
-- 读数纪律：固定 Top N 比较，creator 级分层随机，主指标与护栏同时读数。
+When traffic and cash incentives are limited, are resources reaching creators who are more likely to deliver sustained supply and stronger output per unit of support?
 
-## 创作者价值口径
+The proposed decision rule combines four dimensions:
 
-资源配置判断不直接看单一结果项，而看四个维度：
+1. **Sustained supply:** 30-day retention, consecutive active weeks, and stable operating behaviour.
+2. **Resource efficiency:** revenue per 1,000 impressions and revenue per unit of incentive.
+3. **Supply quality:** monetisation activation and recent operating signals.
+4. **Risk controls:** safety, fraud, complaints, migration cost, and operational capacity.
 
-1. 持续供给：30 日留存、连续活跃周数、稳定经营转化
-2. 单位资源产出：千次曝光收入、单位激励收入
-3. 供给质量：变现开通率、近期经营信号改善
-4. 风险约束：安全、作弊、投诉、迁移成本、运营承接
+## Key offline back-test results
 
-## 关键文件
+The comparison holds the selected group constant at the top 4,200 creators.
 
-- `index.html`：首页
-- `report.html`：完整报告
-- `notebook.html`：分析过程页
-- `sql.html`：SQL 方案页
+| Metric | Existing rule | Adjusted rule | Change |
+|---|---:|---:|---:|
+| 30-day retention | 48.7% | 58.1% | **+9.4 percentage points** |
+| Revenue per unit of incentive | 69.6 | 78.4 | **+12.7%** |
+| Average cash incentive per creator | 550 | 625 | +13.6% |
+| List overlap | — | — | 72.2% |
 
-## 说明
+These are **offline results on synthetic data**, not live business impact. They support testing the rule in a controlled experiment; they do not justify immediate full rollout.
 
-- 数据为合成样本；
-- 离线结果仅用于判断是否进入实验；
-- 是否扩量，必须由线上主指标和护栏决定。
+## Analytical approach
+
+- Diagnose the creator supply funnel and locate the main loss stage.
+- Compare exposure concentration with value concentration.
+- Segment creators into actionable groups, including high-exposure/low-monetisation and high-potential/low-incentive cohorts.
+- Define safety, fraud, and activity eligibility gates for online implementation.
+- Re-rank creators using retention, monetisation efficiency, and resource occupancy signals.
+- Compare the existing and adjusted rules at a fixed top-N.
+- Define primary metrics, guardrails, rollout thresholds, and rollback conditions for an online experiment.
+
+## Run locally
+
+```bash
+git clone https://github.com/QILU-622/creator-value-analysis.git
+cd creator-value-analysis
+
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+
+python -m pip install -r requirements.txt
+python analysis.py
+```
+
+The analysis script reads the synthetic CSV inputs in the repository root and prints the fixed top-N back-test summary.
+
+## Repository guide
+
+- [`index.html`](index.html): portfolio overview and decision summary.
+- [`report.html`](report.html): full business analysis and rollout logic.
+- [`notebook.html`](notebook.html): analytical workflow and code excerpts.
+- [`sql.html`](sql.html): SQL design for funnel analysis, segmentation, back-testing, and experiment monitoring.
+- [`analysis.py`](analysis.py): Python implementation of the scoring and fixed top-N comparison.
+- [`requirements.txt`](requirements.txt): Python dependencies.
+
+## Decision boundary
+
+The offline evidence supports a first controlled rollout only. Expansion should require positive primary metrics, stable guardrails, valid randomisation, and no material deterioration in complaints, fraud, safety, or creator churn.
