@@ -13,17 +13,17 @@ WITH creator_base AS (
         CASE WHEN has_first_publish = 1 AND active_weeks >= 4 AND monetization_opened = 1 AND stable_updater = 1 THEN 1 ELSE 0 END AS stable_monetizing_creator
     FROM creator_profile
 ), funnel_union AS (
-    SELECT 1 AS step_order, '注册创作者' AS stage, COUNT(*) AS creator_cnt FROM creator_base
+    SELECT 1 AS step_order, 'registered creators' AS stage, COUNT(*) AS creator_cnt FROM creator_base
     UNION ALL
-    SELECT 2, '完成首发', SUM(published_creator) FROM creator_base
+    SELECT 2, 'published first post', SUM(published_creator) FROM creator_base
     UNION ALL
-    SELECT 3, '连续活跃≥2周', SUM(active_2w_creator) FROM creator_base
+    SELECT 3, 'active for 2+ weeks', SUM(active_2w_creator) FROM creator_base
     UNION ALL
-    SELECT 4, '连续活跃≥4周', SUM(active_4w_creator) FROM creator_base
+    SELECT 4, 'active for 4+ weeks', SUM(active_4w_creator) FROM creator_base
     UNION ALL
-    SELECT 5, '已开通变现', SUM(monetization_after_active4) FROM creator_base
+    SELECT 5, 'monetisation enabled', SUM(monetization_after_active4) FROM creator_base
     UNION ALL
-    SELECT 6, '稳定经营且已开通变现', SUM(stable_monetizing_creator) FROM creator_base
+    SELECT 6, 'stable and monetised', SUM(stable_monetizing_creator) FROM creator_base
 )
 SELECT
     stage,
