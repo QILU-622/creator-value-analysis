@@ -16,6 +16,6 @@ SELECT
     ROUND(retention_30d_rate, 4) AS retention_30d_rate,
     ROUND(monetization_open_rate, 4) AS monetization_open_rate,
     ROUND(active_4w_rate, 4) AS active_4w_rate,
-    CASE WHEN creators < 100 THEN '样本较小，仅作方向参考' ELSE '可用于稳定监控' END AS interpretation
+    CASE WHEN creators < 100 THEN 'small sample; directional only' ELSE 'suitable for monitoring' END AS interpretation
 FROM monthly_cohort
 ORDER BY join_month;
