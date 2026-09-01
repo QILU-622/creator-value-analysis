@@ -49,7 +49,7 @@ function makeDualLineChart(elId, labels, s1, s2, options={}){
 }
 document.addEventListener('DOMContentLoaded',()=>{
   makeBarChart('funnelChart',
-    ['注册','首发','2周活跃','4周活跃','变现开通','稳定经营'],
+    ['Registered','First post','Active 2w','Active 4w','Monetised','Stable supply'],
     [100,80.6,69.7,45.7,31.6,15.0],
     {yFormatter:v=>`${Math.round(v)}%`, valueFormatter:v=>`${v.toFixed(1)}%`}
   );
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   );
   makeBarChart('topNChart', ['3000','3600','4200','5000','6000'], [14.9,12.2,9.4,7.0,4.9], {valueFormatter:v=>`${v.toFixed(1)}ppt`, yFormatter:v=>`${v.toFixed(0)}ppt`, color:'#7ef0c3'});
   makeBarChart('verticalChart',
-    ['搞笑娱乐','数码科技','本地生活','生活方式','游戏','知识教育','美妆护肤','母婴'],
+    ['Entertainment','Consumer tech','Local services','Lifestyle','Gaming','Education','Beauty','Parenting'],
     [10.5,10.0,9.8,9.4,9.4,8.9,8.8,8.4],
     {w:900, valueFormatter:v=>`${v.toFixed(1)}ppt`, yFormatter:v=>`${v.toFixed(0)}ppt`}
   );
