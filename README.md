@@ -1,5 +1,7 @@
 # Creator Value Analysis and Resource Reallocation
 
+[![Python tests](https://github.com/QILU-622/creator-value-analysis/actions/workflows/tests.yml/badge.svg)](https://github.com/QILU-622/creator-value-analysis/actions/workflows/tests.yml)
+
 A portfolio case study showing how Python and SQL can be used to diagnose resource misallocation, redesign a creator-prioritisation rule, evaluate it with a fixed-size offline back-test, and define a controlled online rollout.
 
 **Independent portfolio project** · Python · pandas · NumPy · SQL · ranking · offline evaluation · experiment design
@@ -32,6 +34,14 @@ The comparison holds the selected group constant at the top 4,200 creators.
 
 These are **offline results on synthetic data**, not live business impact. They support testing the rule in a controlled experiment; they do not justify immediate full rollout.
 
+## Selected evidence
+
+![Exposure and revenue concentration](figures/03_pareto_curve.png)
+
+![Fixed-size historical back-test](figures/05_backtest_comparison.png)
+
+Additional robustness, segmentation, and transition charts are available in [`figures/`](figures/), with their underlying result tables in [`outputs/`](outputs/).
+
 ## Analytical approach
 
 - Diagnose the creator supply funnel and locate the main loss stage.
@@ -48,6 +58,15 @@ These are **offline results on synthetic data**, not live business impact. They 
 - **Evaluation discipline:** compares both rules at the same top-N instead of creating uplift by expanding the selected pool.
 - **Management judgement:** balances retention and efficiency gains against higher cash incentives and migration risk.
 - **Responsible deployment:** keeps synthetic offline evidence separate from causal online impact and specifies what must be validated next.
+
+## Implementation and verification
+
+| Evidence | What can be inspected |
+|---|---|
+| Input validation | Required columns, unique creator IDs, binary eligibility flags, non-empty data, and valid pool size fail early with clear errors. |
+| Reusable Python | Data loading, scoring, segmentation, and fixed top-N evaluation are separate functions rather than one notebook-only script. |
+| Regression tests | Five tests protect the published uplift figures, constant pool size, and key input assumptions. |
+| Continuous integration | GitHub Actions runs the analysis and tests on Python 3.11 and 3.12 for every push and pull request. |
 
 ## Run locally
 
@@ -74,12 +93,13 @@ pytest -q
 ## Repository guide
 
 - [`index.html`](index.html): portfolio overview and decision summary.
-- [`report.html`](report.html): full business analysis and rollout logic.
-- [`notebook.html`](notebook.html): analytical workflow and code excerpts.
-- [`sql.html`](sql.html): SQL design for funnel analysis, segmentation, back-testing, and experiment monitoring.
 - [`analysis.py`](analysis.py): Python implementation of the scoring and fixed top-N comparison.
 - [`TECHNICAL_REPORT.md`](TECHNICAL_REPORT.md): methods, assumptions, results, limitations, and next validation steps.
+- [`sql/`](sql/): modular SQL for funnel analysis, segmentation, back-testing, transition analysis, and experiment monitoring.
+- [`figures/`](figures/): selected diagnostic and robustness charts.
+- [`outputs/`](outputs/): committed result tables supporting the published findings.
 - [`tests/test_analysis.py`](tests/test_analysis.py): regression checks for the published back-test figures.
+- [`.github/workflows/tests.yml`](.github/workflows/tests.yml): automated verification on Python 3.11 and 3.12.
 - [`requirements.txt`](requirements.txt): Python dependencies.
 - [`requirements-dev.txt`](requirements-dev.txt): optional test dependency.
 

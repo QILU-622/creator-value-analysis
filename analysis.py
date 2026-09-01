@@ -7,16 +7,46 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_TOP_N = 4_200
+REQUIRED_COLUMNS = {
+    "creator_id",
+    "join_date",
+    "has_first_publish",
+    "old_rule_score",
+    "retention_30d_rate",
+    "rev_per_1k_exposure",
+    "total_supported_exposure",
+    "exposure_pct_rank",
+    "unit_incentive_revenue",
+    "total_cash_incentive",
+}
+
+
+def validate_creator_data(creator: pd.DataFrame) -> None:
+    """Fail early when the synthetic input cannot support the back-test."""
+    missing = REQUIRED_COLUMNS - set(creator.columns)
+    if missing:
+        raise ValueError(f"Missing required columns: {sorted(missing)}")
+    if creator.empty:
+        raise ValueError("Creator data are empty")
+    if creator["creator_id"].isna().any():
+        raise ValueError("creator_id contains missing values")
+    if creator["creator_id"].duplicated().any():
+        raise ValueError("creator_id must be unique")
+    if not creator["has_first_publish"].isin([0, 1]).all():
+        raise ValueError("has_first_publish must contain only 0 or 1")
 
 
 def load_creator_data(path: Path | None = None) -> pd.DataFrame:
     """Load the synthetic creator-level table."""
     source = path or ROOT / "creator_profile.csv"
-    return pd.read_csv(source, parse_dates=["join_date"])
+    creator = pd.read_csv(source, parse_dates=["join_date"])
+    validate_creator_data(creator)
+    return creator
 
 
 def score_creators(creator: pd.DataFrame) -> pd.DataFrame:
     """Build the adjusted priority score for creators who published content."""
+    validate_creator_data(creator)
     eligible = creator.loc[creator["has_first_publish"].eq(1)].copy()
 
     lower = eligible["rev_per_1k_exposure"].quantile(0.01)
@@ -68,6 +98,8 @@ def run_backtest(
     creator: pd.DataFrame, top_n: int = DEFAULT_TOP_N
 ) -> tuple[pd.DataFrame, float]:
     """Compare the existing and adjusted rules at the same selected-pool size."""
+    if top_n <= 0:
+        raise ValueError("top_n must be a positive integer")
     scored = score_creators(creator)
     if len(scored) < top_n:
         raise ValueError(

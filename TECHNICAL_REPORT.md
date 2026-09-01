@@ -56,7 +56,13 @@ The adjusted list improves retention and revenue per unit of incentive, but it a
 
 These figures are synthetic offline back-test results. They do not establish causal business impact, production safety, or a platform-wide benchmark. Safety and fraud fields are not present in the synthetic back-test and therefore are design requirements for an online experiment, not completed offline checks.
 
-## 7. Proposed online validation
+## 7. Implementation and quality checks
+
+The Python implementation separates loading, validation, scoring, and evaluation. It rejects missing scoring fields, duplicate creator IDs, invalid eligibility flags, non-positive pool sizes, and pool sizes larger than the eligible population before producing a result.
+
+Five regression tests verify the two published uplift figures, top-N consistency, unique IDs, required columns, and valid pool size. GitHub Actions reruns the analysis and test suite on Python 3.11 and 3.12 after each repository change.
+
+## 8. Proposed online validation
 
 - Randomise at creator level within pre-defined strata.
 - Use 30-day retention and revenue per unit of incentive as primary metrics.
