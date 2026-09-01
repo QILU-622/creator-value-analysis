@@ -2,6 +2,10 @@
 
 A portfolio case study showing how Python and SQL can be used to diagnose resource misallocation, redesign a creator-prioritisation rule, evaluate it with a fixed-size offline back-test, and define a controlled online rollout.
 
+**Independent portfolio project** · Python · pandas · NumPy · SQL · ranking · offline evaluation · experiment design
+
+[Live project](https://qilu-622.github.io/creator-value-analysis/) · [Technical report](TECHNICAL_REPORT.md) · [Python analysis](analysis.py) · [SQL back-test](sql/resource_reallocation_backtest.sql)
+
 > **Data disclosure:** All data in this repository are synthetic and were created solely for portfolio demonstration. They do not come from an employer, client, production platform, internship, or any confidential source.
 
 ## Decision question
@@ -38,6 +42,13 @@ These are **offline results on synthetic data**, not live business impact. They 
 - Compare the existing and adjusted rules at a fixed top-N.
 - Define primary metrics, guardrails, rollout thresholds, and rollback conditions for an online experiment.
 
+## What this project demonstrates
+
+- **Decision analytics:** converts a budget-allocation problem into an explicit scoring and selection rule.
+- **Evaluation discipline:** compares both rules at the same top-N instead of creating uplift by expanding the selected pool.
+- **Management judgement:** balances retention and efficiency gains against higher cash incentives and migration risk.
+- **Responsible deployment:** keeps synthetic offline evidence separate from causal online impact and specifies what must be validated next.
+
 ## Run locally
 
 ```bash
@@ -53,6 +64,13 @@ python analysis.py
 
 The analysis script reads the synthetic CSV inputs in the repository root and prints the fixed top-N back-test summary.
 
+Optional regression checks:
+
+```bash
+python -m pip install -r requirements-dev.txt
+pytest -q
+```
+
 ## Repository guide
 
 - [`index.html`](index.html): portfolio overview and decision summary.
@@ -60,7 +78,10 @@ The analysis script reads the synthetic CSV inputs in the repository root and pr
 - [`notebook.html`](notebook.html): analytical workflow and code excerpts.
 - [`sql.html`](sql.html): SQL design for funnel analysis, segmentation, back-testing, and experiment monitoring.
 - [`analysis.py`](analysis.py): Python implementation of the scoring and fixed top-N comparison.
+- [`TECHNICAL_REPORT.md`](TECHNICAL_REPORT.md): methods, assumptions, results, limitations, and next validation steps.
+- [`tests/test_analysis.py`](tests/test_analysis.py): regression checks for the published back-test figures.
 - [`requirements.txt`](requirements.txt): Python dependencies.
+- [`requirements-dev.txt`](requirements-dev.txt): optional test dependency.
 
 ## Decision boundary
 

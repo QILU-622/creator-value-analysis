@@ -1,381 +1,190 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>创作者资源重配分析｜首页</title>
-  <meta name="description" content="创作者资源重配分析项目">
-  
-  <style>
-    :root{
-      --bg:#f6f8fb;
-      --card:#ffffff;
-      --text:#142033;
-      --muted:#556273;
-      --line:#d8e0ea;
-      --accent:#1f5eff;
-      --accent-soft:#edf3ff;
-      --ok:#0c8f5d;
-      --warn:#9a6700;
-      --shadow:0 10px 30px rgba(20,32,51,.08);
-      --radius:18px;
-      --max:1160px;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-      background:linear-gradient(180deg,#f7f9fc 0%,#f3f6fb 100%);
-      color:var(--text);
-      line-height:1.65;
-    }
-    a{color:var(--accent);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
-    .topbar{
-      position:sticky;top:0;z-index:20;
-      backdrop-filter:saturate(180%) blur(10px);
-      background:rgba(246,248,251,.84);
-      border-bottom:1px solid rgba(216,224,234,.85);
-    }
-    .topbar .inner{
-      max-width:var(--max);margin:0 auto;padding:14px 24px;
-      display:flex;align-items:center;justify-content:space-between;gap:20px;
-    }
-    .brand{font-weight:700;letter-spacing:.2px}
-    .nav{display:flex;gap:16px;flex-wrap:wrap}
-    .nav a{font-size:14px;color:var(--muted)}
-    .hero{padding:48px 0 20px}
-    .eyebrow{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:7px 12px;border-radius:999px;
-      background:var(--accent-soft);color:var(--accent);
-      font-size:13px;font-weight:600;
-    }
-    h1{
-      margin:16px 0 12px;font-size:42px;line-height:1.18;
-      letter-spacing:-.02em;
-    }
-    .subtitle{
-      max-width:900px;color:var(--muted);font-size:18px;
-      margin:0 0 24px;
-    }
-    .hero-grid{
-      display:grid;grid-template-columns:1.3fr .9fr;gap:20px;align-items:stretch;
-    }
-    .card{
-      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-      box-shadow:var(--shadow);padding:22px;
-    }
-    .kpi-grid{
-      display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px;
-    }
-    .kpi{
-      background:var(--card);border:1px solid var(--line);border-radius:16px;
-      padding:18px;box-shadow:var(--shadow);
-    }
-    .kpi .num{font-size:30px;font-weight:800;line-height:1.1;margin-bottom:6px}
-    .kpi .label{font-size:13px;color:var(--muted)}
-    .badge{
-      display:inline-block;padding:5px 10px;border-radius:999px;
-      background:#eef7f2;color:var(--ok);font-size:12px;font-weight:700
-    }
-    section{padding:18px 0}
-    h2{
-      margin:0 0 16px;font-size:28px;line-height:1.25;letter-spacing:-.01em;
-    }
-    h3{
-      margin:0 0 10px;font-size:19px;line-height:1.35;
-    }
-    p{margin:0 0 12px}
-    .muted{color:var(--muted)}
-    .section-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-    .panel-list{display:grid;gap:14px}
-    .mini{
-      padding:16px;border:1px solid var(--line);border-radius:14px;background:#fbfcfe;
-    }
-    .mini strong{display:block;margin-bottom:6px}
-    table{
-      width:100%;border-collapse:collapse;font-size:14px;background:#fff;
-      border:1px solid var(--line);border-radius:14px;overflow:hidden;
-    }
-    th,td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
-    th{background:#f7faff;font-weight:700}
-    tr:last-child td{border-bottom:none}
-    .bar-row{display:grid;gap:12px}
-    .bar{
-      display:grid;grid-template-columns:180px 1fr 70px;gap:12px;align-items:center;
-      font-size:14px;
-    }
-    .track{
-      position:relative;height:12px;border-radius:999px;background:#e8eef7;overflow:hidden;
-    }
-    .fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,#1f5eff,#78a2ff)}
-    .fill2{background:linear-gradient(90deg,#16a34a,#6ad18e)}
-    .note{
-      padding:14px 16px;border-left:4px solid var(--accent);background:#f8fbff;border-radius:12px;
-      color:var(--muted)
-    }
-    .code{
-      background:#0f1726;color:#dbe7ff;padding:16px;border-radius:14px;overflow:auto;
-      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.6;
-      white-space:pre-wrap;
-    }
-    .chips{display:flex;flex-wrap:wrap;gap:10px}
-    .chip{
-      padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;
-      font-size:13px;color:var(--muted)
-    }
-    .footer{padding:36px 0 64px;color:var(--muted);font-size:13px}
-    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-    .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-    .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
-    .toc a{
-      display:block;padding:14px 16px;border:1px solid var(--line);border-radius:14px;
-      background:#fff;color:var(--text);box-shadow:var(--shadow)
-    }
-    @media (max-width: 960px){
-      .hero-grid,.section-grid,.two-col,.three-col,.toc{grid-template-columns:1fr}
-      .kpi-grid{grid-template-columns:repeat(2,1fr)}
-      h1{font-size:34px}
-      .bar{grid-template-columns:1fr}
-    }
-    @media (max-width: 640px){
-      .topbar .inner{padding:12px 16px}
-      .wrap{padding:0 16px}
-      .hero{padding-top:28px}
-      .kpi-grid{grid-template-columns:1fr}
-    }
-  </style>
-
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Creator Resource Reallocation | Decision Analytics Portfolio</title>
+  <meta name="description" content="An independent synthetic portfolio project using Python and SQL to evaluate a fixed-size creator resource allocation rule and design a controlled rollout.">
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-
-<div class="topbar">
-  <div class="inner">
-    <div class="brand">创作者资源重配分析</div>
-    <div class="nav">
-      <a href="index.html">首页</a>
-      <a href="report.html">完整报告</a>
-      <a href="notebook.html">分析过程</a>
-      <a href="sql.html">SQL 方案</a>
-    </div>
-  </div>
-</div>
-
-<div class="wrap">
-  <header class="hero">
-    <span class="eyebrow">资源分配 · 规则回测 · 灰度决策</span>
-    <h1>资源重配的判断条件已经成立，推进方式应当受约束</h1>
-    <p class="subtitle">
-      目标不是重写一套“看起来更聪明”的规则，而是在预算有限、供给竞争激烈的条件下，
-      把曝光和激励从低效率占用中回收出来，补向更可能形成稳定供给和单位资源产出的创作者。
-    </p>
-
-    <div class="hero-grid">
-      <div class="card">
-        <h3>首页结论</h3>
-        <table>
-          <tr><th>判断项</th><th>结论</th></tr>
-          <tr><td>问题是否成立</td><td>成立。曝光集中度高于价值集中度，旧规则仍更接近按历史优势续配资源。</td></tr>
-          <tr><td>动作是否明确</td><td>明确。首轮动作集中在“高曝光低变现”降配复核，以及“高潜低激励”增配进入试验池。</td></tr>
-          <tr><td>是否适合直接扩量</td><td>不适合。离线回测只支持进入首轮灰度，不能替代线上因果识别。</td></tr>
-          <tr><td>推进原则</td><td>固定 Top N 比较、creator 级分层随机、主指标与护栏同时读数。</td></tr>
-        </table>
+  <header class="topbar">
+    <div class="wrap nav">
+      <div class="brand">
+        Creator Resource Reallocation
+        <small>Decision analytics · ranking · experiment design</small>
       </div>
-      <div class="card">
-        <h3>创作者价值定义</h3>
-        <p class="muted">资源分配不直接看单一结果项，而看四个维度的合成判断。</p>
-        <div class="panel-list">
-          <div class="mini"><strong>持续供给</strong>30 日留存、连续活跃周数、稳定经营转化。</div>
-          <div class="mini"><strong>单位资源产出</strong>千次曝光收入、单位激励收入、低资源占用下的经营表现。</div>
-          <div class="mini"><strong>供给质量</strong>变现开通率、内容消费结果、近期经营信号改善。</div>
-          <div class="mini"><strong>风险约束</strong>安全、作弊、投诉、运营承接与迁移成本。</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="kpi-grid">
-      <div class="kpi"><div class="num">42.9%</div><div class="label">Top 20% 创作者曝光占比</div></div>
-      <div class="kpi"><div class="num">30.2%</div><div class="label">Top 20% 创作者收入占比</div></div>
-      <div class="kpi"><div class="num">2,620</div><div class="label">高曝光低变现创作者</div></div>
-      <div class="kpi"><div class="num">+9.4ppt</div><div class="label">Top 4,200 30 日留存提升</div></div>
-    </div>
-
-    <div class="toc">
-      <a href="#question"><strong>业务问题</strong><br><span class="muted">问题定义与价值口径</span></a>
-      <a href="#evidence"><strong>证据链</strong><br><span class="muted">漏斗、错配、分层、回测</span></a>
-      <a href="#rule"><strong>首轮口径</strong><br><span class="muted">准入、排序、复核</span></a>
-      <a href="#backtest"><strong>回测读数</strong><br><span class="muted">固定 Top N 与迁移结构</span></a>
-      <a href="#experiment"><strong>实验门槛</strong><br><span class="muted">主指标、护栏、回滚</span></a>
-      <a href="#docs"><strong>资料入口</strong><br><span class="muted">报告、分析过程、SQL</span></a>
+      <nav class="navlinks" aria-label="Project navigation">
+        <a class="active" href="#overview">Overview</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#method">Method</a>
+        <a href="#decision">Decision</a>
+        <a href="#technical">Technical proof</a>
+      </nav>
     </div>
   </header>
 
-  <section id="question">
-    <h2>业务问题</h2>
-    <div class="section-grid">
-      <div class="card">
-        <h3>决策对象</h3>
-        <p>在流量和现金激励有限时，平台需要决定哪些创作者进入高资源池，哪些创作者继续维持原配置，哪些创作者应当降配并进入复核。</p>
-        <div class="note">这里要解决的是资源配置问题，不是对创作者做静态画像展示。</div>
-      </div>
-      <div class="card">
-        <h3>判断标准</h3>
-        <p>高价值创作者不是“看起来热闹”的创作者，而是更可能在后续经营周期中形成稳定供给、留存与单位资源产出的创作者。</p>
-        <div class="chips">
-          <span class="chip">持续供给</span>
-          <span class="chip">单位资源产出</span>
-          <span class="chip">质量信号</span>
-          <span class="chip">风险约束</span>
+  <main>
+    <section class="hero" id="overview">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow">Independent synthetic portfolio project</span>
+            <h1>Should a platform change which creators receive scarce traffic and incentives?</h1>
+            <p>
+              I translated a resource-allocation problem into an explicit ranking rule,
+              compared it with the existing rule at the same top-4,200 pool size, and
+              defined the controls required before any online rollout.
+            </p>
+            <div class="split">
+              <span class="badge soft">Python</span>
+              <span class="badge soft">pandas / NumPy</span>
+              <span class="badge soft">SQL</span>
+              <span class="badge good">Fixed top-N back-test</span>
+              <span class="badge warn">Offline evidence only</span>
+            </div>
+            <div class="split" style="margin-top:18px">
+              <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/blob/main/TECHNICAL_REPORT.md"><strong>Technical report</strong><span class="small">Methods, assumptions and limitations</span></a>
+              <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/blob/main/analysis.py"><strong>Python analysis</strong><span class="small">Runnable scoring and back-test code</span></a>
+              <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis"><strong>GitHub repository</strong><span class="small">Data, tests, notebook and SQL</span></a>
+            </div>
+          </div>
+          <aside class="panel pad tight">
+            <span class="badge good">Decision</span>
+            <h2 style="margin-top:14px">Run a controlled first test. Do not launch platform-wide.</h2>
+            <p>
+              The adjusted list improves synthetic retention and efficiency, but average
+              cash support also rises. The result is a testable trade-off, not a free gain.
+            </p>
+            <div class="callout">
+              <strong>Data boundary</strong>
+              <p>
+                All 18,742 creator profiles and supporting tables are synthetic.
+                They contain no employer, client, internship, platform or confidential data.
+              </p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="metrics">
+          <div class="metric"><div class="value">+9.4pp</div><div class="label">30-day retention in the adjusted top-4,200 list</div></div>
+          <div class="metric"><div class="value">+12.7%</div><div class="label">Revenue per unit of incentive</div></div>
+          <div class="metric"><div class="value">+13.6%</div><div class="label">Average cash incentive per selected creator</div></div>
+          <div class="metric"><div class="value">72.2%</div><div class="label">Overlap between existing and adjusted lists</div></div>
         </div>
       </div>
+    </section>
+
+    <section class="section" id="evidence">
+      <div class="wrap">
+        <div class="section-header">
+          <div><div class="section-kicker">Evidence</div><h2>Why the allocation rule deserves review</h2></div>
+        </div>
+        <div class="grid-3">
+          <article class="panel pad">
+            <h3>1. Supply loss</h3>
+            <p>18,742 creators enter the synthetic funnel, but only 2,819 become stable, monetised suppliers.</p>
+          </article>
+          <article class="panel pad">
+            <h3>2. Resource concentration</h3>
+            <p>The top 20% receive 42.9% of exposure while producing 30.2% of revenue.</p>
+          </article>
+          <article class="panel pad">
+            <h3>3. Actionable segments</h3>
+            <p>High-exposure / low-monetisation and high-potential / low-incentive groups support different operating actions.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="method">
+      <div class="wrap">
+        <div class="grid-2">
+          <article class="panel pad">
+            <div class="section-kicker">Method</div>
+            <h2>Adjusted ranking rule</h2>
+            <div class="formula">Adjusted priority score
+= 0.60 × existing-rule percentile
++ 0.20 × retention percentile
++ 0.15 × winsorised efficiency percentile
++ 0.05 × low-resource-occupancy percentile</div>
+            <p class="small" style="margin-top:12px">
+              The existing rule retains the largest weight to limit migration. Efficiency is
+              winsorised at the 1st and 99th percentiles before ranking.
+            </p>
+          </article>
+          <article class="panel pad">
+            <div class="section-kicker">Evaluation discipline</div>
+            <h2>Hold selection size constant</h2>
+            <ol class="list-clean">
+              <li>Filter to creators who completed a first publication.</li>
+              <li>Calculate percentile-based ranking signals.</li>
+              <li>Select exactly 4,200 creators under each rule.</li>
+              <li>Compare retention, efficiency, cost and list migration.</li>
+            </ol>
+            <div class="note">
+              A larger selected pool could manufacture apparent uplift. The fixed top-N comparison
+              tests allocation quality instead of pool expansion.
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="decision">
+      <div class="wrap">
+        <div class="section-header">
+          <div><div class="section-kicker">Back-test</div><h2>Result and trade-off</h2></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Metric</th><th>Existing rule</th><th>Adjusted rule</th><th>Change</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td>30-day retention</td><td>48.7%</td><td>58.1%</td><td>+9.4pp</td><td>Stronger sustained supply</td></tr>
+              <tr><td>Revenue per unit of incentive</td><td>69.6</td><td>78.4</td><td>+12.7%</td><td>Higher support efficiency</td></tr>
+              <tr><td>Cash incentive per creator</td><td>550</td><td>625</td><td>+13.6%</td><td>Cost rises and must remain a guardrail</td></tr>
+              <tr><td>List overlap</td><td colspan="2">72.2%</td><td>27.8% migration</td><td>Meaningful but bounded operating change</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout" style="margin-top:18px">
+          <strong>Interpretation boundary</strong>
+          <p>
+            These are synthetic offline back-test results, not causal production impact.
+            Safety and fraud gates are online design requirements because those fields are not
+            present in the synthetic back-test.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="technical">
+      <div class="wrap">
+        <div class="section-header">
+          <div><div class="section-kicker">Technical proof</div><h2>What can be inspected and rerun</h2></div>
+        </div>
+        <div class="docs">
+          <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/blob/main/analysis.py"><strong>Python</strong><span class="small">Reusable loading, scoring and back-test functions</span></a>
+          <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/tree/main/sql"><strong>SQL</strong><span class="small">Funnel, segmentation, migration and SRM queries</span></a>
+          <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/tree/main/tests"><strong>Tests</strong><span class="small">Regression checks for published figures and fixed pool size</span></a>
+          <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/blob/main/notebooks/creator_value_analysis.ipynb"><strong>Notebook</strong><span class="small">Full analytical workflow and diagnostic outputs</span></a>
+        </div>
+        <div class="panel pad" style="margin-top:18px">
+          <h3>Proposed online controls</h3>
+          <div class="grid-3">
+            <div class="subpanel"><strong>Primary metrics</strong><p>30-day retention and revenue per unit of incentive.</p></div>
+            <div class="subpanel"><strong>Guardrails</strong><p>Cash support, creator churn, complaints, fraud and content safety.</p></div>
+            <div class="subpanel"><strong>Validity</strong><p>Creator-level stratified randomisation, SRM checks and contamination monitoring.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      Independent synthetic portfolio project. Offline results support controlled testing only and do not represent live business impact.
     </div>
-  </section>
-
-  <section id="evidence">
-    <h2>证据链</h2>
-    <div class="three-col">
-      <div class="card">
-        <h3>1. 损耗位置</h3>
-        <p>注册到首发并不是主要瓶颈，主要损耗集中在首发后到稳定经营之间，资源动作应当作用在持续经营阶段。</p>
-      </div>
-      <div class="card">
-        <h3>2. 资源错配</h3>
-        <p>Top 20% 创作者拿走 42.9% 曝光，却只贡献 30.2% 收入。历史曝光优势被延续，经营质量没有被充分纳入。</p>
-      </div>
-      <div class="card">
-        <h3>3. 人群分离</h3>
-        <p>“高曝光低变现”与“高潜低激励”两类人群边界清晰，具备形成差异化动作的基础。</p>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:20px">
-      <h3>核心读数</h3>
-      <div class="bar-row">
-        <div class="bar"><div>曝光集中度</div><div class="track"><div class="fill" style="width:42.9%"></div></div><div>42.9%</div></div>
-        <div class="bar"><div>价值集中度</div><div class="track"><div class="fill fill2" style="width:30.2%"></div></div><div>30.2%</div></div>
-        <div class="bar"><div>名单重合率</div><div class="track"><div class="fill" style="width:72.2%"></div></div><div>72.2%</div></div>
-        <div class="bar"><div>单位激励收入提升</div><div class="track"><div class="fill fill2" style="width:63%"></div></div><div>+12.7%</div></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="rule">
-    <h2>首轮灰度口径</h2>
-    <div class="two-col">
-      <div class="card">
-        <h3>执行结构</h3>
-        <table>
-          <tr><th>步骤</th><th>处理方式</th></tr>
-          <tr><td>准入过滤</td><td>过滤安全、作弊、活跃不足，以及历史资源占用高但长期效率低的人群。</td></tr>
-          <tr><td>排序加权</td><td>保留旧规则主体，同时把留存、变现效率和低资源占用纳入修正信号。</td></tr>
-          <tr><td>名单复核</td><td>拟降配对象进入复核与申诉队列，避免边界样本被机械误伤。</td></tr>
-        </table>
-      </div>
-      <div class="card">
-        <h3>首轮评分公式</h3>
-        <div class="code">新优先级分数
-= 0.60 × 原规则分位
-+ 0.20 × 留存分位
-+ 0.15 × 变现效率分位（缩尾后）
-+ 0.05 × 低资源占用分位</div>
-        <p class="muted" style="margin-top:12px">旧规则保留 0.60，用于控制名单迁移速度；留存进入排序主逻辑；效率与低资源占用只作修正项。</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="backtest">
-    <h2>同规模回测</h2>
-    <div class="card">
-      <table>
-        <tr><th>维度</th><th>原规则</th><th>新规则</th><th>变化</th></tr>
-        <tr><td>30 日留存</td><td>48.7%</td><td>58.1%</td><td>+9.4ppt</td></tr>
-        <tr><td>单位激励收入</td><td>69.6</td><td>78.4</td><td>+12.7%</td></tr>
-        <tr><td>人均现金激励</td><td>550</td><td>625</td><td>+13.6%</td></tr>
-        <tr><td>名单重合率</td><td colspan="2">72.2%</td><td>迁移幅度可控</td></tr>
-      </table>
-      <p class="muted" style="margin-top:12px">当前结果更接近结构性资源重配：单人成本抬升，但稳定经营和单位资源产出同步改善。</p>
-    </div>
-
-    <div class="section-grid" style="margin-top:20px">
-      <div class="card">
-        <h3>迁移结构</h3>
-        <table>
-          <tr><th>方向</th><th>主体</th><th>占比</th></tr>
-          <tr><td>旧名单移出</td><td>高曝光低变现</td><td>93.2%</td></tr>
-          <tr><td>新名单补入</td><td>一般供给</td><td>43.1%</td></tr>
-          <tr><td>新名单补入</td><td>高价值稳定供给</td><td>39.5%</td></tr>
-          <tr><td>新名单补入</td><td>高潜低激励</td><td>13.7%</td></tr>
-        </table>
-      </div>
-      <div class="card">
-        <h3>扩量视角</h3>
-        <table>
-          <tr><th>Top N</th><th>30 日留存提升</th><th>单位激励收入提升</th></tr>
-          <tr><td>3,000</td><td>14.9ppt</td><td>18.7%</td></tr>
-          <tr><td>3,600</td><td>12.2ppt</td><td>15.8%</td></tr>
-          <tr><td>4,200</td><td>9.4ppt</td><td>12.7%</td></tr>
-          <tr><td>5,000</td><td>7.0ppt</td><td>10.1%</td></tr>
-          <tr><td>6,000</td><td>4.9ppt</td><td>7.2%</td></tr>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <section id="experiment">
-    <h2>实验门槛与回滚条件</h2>
-    <div class="two-col">
-      <div class="card">
-        <h3>实验设计</h3>
-        <table>
-          <tr><th>项目</th><th>建议</th></tr>
-          <tr><td>随机化单位</td><td>creator 级分层随机实验</td></tr>
-          <tr><td>主指标</td><td>30 日留存率、单位激励收入</td></tr>
-          <tr><td>护栏指标</td><td>人均现金激励、供给流失率、投诉率、作弊率、内容安全</td></tr>
-          <tr><td>扩量条件</td><td>主指标不为负，单位激励收入保持为正，关键护栏无明显恶化</td></tr>
-        </table>
-      </div>
-      <div class="card">
-        <h3>暂停或回滚</h3>
-        <table>
-          <tr><th>触发情形</th><th>动作</th></tr>
-          <tr><td>连续 3 天出现显著 SRM / 分流漂移</td><td>暂停读数并排查</td></tr>
-          <tr><td>投诉、作弊或安全显著恶化</td><td>停止扩量并回到上一版本</td></tr>
-          <tr><td>单位激励收入转负</td><td>停止扩量</td></tr>
-          <tr><td>week 1 抬升但 week 4 回落，holdout 不支持继续扩量</td><td>回滚并重做方案</td></tr>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <section id="docs">
-    <h2>资料入口</h2>
-    <div class="three-col">
-      <div class="card">
-        <h3>完整报告</h3>
-        <p>问题定义、边界、分层、口径取舍、回测与风险控制。</p>
-        <a href="report.html">进入报告页</a>
-      </div>
-      <div class="card">
-        <h3>分析过程</h3>
-        <p>按经营判断顺序整理的分析路径、核心口径与代码片段。</p>
-        <a href="notebook.html">进入分析过程页</a>
-      </div>
-      <div class="card">
-        <h3>SQL 方案</h3>
-        <p>漏斗、分层、固定 Top N 回测、名单迁移和 SRM 监控 SQL。</p>
-        <a href="sql.html">进入 SQL 页</a>
-      </div>
-    </div>
-  </section>
-
-  <div class="footer">
-    样本说明：数据为合成样本；离线结果仅用于判断是否进入实验，不替代线上因果识别。
-  </div>
-</div>
-
+  </footer>
 </body>
 </html>
