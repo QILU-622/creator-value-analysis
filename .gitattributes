@@ -1,0 +1,5 @@
+# Keep GitHub's language card focused on the analytical implementation.
+*.html linguist-documentation=true
+*.css linguist-documentation=true
+*.js linguist-documentation=true
+*.ipynb linguist-documentation=true
