@@ -10,11 +10,11 @@ WITH creator_scored AS (
         retention_pct_rank,
         resource_pct_rank,
         CASE
-            WHEN exposure_pct_rank >= 0.60 AND efficiency_pct_rank <= 0.52 THEN '高曝光低变现'
-            WHEN retention_pct_rank >= 0.65 AND efficiency_pct_rank >= 0.65 AND resource_pct_rank <= 0.68 THEN '高潜低激励'
-            WHEN retention_pct_rank >= 0.72 AND efficiency_pct_rank >= 0.72 THEN '高价值稳定供给'
-            WHEN exposure_pct_rank <= 0.25 AND efficiency_pct_rank <= 0.35 THEN '低价值供给'
-            ELSE '一般供给'
+            WHEN exposure_pct_rank >= 0.60 AND efficiency_pct_rank <= 0.52 THEN 'high-exposure / low-monetisation'
+            WHEN retention_pct_rank >= 0.65 AND efficiency_pct_rank >= 0.65 AND resource_pct_rank <= 0.68 THEN 'high-potential / low-incentive'
+            WHEN retention_pct_rank >= 0.72 AND efficiency_pct_rank >= 0.72 THEN 'high-value stable supply'
+            WHEN exposure_pct_rank <= 0.25 AND efficiency_pct_rank <= 0.35 THEN 'low-value supply'
+            ELSE 'general supply'
         END AS creator_segment
     FROM creator_profile
 )
