@@ -1,5 +1,5 @@
--- 用于线上灰度期间的日级监控模板。
--- 目标：尽早发现 SRM、流量分配漂移、激励过量投放与关键护栏恶化。
+-- Daily monitoring template for a controlled online rollout.
+-- Goal: detect SRM, allocation drift, incentive overspend, and guardrail deterioration early.
 
 WITH assignment_daily AS (
     SELECT
@@ -57,9 +57,9 @@ SELECT
     ROUND(fraud_cases * 1.0 / NULLIF(creators, 0), 4) AS fraud_rate,
     ROUND(safety_cases * 1.0 / NULLIF(creators, 0), 4) AS safety_rate,
     CASE
-        WHEN ABS(creator_share - 0.5) > 0.03 THEN '检查 SRM / 分流漂移'
-        WHEN revenue_amt * 1.0 / NULLIF(cash_incentive, 0) < 0 THEN '单位激励收入转负，暂停扩量'
-        ELSE '继续监控'
+        WHEN ABS(creator_share - 0.5) > 0.03 THEN 'check SRM or allocation drift'
+        WHEN revenue_amt * 1.0 / NULLIF(cash_incentive, 0) < 0 THEN 'pause expansion: revenue per incentive is negative'
+        ELSE 'continue monitoring'
     END AS action_hint
 FROM monitored
 ORDER BY event_date, creator_vertical, experiment_group;
