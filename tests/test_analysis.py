@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from analysis import load_creator_data, run_backtest
+from analysis import bootstrap_backtest, load_creator_data, run_backtest
 
 
 def test_published_backtest_metrics() -> None:
@@ -47,3 +47,32 @@ def test_input_requires_the_scoring_columns() -> None:
 
     with pytest.raises(ValueError, match="old_rule_score"):
         run_backtest(creator, top_n=1)
+
+
+def test_published_bootstrap_intervals_are_reproducible() -> None:
+    bootstrap = bootstrap_backtest(load_creator_data())
+    retention = bootstrap.iloc[0]
+    efficiency = bootstrap.iloc[1]
+
+    assert math.isclose(retention["point_estimate"], 9.4318333333, abs_tol=1e-8)
+    assert math.isclose(retention["ci_low"], 9.0158963810, abs_tol=1e-8)
+    assert math.isclose(retention["ci_high"], 9.8799215476, abs_tol=1e-8)
+    assert math.isclose(efficiency["point_estimate"], 12.7118278980, abs_tol=1e-8)
+    assert math.isclose(efficiency["ci_low"], 10.9986177345, abs_tol=1e-8)
+    assert math.isclose(efficiency["ci_high"], 14.5119073929, abs_tol=1e-8)
+    assert (bootstrap["ci_low"] > 0).all()
+
+
+@pytest.mark.parametrize(
+    "kwargs, message",
+    [
+        ({"iterations": 0}, "iterations must be a positive integer"),
+        ({"confidence": 1.0}, "confidence must be between 0 and 1"),
+        ({"seed": -1}, "seed must be a non-negative integer"),
+    ],
+)
+def test_bootstrap_configuration_fails_early(
+    kwargs: dict[str, int | float], message: str
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        bootstrap_backtest(load_creator_data(), **kwargs)
