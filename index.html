@@ -67,8 +67,8 @@
         </div>
 
         <div class="metrics">
-          <div class="metric"><div class="value">+9.4pp</div><div class="label">30-day retention in the adjusted top-4,200 list</div></div>
-          <div class="metric"><div class="value">+12.7%</div><div class="label">Revenue per unit of incentive</div></div>
+          <div class="metric"><div class="value">+9.43pp</div><div class="label">30-day retention · 95% bootstrap CI [9.02, 9.88]pp</div></div>
+          <div class="metric"><div class="value">+12.71%</div><div class="label">Revenue per unit of incentive · 95% bootstrap CI [11.00%, 14.51%]</div></div>
           <div class="metric"><div class="value">+13.6%</div><div class="label">Average cash incentive per selected creator</div></div>
           <div class="metric"><div class="value">72.2%</div><div class="label">Overlap between existing and adjusted lists</div></div>
         </div>
@@ -138,12 +138,12 @@
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Metric</th><th>Existing rule</th><th>Adjusted rule</th><th>Change</th><th>Interpretation</th></tr></thead>
+            <thead><tr><th>Metric</th><th>Existing rule</th><th>Adjusted rule</th><th>Change</th><th>95% bootstrap interval</th><th>Interpretation</th></tr></thead>
             <tbody>
-              <tr><td>30-day retention</td><td>48.7%</td><td>58.1%</td><td>+9.4pp</td><td>Stronger sustained supply</td></tr>
-              <tr><td>Revenue per unit of incentive</td><td>69.6</td><td>78.4</td><td>+12.7%</td><td>Higher support efficiency</td></tr>
-              <tr><td>Cash incentive per creator</td><td>550</td><td>625</td><td>+13.6%</td><td>Cost rises and must remain a guardrail</td></tr>
-              <tr><td>List overlap</td><td colspan="2">72.2%</td><td>27.8% migration</td><td>Meaningful but bounded operating change</td></tr>
+              <tr><td>30-day retention</td><td>48.70%</td><td>58.13%</td><td>+9.43pp</td><td>[9.02, 9.88]pp</td><td>Stronger sustained supply</td></tr>
+              <tr><td>Revenue per unit of incentive</td><td>69.59</td><td>78.43</td><td>+12.71%</td><td>[11.00%, 14.51%]</td><td>Higher support efficiency</td></tr>
+              <tr><td>Cash incentive per creator</td><td>550</td><td>625</td><td>+13.6%</td><td>—</td><td>Cost rises and must remain a guardrail</td></tr>
+              <tr><td>List overlap</td><td colspan="2">72.2%</td><td>27.8% migration</td><td>—</td><td>Meaningful but bounded operating change</td></tr>
             </tbody>
           </table>
         </div>
@@ -164,9 +164,9 @@
           <div><div class="section-kicker">Technical proof</div><h2>What can be inspected and rerun</h2></div>
         </div>
         <div class="docs">
-          <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/blob/main/analysis.py"><strong>Python</strong><span class="small">Validated loading, scoring and fixed top-N back-test functions</span></a>
+          <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/blob/main/analysis.py"><strong>Python</strong><span class="small">Validated scoring, fixed top-N back-test and 1,000-resample paired bootstrap</span></a>
           <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/tree/main/sql"><strong>SQL</strong><span class="small">Funnel, segmentation, migration and SRM queries</span></a>
-          <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/tree/main/tests"><strong>Tests</strong><span class="small">Five checks for published figures, pool size and input validity</span></a>
+          <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/tree/main/tests"><strong>Tests</strong><span class="small">Nine checks for published lifts, intervals and input validity</span></a>
           <a class="doc-link" href="https://github.com/QILU-622/creator-value-analysis/tree/main/figures"><strong>Figures</strong><span class="small">Funnel, concentration, back-test and robustness outputs</span></a>
         </div>
         <div class="panel pad" style="margin-top:18px">
