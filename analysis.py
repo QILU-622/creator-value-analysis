@@ -7,6 +7,8 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_TOP_N = 4_200
+DEFAULT_BOOTSTRAP_ITERATIONS = 1_000
+DEFAULT_BOOTSTRAP_SEED = 20_260_903
 REQUIRED_COLUMNS = {
     "creator_id",
     "join_date",
@@ -132,9 +134,107 @@ def run_backtest(
     return summary, overlap
 
 
+def bootstrap_backtest(
+    creator: pd.DataFrame,
+    top_n: int = DEFAULT_TOP_N,
+    iterations: int = DEFAULT_BOOTSTRAP_ITERATIONS,
+    confidence: float = 0.95,
+    seed: int = DEFAULT_BOOTSTRAP_SEED,
+) -> pd.DataFrame:
+    """Estimate uncertainty around the two headline back-test lifts.
+
+    The creator-level bootstrap resamples the full eligible population and applies
+    the two fixed selection masks to every resample. Using the same draw for both
+    rules preserves the correlation created by their overlapping creator lists.
+    The intervals are conditional on the fitted ranking rules; they do not turn
+    this synthetic offline comparison into a causal estimate.
+    """
+    if not isinstance(iterations, int) or isinstance(iterations, bool) or iterations <= 0:
+        raise ValueError("iterations must be a positive integer")
+    if not 0 < confidence < 1:
+        raise ValueError("confidence must be between 0 and 1")
+    if not isinstance(seed, int) or isinstance(seed, bool) or seed < 0:
+        raise ValueError("seed must be a non-negative integer")
+
+    scored = score_creators(creator)
+    if len(scored) < top_n:
+        raise ValueError(
+            f"top_n={top_n:,} exceeds the {len(scored):,} eligible creators"
+        )
+    if top_n <= 0:
+        raise ValueError("top_n must be a positive integer")
+
+    existing = scored.nlargest(top_n, "old_rule_score")
+    adjusted = scored.nlargest(top_n, "adjusted_priority_score")
+    existing_mask = scored["creator_id"].isin(existing["creator_id"]).to_numpy()
+    adjusted_mask = scored["creator_id"].isin(adjusted["creator_id"]).to_numpy()
+    retention = scored["retention_30d_rate"].to_numpy(dtype=float)
+    efficiency = scored["unit_incentive_revenue"].to_numpy(dtype=float)
+
+    if np.isnan(retention).any() or np.isnan(efficiency).any():
+        raise ValueError("eligible outcome columns must not contain missing values")
+
+    rng = np.random.default_rng(seed)
+    retention_lifts = np.empty(iterations)
+    efficiency_lifts = np.empty(iterations)
+
+    for draw in range(iterations):
+        sampled = rng.integers(0, len(scored), size=len(scored))
+        sampled_existing = existing_mask[sampled]
+        sampled_adjusted = adjusted_mask[sampled]
+
+        existing_retention = retention[sampled][sampled_existing].mean()
+        adjusted_retention = retention[sampled][sampled_adjusted].mean()
+        existing_efficiency = efficiency[sampled][sampled_existing].mean()
+        adjusted_efficiency = efficiency[sampled][sampled_adjusted].mean()
+
+        retention_lifts[draw] = (
+            adjusted_retention - existing_retention
+        ) * 100
+        efficiency_lifts[draw] = (
+            adjusted_efficiency / existing_efficiency - 1
+        ) * 100
+
+    alpha = (1 - confidence) / 2
+    lower_percentile = 100 * alpha
+    upper_percentile = 100 * (1 - alpha)
+    point_retention = (
+        adjusted["retention_30d_rate"].mean()
+        - existing["retention_30d_rate"].mean()
+    ) * 100
+    point_efficiency = (
+        adjusted["unit_incentive_revenue"].mean()
+        / existing["unit_incentive_revenue"].mean()
+        - 1
+    ) * 100
+
+    return pd.DataFrame(
+        {
+            "metric": [
+                "30-day retention lift",
+                "Revenue per unit of incentive lift",
+            ],
+            "unit": ["percentage points", "percent"],
+            "point_estimate": [point_retention, point_efficiency],
+            "ci_low": [
+                np.percentile(retention_lifts, lower_percentile),
+                np.percentile(efficiency_lifts, lower_percentile),
+            ],
+            "ci_high": [
+                np.percentile(retention_lifts, upper_percentile),
+                np.percentile(efficiency_lifts, upper_percentile),
+            ],
+            "confidence_level": [confidence, confidence],
+            "bootstrap_iterations": [iterations, iterations],
+            "random_seed": [seed, seed],
+        }
+    )
+
+
 def main() -> None:
     creator = load_creator_data()
     summary, overlap = run_backtest(creator)
+    bootstrap = bootstrap_backtest(creator)
 
     existing = summary.iloc[0]
     adjusted = summary.iloc[1]
@@ -151,6 +251,13 @@ def main() -> None:
     print(f"30-day retention lift: {retention_lift_pp:.2f} percentage points")
     print(f"Revenue per unit of incentive lift: {efficiency_lift_pct:.2f}%")
     print(f"Top-{DEFAULT_TOP_N:,} list overlap: {overlap:.2%}")
+    print("Creator-level paired bootstrap uncertainty:")
+    for result in bootstrap.itertuples(index=False):
+        print(
+            f"  {result.metric}: {result.point_estimate:.2f} {result.unit} "
+            f"(95% CI [{result.ci_low:.2f}, {result.ci_high:.2f}]; "
+            f"{result.bootstrap_iterations:,} resamples; seed={result.random_seed})"
+        )
     print(
         "Boundary: synthetic offline back-test; "
         "not evidence of live causal business impact."
